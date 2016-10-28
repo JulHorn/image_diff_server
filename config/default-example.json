@@ -1,0 +1,10 @@
+{
+	"server":{
+		"port":"3000"
+	},
+	"images":{
+		"referenceImageFolder":"",
+		"newImageFolder":"",
+		"resultImageFolder":""
+	}
+}

@@ -1,0 +1,58 @@
+var uuid = require('node-uuid');
+var ImageModel = require('./ImageModel');
+
+var ImageSetModel = function () {
+    this.difference = 0;
+    this.distance = 0;
+    this.error = '';
+    this.id = uuid.v1();
+    this.referenceImage = new ImageModel();
+    this.newImage = new ImageModel();
+    this.diffImage = new ImageModel();
+};
+
+/* ----- Getter ----- */
+
+ImageSetModel.prototype.getDifference = function () {
+    return this.difference;
+};
+
+ImageSetModel.prototype.getDistance = function () {
+    return this.distance;
+};
+
+ImageSetModel.prototype.getError = function () {
+    return this.error;
+};
+
+ImageSetModel.prototype.getId = function () {
+    return this.id;
+};
+
+ImageSetModel.prototype.getReferenceImage = function () {
+    return this.referenceImage;
+};
+
+ImageSetModel.prototype.getNewImage = function () {
+    return this.newImage;
+};
+
+ImageSetModel.prototype.getDiffImage = function () {
+    return this.diffImage;
+};
+
+/* ----- Setter ----- */
+
+ImageSetModel.prototype.setDifference = function (difference) {
+    this.difference = difference;
+};
+
+ImageSetModel.prototype.setDistance = function (distance) {
+    this.distance = distance;
+};
+
+ImageSetModel.prototype.setError = function (error) {
+    this.error = error;
+};
+
+module.exports = ImageSetModel;
