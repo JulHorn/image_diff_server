@@ -3,6 +3,7 @@ extends layout
 block content
   h1= title
   p Timestamp: #{data.getTimeStamp()}
+  p Number of sets #{data.getImageSets().length}
   p Max percentage of different pixels: #{data.getBiggestPercentualPixelDifference()}
   p Max distance: #{data.getBiggestDistanceDifference()}
   - var imageSets = data.getImageSets()

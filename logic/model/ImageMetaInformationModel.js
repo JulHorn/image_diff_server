@@ -2,6 +2,7 @@ var fs = require('fs-extra');
 var logger = require('winston');
 var config = require('../configurationLoader');
 var ImageSet = require('./ImageSetModel');
+var ImageModel = require('./ImageModel');
 
 var ImageMetaInformationModel = function () {
     this.biggestPercentualPixelDifference = 0;
@@ -30,10 +31,10 @@ ImageMetaInformationModel.prototype.getBiggestDistanceDifference = function () {
 ImageMetaInformationModel.prototype.save = function () {
     fs.writeFile(config.getMetaInformationFilePath(), JSON.stringify(this), 'utf8', function (err) {
         if(err != null || typeof err == 'undefined'){
-            logger.error('Failed to write meta informations.', err);
+            logger.error('Failed to write meta information.', err);
         }
 
-        logger.info('Writing meta informations finished.');
+        logger.info('Writing meta information finished.');
     });
 };
 
@@ -59,7 +60,7 @@ ImageMetaInformationModel.prototype.load = function () {
 
     this.calculateBiggestDifferences();
 
-    logger.info('Loading meta informations finished.');
+    logger.info('Loading meta information finished.');
 };
 
 ImageMetaInformationModel.prototype.getImageSets = function(){
@@ -67,17 +68,43 @@ ImageMetaInformationModel.prototype.getImageSets = function(){
 };
 
 ImageMetaInformationModel.prototype.addImageSet = function (imageSet) {
-    this.imageSets.push(imageSet);
+    // Remove old/outdated image set before adding the new one with the same image names
+    var oldImageSet = this.getImageSetByName(imageSet.getReferenceImage().getName());
+
+    if(oldImageSet === null){
+        oldImageSet = this.getImageSetByName(imageSet.getNewImage().getName());
+
+        if(oldImageSet !== null){
+            this.deleteImageSet(oldImageSet.getId());
+        }
+    } else {
+        this.deleteImageSet(oldImageSet.getId());
+    }
+
+    // Add new image set
+    this.getImageSets().push(imageSet);
 };
 
-ImageMetaInformationModel.prototype.addImageSets = function (imageSets) {
-    this.imageSets = this.imageSets.concat(imageSets);
-};
+ImageMetaInformationModel.prototype.deleteImageSet = function (id) {
+    var index = this.__getIndexOfImageSet(id);
+
+    // Error handling
+    if(index < 0){
+        var error = 'The image set with the id '
+            + id
+            + ' does not exist and thus can not be deleted.';
+
+        logger.error(error);
+        throw Error(error);
+    }
+
+    this.getImageSets().splice(index, 1);
+}
 
 ImageMetaInformationModel.prototype.calculateBiggestDifferences = function () {
 var that = this;
 
-    this.imageSets.forEach(function (set) {
+    this.getImageSets().forEach(function (set) {
         if(that.biggestPercentualPixelDifference < set.getDifference()){
             that.biggestPercentualPixelDifference = set.getDifference();
         }
@@ -89,11 +116,45 @@ var that = this;
 };
 
 ImageMetaInformationModel.prototype.getImageSetById = function(id){
+    var result = this.getImageSets().filter(function (imageSet) {
+        return imageSet.getId() === id;
+    });
 
+    // If the image does not already exist in the meta informations sturcture, then return null
+    if(result.length === 0){
+        return null;
+    }
+
+    // Else return the found imageSet
+    return result[0];
 };
 
-ImageMetaInformationModel.prototype.getImageSetByName = function(id){
+ImageMetaInformationModel.prototype.getImageSetByName = function(imageName){
 
+    // If no proper name was given, return null
+    if(imageName === ''){
+        return null;
+    }
+
+    // Get the image set with the name
+    var result = this.getImageSets().filter(function (imageSet) {
+       return imageSet.getReferenceImage().getName() == imageName
+        || imageSet.getNewImage().getName() == imageName;
+    });
+
+    // If the image does not already exist in the meta informations sturcture, then return null
+    if(result.length === 0){
+        return null;
+    }
+
+    // Else return the found imageSet
+    return result[0];
+};
+
+ImageMetaInformationModel.prototype.__getIndexOfImageSet = function (id) {
+    return this.getImageSets().findIndex(function (imageSet) {
+        return imageSet.getId() === id;
+    });
 };
 
 module.exports = new ImageMetaInformationModel();
