@@ -22,15 +22,15 @@ conf.prototype.getImagesConfig = function () {
 };
 
 conf.prototype.getReferenceImageFolderPath = function () {
-    return path.resolve(this.getImagesConfig().get('referenceImageFolder'));
+    return path.normalize(this.getImagesConfig().get('referenceImageFolder'));
 };
 
 conf.prototype.getNewImageFolderPath = function () {
-    return path.resolve(this.getImagesConfig().get('newImageFolder'));
+    return path.normalize(this.getImagesConfig().get('newImageFolder'));
 };
 
 conf.prototype.getResultImageFolderPath = function () {
-    return path.resolve(this.getImagesConfig().get('resultImageFolder'));
+    return path.normalize(this.getImagesConfig().get('resultImageFolder'));
 };
 
 module.exports = new conf();

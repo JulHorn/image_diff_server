@@ -6,3 +6,87 @@ body {
 a {
   color: #00B7FF;
 }
+
+button {
+  color:#ffffff;
+  border:1px solid #888;
+
+  box-shadow: inset 0px 19px 0px -24px #888;
+  background-color: #333333;
+
+  display:inline-block;
+  cursor:pointer;
+
+  font-family:"Segoe UI", Tahoma, sans-serif;
+  font-size:12px;
+  white-space: nowrap;
+  vertical-align: middle;
+
+  padding:3px 6px;
+  margin: 0 -5px 0 0;
+
+  text-decoration:none;
+  text-shadow:0px 1px 0px #1f1f1f;
+
+  outline: none;
+
+}
+
+button:hover {
+  background-color:#1a1a1a;
+}
+
+button:active {
+  position:relative;
+  top:1px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+
+}
+
+table th {
+  max-width: 100px;
+
+  text-overflow:ellipsis;
+  overflow:hidden;
+  white-space:nowrap;
+  text-align: left;
+}
+
+table tbody {
+  border: 1px solid #888;
+}
+table tbody tr:nth-child(even) td {
+  background-color: #FFF;
+}
+
+table tbody tr:nth-child(odd) td {
+  background-color: #EEE;
+}
+
+table tbody tr td {
+  padding: 3px 4px;
+  border-top: 1px solid #888;
+  border-bottom: 1px solid #888;
+  vertical-align: top;
+}
+
+table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+table tbody tr:hover td {
+  background: #CCC;
+}
+
+a {
+  display: inline-block;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px;
+  transition: 0.3s;
+}
