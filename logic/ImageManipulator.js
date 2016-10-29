@@ -3,6 +3,7 @@ var fs = require('fs-extra');
 var path = require('path');
 var config = require('./configurationLoader');
 var ImageSetModel = require('./model/ImageSetModel');
+var ImageMetaInformationModel = require('./model/ImageMetaInformationModel');
 var logger = require('winston');
 
 var ImageManipulator = function () {
@@ -53,18 +54,81 @@ ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, call
             // Autocrop if argument is given to normalalize images
             that.__autoCrop(referenceImage, newImage, autoCrop);
 
-            // Create diff and write file
+            // Create diff, ensure that folder structure exists and write file
             var diff = jimp.diff(referenceImage, newImage);
+            this.__ensureThatFolderStructureExist(config.getReferenceImageFolderPath());
             diff.image.write(diffImagePath);
 
             // Create data structure for the gathering of meta informations
-            callback(that.__createImageSet(imageName, referenceImage, newImagePath, diff.image, diff.percent, jimp.distance(referenceImage, newImage), ''));
+            callback(that.__createCompleteImageSet(imageName, referenceImage, newImagePath, diff.image, diff.percent, jimp.distance(referenceImage, newImage), ''));
         });
     });
 };
 
-ImageManipulator.prototype.createDiffImages = function () {
+ImageManipulator.prototype.createDiffImages = function (autocrop) {
+    var that = this;
+    var imageMetaInformationModel = new ImageMetaInformationModel();
 
+    this.__ensureThatFolderStructureExist(config.getReferenceImageFolderPath());
+    this.__ensureThatFolderStructureExist(config.getNewImageFolderPath());
+
+    fs.readdir(config.getReferenceImageFolderPath(), 'utf8', function (err, refImageNames) {
+        fs.readdir(config.getNewImageFolderPath(), 'utf8', function (err, newImageNames) {
+
+            // Get images that exist in both or only in one folder
+            var images = that.__getImageNames(refImageNames, newImageNames, false);
+            var refDiffImages = that.__getImageNames(refImageNames, newImageNames, true);
+            var newDiffImages = that.__getImageNames(newImageNames, refImageNames, true);
+
+            console.log('create', that.__createSingleImages(refDiffImages, newDiffImages));
+
+            that.__createSingleImages(refDiffImages, newDiffImages, function (resultImageSet) {
+                imageMetaInformationModel.addImageSet(resultImageSet);
+                console.log('ImageSet', imageMetaInformationModel);
+            });
+
+
+        });
+    });
+};
+
+ImageManipulator.prototype.__createDiffImages = function () {
+
+};
+
+ImageManipulator.prototype.__createSingleImages = function (refImageNames, newImageNames, callback) {
+    var that = this;
+console.log(refImageNames);
+    console.log(newImageNames);
+    console.log(callback);
+    newImageNames.forEach(function (newImageName) {
+        console.log(config.getNewImageFolderPath() + path.sep + newImageName);
+        jimp.read(config.getNewImageFolderPath() + path.sep + newImageName, function (err, newImage){
+
+            callback(that.__createSingleImageSet(newImageName, newImage, false));
+        });
+    });
+
+    refImageNames.forEach(function (refImageName) {
+        jimp.read(config.getReferenceImageFolderPath() + path.sep + refImageName, function (err, refImage){
+            callback(that.__createSingleImageSet(refImageName, refImage, true));
+        });
+    });
+};
+
+ImageManipulator.prototype.__getImageNames = function(fileNameArray1, fileNameArray2, differentImages){
+
+    // Get the images that are only in the first array
+    if(differentImages){
+        return fileNameArray1.filter(function(element){
+            return !fileNameArray2.includes(element) && element.toLowerCase().endsWith('.png');
+        });
+    }
+
+    // Get the images that are in both arrays
+    return fileNameArray1.filter(function(element){
+        return fileNameArray2.includes(element) && element.toLowerCase().endsWith('.png');
+    });
 };
 
 ImageManipulator.prototype.__autoCrop = function (image1, image2, autoCrop) {
@@ -74,11 +138,39 @@ ImageManipulator.prototype.__autoCrop = function (image1, image2, autoCrop) {
     }
 };
 
+ImageManipulator.prototype.__ensureThatFolderStructureExist= function(folder){
+    if(!fs.statSync(folder).isDirectory()){
+        fs.mkdirsSync(folder);
+    }
+};
+
 ImageManipulator.prototype.__checkImageExists = function (imagePath) {
     return fs.statSync(imagePath).isFile();
 };
 
-ImageManipulator.prototype.__createImageSet = function(imageName, referenceImage, newImage, diffImage, difference, distance, error){
+ImageManipulator.prototype.__createSingleImageSet = function (imageName, image, error, isReferenceImage) {
+    var imageSet = new ImageSetModel();
+
+    // Set error values
+    imageSet.setError(error);
+    imageSet.setDifference(100);
+    imageSet.setDistance(100);
+
+    // Edit set dependant of the image type
+    if(isReferenceImage) {
+        imageSet.getReferenceImage().setHeight(image.bitmap.height);
+        imageSet.getReferenceImage().setWidth(image.bitmap.width);
+        imageSet.getReferenceImage().setName(imageName);
+    } else {
+        imageSet.getNewImage().setHeight(image.bitmap.height);
+        imageSet.getNewImage().setWidth(image.bitmap.width);
+        imageSet.getNewImage().setName(imageName);
+    }
+
+    return imageSet;
+};
+
+ImageManipulator.prototype.__createCompleteImageSet = function(imageName, referenceImage, newImage, diffImage, difference, distance, error){
     var imageSet = new ImageSetModel();
 
     imageSet.setDifference(difference);
