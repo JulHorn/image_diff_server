@@ -2,9 +2,9 @@ extends layout
 
 block content
   h1= title
-  p Biggest difference: #{data.getBiggestDifference()}
   p Timestamp: #{data.getTimeStamp()}
-  p Images displayed with greater difference of: Threshold TBD
+  p Max percentage of different pixels: #{data.getBiggestPercentualPixelDifference()}
+  p Max distance: #{data.getBiggestDistanceDifference()}
   - var imageSets = data.getImageSets()
   table
     thead
@@ -16,22 +16,22 @@ block content
         each set, index in imageSets
             tr
                 td
-                    a(href=set.getReferenceImage().getPath())
-                        img(src=set.getReferenceImage().getPath())
+                    a(href=set.getReferenceImage().getPath().replace('public', '.'))
+                        img(src=set.getReferenceImage().getPath().replace('public', '.'))
                     p Name: #{set.getReferenceImage().getName()}
                     p Height: #{set.getReferenceImage().getHeight()}
                     p Width: #{set.getReferenceImage().getHeight()}
                     button(data-set-id=set.getId(), data-set-action='delete') Delete
                 td
-                    a(href=set.getNewImage().getPath())
-                        img(src=set.getNewImage().getPath())
+                    a(href=set.getNewImage().getPath().replace('public', '.'))
+                        img(src=set.getNewImage().getPath().replace('public', '.'))
                     p Name: #{set.getNewImage().getName()}
                     p Height: #{set.getNewImage().getHeight()}
                     p Width: #{set.getNewImage().getHeight()}
                     button(data-set-id=set.getId(), data-set-action='add') New Baseline
                 td
-                    a(href=set.getDiffImage().getPath())
-                        img(src=set.getDiffImage().getPath())
+                    a(href=set.getDiffImage().getPath().replace('public', '.'))
+                        img(src=set.getDiffImage().getPath().replace('public', '.'))
                     p Name: #{set.getDiffImage().getName()}
                     p Height: #{set.getDiffImage().getHeight()}
                     p Width: #{set.getDiffImage().getHeight()}

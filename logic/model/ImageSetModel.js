@@ -55,4 +55,17 @@ ImageSetModel.prototype.setError = function (error) {
     this.error = error;
 };
 
+/* ----- Other ----- */
+
+ImageSetModel.prototype.load = function (data) {
+    this.setDistance(data.distance);
+    this.setDifference(data.difference);
+    this.setError(data.error);
+    this.id = data.id;
+
+    this.getReferenceImage().load(data.referenceImage);
+    this.getNewImage().load(data.newImage);
+    this.getDiffImage().load(data.diffImage);
+};
+
 module.exports = ImageSetModel;

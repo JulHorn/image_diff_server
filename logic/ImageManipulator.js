@@ -7,9 +7,12 @@ var ImageMetaInformationModel = require('./model/ImageMetaInformationModel');
 var logger = require('winston');
 
 var ImageManipulator = function () {
-    
+    this.imageMetaInformationModel = ImageMetaInformationModel;
 };
 
+/**
+ * Does not update the meta informations!
+ * **/
 ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, callback) {
 
     // Other vars
@@ -56,7 +59,7 @@ ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, call
 
             // Create diff, ensure that folder structure exists and write file
             var diff = jimp.diff(referenceImage, newImage);
-            this.__ensureThatFolderStructureExist(config.getReferenceImageFolderPath());
+            that.__ensureThatFolderStructureExist(config.getReferenceImageFolderPath());
             diff.image.write(diffImagePath);
 
             // Create data structure for the gathering of meta informations
@@ -65,9 +68,8 @@ ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, call
     });
 };
 
-ImageManipulator.prototype.createDiffImages = function (autocrop) {
+ImageManipulator.prototype.createDiffImages = function (autoCrop) {
     var that = this;
-    var imageMetaInformationModel = new ImageMetaInformationModel();
 
     this.__ensureThatFolderStructureExist(config.getReferenceImageFolderPath());
     this.__ensureThatFolderStructureExist(config.getNewImageFolderPath());
@@ -76,42 +78,50 @@ ImageManipulator.prototype.createDiffImages = function (autocrop) {
         fs.readdir(config.getNewImageFolderPath(), 'utf8', function (err, newImageNames) {
 
             // Get images that exist in both or only in one folder
-            var images = that.__getImageNames(refImageNames, newImageNames, false);
-            var refDiffImages = that.__getImageNames(refImageNames, newImageNames, true);
-            var newDiffImages = that.__getImageNames(newImageNames, refImageNames, true);
+            var imageNames = that.__getImageNames(refImageNames, newImageNames, false);
+            var refDiffImageNames = that.__getImageNames(refImageNames, newImageNames, true);
+            var newDiffImageNames = that.__getImageNames(newImageNames, refImageNames, true);
 
-            console.log('create', that.__createSingleImages(refDiffImages, newDiffImages));
+            that.__createSingleImages(refDiffImageNames, newDiffImageNames);
+            that.__createDiffImages(imageNames, autoCrop);
 
-            that.__createSingleImages(refDiffImages, newDiffImages, function (resultImageSet) {
-                imageMetaInformationModel.addImageSet(resultImageSet);
-                console.log('ImageSet', imageMetaInformationModel);
-            });
-
-
+            // Need to ensure that the operation is truly finished here...
+            // Emulate that this actually works
+            setTimeout(function () {
+                that.imageMetaInformationModel.setTimeStamp(new Date().toISOString());
+                that.imageMetaInformationModel.calculateBiggestDifferences();
+                that.imageMetaInformationModel.save();
+            }, 5000);
         });
     });
 };
 
-ImageManipulator.prototype.__createDiffImages = function () {
+// Hmm, how to figure out that this is finished? Not sure the callback really does what it should...
+ImageManipulator.prototype.__createDiffImages = function (imageNames, autoCrop, callback) {
+    var that = this;
 
+    imageNames.forEach(function (imageName) {
+        that.createDiffImage(imageName, autoCrop, function (resultSet) {
+            that.imageMetaInformationModel.addImageSet(resultSet);
+        });
+    });
 };
 
+// Hmm, how to figure out that this is finished? Not sure the callback really does what it should...
 ImageManipulator.prototype.__createSingleImages = function (refImageNames, newImageNames, callback) {
     var that = this;
-console.log(refImageNames);
-    console.log(newImageNames);
-    console.log(callback);
-    newImageNames.forEach(function (newImageName) {
-        console.log(config.getNewImageFolderPath() + path.sep + newImageName);
-        jimp.read(config.getNewImageFolderPath() + path.sep + newImageName, function (err, newImage){
 
-            callback(that.__createSingleImageSet(newImageName, newImage, false));
+    // New images
+    newImageNames.forEach(function (newImageName) {
+        jimp.read(config.getNewImageFolderPath() + path.sep + newImageName, function (err, newImage){
+            that.imageMetaInformationModel.addImageSet(that.__createSingleImageSet(newImageName, newImage, 'There is no reference image existing yet.', false));
         });
     });
 
+    // Reference images
     refImageNames.forEach(function (refImageName) {
         jimp.read(config.getReferenceImageFolderPath() + path.sep + refImageName, function (err, refImage){
-            callback(that.__createSingleImageSet(refImageName, refImage, true));
+            that.imageMetaInformationModel.addImageSet(that.__createSingleImageSet(refImageName, refImage, 'There is no new image existing. Reference outdated?', true));
         });
     });
 };
@@ -161,10 +171,12 @@ ImageManipulator.prototype.__createSingleImageSet = function (imageName, image, 
         imageSet.getReferenceImage().setHeight(image.bitmap.height);
         imageSet.getReferenceImage().setWidth(image.bitmap.width);
         imageSet.getReferenceImage().setName(imageName);
+        imageSet.getReferenceImage().setPath(config.getReferenceImageFolderPath() + path.sep + imageName);
     } else {
         imageSet.getNewImage().setHeight(image.bitmap.height);
         imageSet.getNewImage().setWidth(image.bitmap.width);
         imageSet.getNewImage().setName(imageName);
+        imageSet.getNewImage().setPath(config.getNewImageFolderPath() + path.sep + imageName);
     }
 
     return imageSet;
@@ -180,14 +192,17 @@ ImageManipulator.prototype.__createCompleteImageSet = function(imageName, refere
     imageSet.getReferenceImage().setName(imageName);
     imageSet.getReferenceImage().setHeight(referenceImage.bitmap.height);
     imageSet.getReferenceImage().setWidth(referenceImage.bitmap.width);
+    imageSet.getReferenceImage().setPath(config.getReferenceImageFolderPath() + path.sep + imageName);
 
     imageSet.getNewImage().setName(imageName);
     imageSet.getNewImage().setHeight(referenceImage.bitmap.height);
     imageSet.getNewImage().setWidth(referenceImage.bitmap.width);
+    imageSet.getNewImage().setPath(config.getNewImageFolderPath() + path.sep + imageName);
 
     imageSet.getDiffImage().setName(imageName);
     imageSet.getDiffImage().setHeight(referenceImage.bitmap.height);
     imageSet.getDiffImage().setWidth(referenceImage.bitmap.width);
+    imageSet.getDiffImage().setPath(config.getResultImageFolderPath() + path.sep + imageName);
 
     return imageSet;
 };

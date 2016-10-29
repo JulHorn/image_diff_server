@@ -33,4 +33,20 @@ conf.prototype.getResultImageFolderPath = function () {
     return path.normalize(this.getImagesConfig().get('resultImageFolder'));
 };
 
+conf.prototype.getMetaInformationFilePath = function () {
+    return path.normalize(this.getImagesConfig().get('metaInformationFile'));
+};
+
+conf.prototype.getThresholdConf = function () {
+    return this.getBaseConf().get('thresholds');
+};
+
+conf.prototype.getMaxPixelDifferenceThreshold = function () {
+    return this.getThresholdConf().get('maxPercentualImagePixelDifference');
+};
+
+conf.prototype.getMaxDistanceDifferenceThreshold = function () {
+    return this.getThresholdConf().get('maxImageImageDistanceDifference');
+};
+
 module.exports = new conf();

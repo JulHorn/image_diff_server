@@ -41,4 +41,13 @@ ImageModel.prototype.setPath = function (path) {
     this.path = path;
 };
 
+/* ----- Others ----- */
+
+ImageModel.prototype.load = function (data) {
+    this.setPath(data.path);
+    this.setName(data.name);
+    this.setHeight(data.height);
+    this.setWidth(data.width);
+};
+
 module.exports = ImageModel;

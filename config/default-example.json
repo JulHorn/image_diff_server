@@ -5,6 +5,11 @@
 	"images":{
 		"referenceImageFolder":"",
 		"newImageFolder":"",
-		"resultImageFolder":""
+		"resultImageFolder":"",
+		"metaInformationFile":".\\data\\metaInformation.json"
+	},
+	"thresholds":{
+		"maxPercentualImagePixelDifference": 0,
+		"maxImageImageDistanceDifference": 0
 	}
 }
