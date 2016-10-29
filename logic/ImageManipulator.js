@@ -102,7 +102,11 @@ ImageManipulator.prototype.__createDiffImages = function (imageNames, autoCrop, 
 
     imageNames.forEach(function (imageName) {
         that.createDiffImage(imageName, autoCrop, function (resultSet) {
-            that.imageMetaInformationModel.addImageSet(resultSet);
+            // Only add images if a a threshold was breached
+            if(resultSet.getDistance() > config.getMaxDistanceDifferenceThreshold()
+                || resultSet.getDifference() > config.getMaxPixelDifferenceThreshold()){
+                that.imageMetaInformationModel.addImageSet(resultSet);
+            }
         });
     });
 };
