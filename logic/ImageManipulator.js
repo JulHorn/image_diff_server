@@ -88,8 +88,8 @@ ImageManipulator.prototype.createDiffImages = function (autoCrop) {
             // Need to ensure that the operation is truly finished here...
             // Emulate that this actually works
             setTimeout(function () {
-                that.imageMetaInformationModel.setTimeStamp(new Date().toISOString());
                 that.imageMetaInformationModel.calculateBiggestDifferences();
+                that.imageMetaInformationModel.setTimeStamp(new Date().toISOString());
                 that.imageMetaInformationModel.save();
             }, 5000);
         });

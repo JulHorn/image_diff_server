@@ -104,6 +104,13 @@ ImageMetaInformationModel.prototype.deleteImageSet = function (id) {
 ImageMetaInformationModel.prototype.calculateBiggestDifferences = function () {
 var that = this;
 
+    // If no image set exists, the difference is always 0
+    if(this.getImageSets().length === 0){
+        that.biggestPercentualPixelDifference = 0;
+        that.biggestDistanceDifference = 0;
+    }
+
+    // Calculate pixel and distance difference
     this.getImageSets().forEach(function (set) {
         if(that.biggestPercentualPixelDifference < set.getDifference()){
             that.biggestPercentualPixelDifference = set.getDifference();

@@ -2,10 +2,18 @@ extends layout
 
 block content
   h1= title
-  p Timestamp: #{data.getTimeStamp()}
-  p Number of sets #{data.getImageSets().length}
-  p Max percentage of different pixels: #{data.getBiggestPercentualPixelDifference()}
-  p Max distance: #{data.getBiggestDistanceDifference()}
+  div
+    label Timestamp:
+    label(id='timeStamp') #{data.getTimeStamp()}
+  div
+    label Number of sets:
+    label(id='numberOfSets')  #{data.getImageSets().length}
+  div
+    label Max percentage of different pixels:
+    label(id='maxPixelPercentage') #{data.getBiggestPercentualPixelDifference()}
+  div
+    label Max distance:
+    label(id='maxDistance') #{data.getBiggestDistanceDifference()}
   - var imageSets = data.getImageSets()
   table
     thead
@@ -22,14 +30,14 @@ block content
                     p Name: #{set.getReferenceImage().getName()}
                     p Height: #{set.getReferenceImage().getHeight()}
                     p Width: #{set.getReferenceImage().getHeight()}
-                    button(data-set-id=set.getId(), data-set-action='delete') Delete
+                    button(data-id=set.getId(), data-action='delete') Delete
                 td
                     a(href=set.getNewImage().getPath().replace('public', '.'))
                         img(src=set.getNewImage().getPath().replace('public', '.'))
                     p Name: #{set.getNewImage().getName()}
                     p Height: #{set.getNewImage().getHeight()}
                     p Width: #{set.getNewImage().getHeight()}
-                    button(data-set-id=set.getId(), data-set-action='add') New Baseline
+                    button(data-id=set.getId(), data-action='add') New Baseline
                 td
                     a(href=set.getDiffImage().getPath().replace('public', '.'))
                         img(src=set.getDiffImage().getPath().replace('public', '.'))

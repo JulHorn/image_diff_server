@@ -90,3 +90,7 @@ a {
   padding: 5px;
   transition: 0.3s;
 }
+
+label {
+  padding-right: 5px;
+}
