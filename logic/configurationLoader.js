@@ -49,4 +49,12 @@ conf.prototype.getMaxDistanceDifferenceThreshold = function () {
     return this.getThresholdConf().get('maxImageImageDistanceDifference');
 };
 
+conf.prototype.getOptions = function () {
+    return this.getBaseConf().get('options');
+};
+
+conf.prototype.getAutoCropOption = function () {
+    return this.getOptions().get('autoCrop');
+};
+
 module.exports = new conf();

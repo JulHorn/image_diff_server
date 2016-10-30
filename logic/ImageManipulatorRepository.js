@@ -1,9 +1,12 @@
 var ImageMetaInformationModel = require('./model/ImageMetaInformationModel');
 var fs = require('fs-extra');
+var path = require('path');
 var logger = require('winston');
+var ImageManipulator = require('./ImageManipulator');
+var config = require('./configurationLoader');
 
 var ImageManipulatorRepository = function () {
-    
+    this.imageManipulator = new ImageManipulator();
 };
 
 ImageManipulatorRepository.prototype.deleteImageSet = function (id, callback) {
@@ -24,8 +27,33 @@ ImageManipulatorRepository.prototype.deleteImageSet = function (id, callback) {
     callback(ImageMetaInformationModel);
 };
 
-ImageManipulatorRepository.prototype.update = function () {
+ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function () {
+    this.imageManipulator.createDiffImages(config.getAutoCropOption());
+};
+
+ImageManipulatorRepository.prototype.makeToNewReferenceImage = function (id, callback) {
+    var imageSet = ImageMetaInformationModel.getImageSetById(id);
+    var that = this;
     
+    fs.copy(imageSet.getNewImage().getPath(), config.getReferenceImageFolderPath() + path.sep + imageSet.getNewImage().getName(), function (err) {
+
+        if(err !== 'undefinded' || err !== null){
+            // ToDo Error handling
+        }
+
+        that.imageManipulator.createDiffImage(imageSet.getNewImage().getName(), config.getAutoCropOption(), function (resultSet) {
+            imageSet.setDifference(resultSet.getDifference());
+            imageSet.setError(resultSet.getError());
+            imageSet.setDistance(resultSet.getDistance());
+            imageSet.setReferenceImage(resultSet.getReferenceImage());
+            imageSet.setDiffImage(resultSet.getDiffImage());
+
+            ImageMetaInformationModel.calculateBiggestDifferences();
+            ImageMetaInformationModel.setTimeStamp(new Date().toISOString());
+            ImageMetaInformationModel.save();
+            callback(ImageMetaInformationModel);
+        });
+    });
 };
 
 ImageManipulatorRepository.prototype.__deleteFile = function (path) {

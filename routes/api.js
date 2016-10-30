@@ -4,28 +4,20 @@ var ImageManipulator = require('../logic/ImageManipulator');
 var ImageManipulatorRepository = require('../logic/ImageManipulatorRepository');
 var logger = require('winston');
 
-router.put('/refreshAll', function(req, res) {
-    var im = new ImageManipulator();
-    console.log("hui");
-    im.createDiffImages(false);
-
-    /*im.createDiffImage('Unbenannt.PNG', false, function (data) {
-        console.log(data);
-    });*/
+router.post('/refreshAll', function(req, res) {
+    ImageManipulatorRepository.calculateDifferencesForAllImages();
 
     res.statusCode = 200;
     res.json({ message: 'OK'});
 });
 
-router.put('/:id/refresh', function(req, res) {
-    var im = new ImageManipulator();
-    console.log("hui");
+router.put('/:id/makeToNewReferenceImage', function(req, res) {
+    var setId = req.params.id;
 
-    im.createDiffImage('Unbenannt.PNG', false, function (data) {
-     console.log(data);
-     });
-
-    res.statusCode = 200;
+    ImageManipulatorRepository.makeToNewReferenceImage(setId, function (imageMetaInformation) {
+        res.statusCode = 200;
+        res.json({message: 'OK', data: JSON.stringify(imageMetaInformation)});
+    });
 });
 
 router.delete('/:id', function (req, res) {

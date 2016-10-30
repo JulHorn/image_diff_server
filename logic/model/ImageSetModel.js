@@ -55,6 +55,18 @@ ImageSetModel.prototype.setError = function (error) {
     this.error = error;
 };
 
+ImageSetModel.prototype.setReferenceImage = function (image) {
+    this.referenceImage = image;
+};
+
+ImageSetModel.prototype.setNewImage = function (image) {
+    this.newImage = image;
+};
+
+ImageSetModel.prototype.setDiffImage = function (image) {
+    this.diffImage = image;
+};
+
 /* ----- Other ----- */
 
 ImageSetModel.prototype.load = function (data) {

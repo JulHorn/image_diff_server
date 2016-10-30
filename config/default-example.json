@@ -11,5 +11,8 @@
 	"thresholds":{
 		"maxPercentualImagePixelDifference": 0,
 		"maxImageImageDistanceDifference": 0
+	},
+	"options": {
+		"autoCrop":true
 	}
 }
