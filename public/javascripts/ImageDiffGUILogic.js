@@ -1,6 +1,8 @@
 var ImageDiffGUILogic = function () {
     this.bindEvents();
     this.connector = new Connector();
+
+    $('#serverAddress').val(this.connector.getServerEndpoint());
 };
 
 ImageDiffGUILogic.prototype.bindEvents = function () {
@@ -23,6 +25,10 @@ ImageDiffGUILogic.prototype.bindEvents = function () {
             that.__refreshMetaInformation(data);
             that.__updateImageSetMetaInformation(resultImageSet, button.parents('tr'));
         });
+    });
+
+    $('body').on('click', 'button[data-action=saveServerAddress]', function () {
+        localStorage.imageDiffServerEndpoint = $('#serverAddress').val();
     });
 
     $('body').on('click', 'button[data-action=refreshAll]', function () {

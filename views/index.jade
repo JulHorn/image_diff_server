@@ -15,8 +15,12 @@ block content
     label Max distance:
     label(id='maxDistance') #{data.getBiggestDistanceDifference()}
   div
-    button(data-action='refreshAll') Refresh All
-    label(id='refreshAllText')
+      label Server Address:
+      input(type='text', id='serverAddress')
+      button(data-action='saveServerAddress') Save
+    div
+        button(data-action='refreshAll') Refresh All
+        label(id='refreshAllText')
   - var imageSets = data.getImageSets()
   table
     thead
