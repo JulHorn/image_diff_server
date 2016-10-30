@@ -23,7 +23,7 @@ Connector.prototype.sendRequest = function (url, method, data, callback) {
     .done(function (data) {
         console.log('Request was successfull: ', url, method, data);
 
-        if(typeof data.data === undefined || data.data === null){
+        if(typeof data.data === 'undefined' || data.data === null){
             callback(data.message);
         } else {
             callback(JSON.parse(data.data));
