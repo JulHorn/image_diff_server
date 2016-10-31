@@ -50,7 +50,7 @@ ImageDiffGUILogic.prototype.__updateImageSetMetaInformation = function (resultIm
         diffImg.find('img[role="image"]').attr('src', resultImageSet.diffImage.path.replace('public', '.') + imageSuffix);
         refImg.find('a[role="imageLink"]').attr('href', resultImageSet.referenceImage.path.replace('public', '.') + imageSuffix);
         refImg.find('img[role="image"]').attr('src', resultImageSet.referenceImage.path.replace('public', '.') + imageSuffix);
-    }, 100);
+    }, 200);
 
     // Set meta information
     refImg.find('*[role="imageName"]').text(resultImageSet.referenceImage.name);
