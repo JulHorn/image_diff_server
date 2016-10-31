@@ -76,29 +76,26 @@ ImageManipulator.prototype.createDiffImages = function (autoCrop) {
 
     fs.readdir(config.getReferenceImageFolderPath(), 'utf8', function (err, refImageNames) {
         fs.readdir(config.getNewImageFolderPath(), 'utf8', function (err, newImageNames) {
-
             // Get images that exist in both or only in one folder
             var imageNames = that.__getImageNames(refImageNames, newImageNames, false);
             var refDiffImageNames = that.__getImageNames(refImageNames, newImageNames, true);
             var newDiffImageNames = that.__getImageNames(newImageNames, refImageNames, true);
+            var imageNamesPromise = await(imageNames.length);
 
-            that.__createSingleImages(refDiffImageNames, newDiffImageNames);
+            that.__createSingleImages(refDiffImageNames, newDiffImageNames, imageNamesPromise);
             that.__createDiffImages(imageNames, autoCrop);
 
             // Need to ensure that the operation is truly finished here...
             // Emulate that this actually works
-            setTimeout(function () {
-                that.imageMetaInformationModel.calculateBiggestDifferences();
-                that.imageMetaInformationModel.setTimeStamp(new Date().toISOString());
-                that.imageMetaInformationModel.save();
-            }, 5000);
         });
     });
 };
 
 // Hmm, how to figure out that this is finished? Not sure the callback really does what it should...
-ImageManipulator.prototype.__createDiffImages = function (imageNames, autoCrop, callback) {
+ImageManipulator.prototype.__createDiffImages = function (imageNames, autoCrop, promise) {
     var that = this;
+    var jobCounter = 0;
+    var numberOfJobs = imageNames.length;
 
     imageNames.forEach(function (imageName) {
         that.createDiffImage(imageName, autoCrop, function (resultSet) {
@@ -106,19 +103,42 @@ ImageManipulator.prototype.__createDiffImages = function (imageNames, autoCrop, 
             if(resultSet.getDistance() > config.getMaxDistanceDifferenceThreshold()
                 || resultSet.getDifference() > config.getMaxPixelDifferenceThreshold()){
                 that.imageMetaInformationModel.addImageSet(resultSet);
+                logger.info('Image breached threshold:', imageName);
+            }
+            // Increase the number of finshed jobs
+            jobCounter++;
+
+            // Save meta information when all jobs have finished
+            if(jobCounter === numberOfJobs){
+                that.__saveMetaInformation();
             }
         });
     });
 };
 
+ImageManipulator.prototype.__saveMetaInformation = function () {
+    this.imageMetaInformationModel.calculateBiggestDifferences();
+    this.imageMetaInformationModel.setTimeStamp(new Date().toISOString());
+    this.imageMetaInformationModel.save();
+};
+
 // Hmm, how to figure out that this is finished? Not sure the callback really does what it should...
 ImageManipulator.prototype.__createSingleImages = function (refImageNames, newImageNames, callback) {
     var that = this;
+    var numberOfJobs = newImageNames.length + refImageNames.length;
+    var jobCounter = 0;
 
     // New images
     newImageNames.forEach(function (newImageName) {
         jimp.read(config.getNewImageFolderPath() + path.sep + newImageName, function (err, newImage){
             that.imageMetaInformationModel.addImageSet(that.__createSingleImageSet(newImageName, newImage, 'There is no reference image existing yet.', false));
+
+            // Increase the number of finshed jobs
+            jobCounter++;
+            // Save meta information when all jobs have finished
+            if(jobCounter === numberOfJobs){
+                that.__saveMetaInformation();
+            }
         });
     });
 
@@ -126,6 +146,13 @@ ImageManipulator.prototype.__createSingleImages = function (refImageNames, newIm
     refImageNames.forEach(function (refImageName) {
         jimp.read(config.getReferenceImageFolderPath() + path.sep + refImageName, function (err, refImage){
             that.imageMetaInformationModel.addImageSet(that.__createSingleImageSet(refImageName, refImage, 'There is no new image existing. Reference outdated?', true));
+            // Increase the number of finshed jobs
+            jobCounter++;
+
+            // Save meta information when all jobs have finished
+            if(jobCounter === numberOfJobs){
+                that.__saveMetaInformation();
+            }
         });
     });
 };
