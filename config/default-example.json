@@ -9,8 +9,8 @@
 		"metaInformationFile":".\\data\\metaInformation.json"
 	},
 	"thresholds":{
-		"maxPercentualImagePixelDifference": 0,
-		"maxImageImageDistanceDifference": 0
+		"maxPercentualImagePixelDifference": 0.15,
+		"maxImageImageDistanceDifference": 0.15
 	},
 	"options": {
 		"autoCrop":true

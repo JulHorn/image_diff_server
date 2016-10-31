@@ -62,8 +62,8 @@ ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, call
             that.__ensureThatFolderStructureExist(config.getReferenceImageFolderPath());
             diff.image.write(diffImagePath);
 
-            // Create data structure for the gathering of meta informations
-            callback(that.__createCompleteImageSet(imageName, referenceImage, newImagePath, diff.image, diff.percent, jimp.distance(referenceImage, newImage), ''));
+            // Create data structure for the gathering of meta informations (distance and difference are between 0 and 0 -> * 100 for percent)
+            callback(that.__createCompleteImageSet(imageName, referenceImage, newImagePath, diff.image, diff.percent * 100, jimp.distance(referenceImage, newImage) * 100, ''));
         });
     });
 };
