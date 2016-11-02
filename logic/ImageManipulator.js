@@ -339,10 +339,9 @@ ImageManipulator.prototype.__ensureThatFolderStructureExist= function(folder){
  * **/
 ImageManipulator.prototype.__isImageExisting = function (imagePath) {
     try{
-        fs.accessSync(config.getMetaInformationFilePath());
+        fs.accessSync(imagePath);
         return fs.statSync(imagePath).isFile();
     } catch(err) {
-        logger.info('Meta information file does not seem to exist. Working from a blank slate.', config.getMetaInformationFilePath());
         return false;
     }
 };
