@@ -1,20 +1,52 @@
+/**
+ * Constructor.
+ * **/
 var Connector = function () {
 };
 
+/* -----  Specialised Request Methods ----- */
+
+/**
+ * Deletes an image set.
+ *
+ * @param id The id of the image set to be deleted.
+ * @param callback Called when the request is done.
+ * **/
 Connector.prototype.delete = function (id, callback) {
     this.sendRequest('/'+ id, 'DELETE', null, callback);
 };
 
+/**
+ * Calculates the diff images for all images. Does not wait until the computation is done.
+ *
+ * @param callback Called when the request is done.
+ * **/
 Connector.prototype.refreshAll = function (callback) {
     this.sendRequest('/refreshAll', 'POST', null, callback);
 };
 
+/**
+ * Makes a new image to a reference image.
+ *
+ * @param id The id of the image set for which the new image should be made the reference image.
+ * @param callback Called when the request is done.
+ * **/
 Connector.prototype.makteToNewReferenceImage = function (id, callback) {
     this.sendRequest('/' + id + '/makeToNewReferenceImage', 'PUT', null, callback);
 };
 
+/* ----- General Methods ----- */
+
+/**
+ * Sends an ajax request.
+ *
+ * @param url The url to which the request will be send.
+ * @param method The request method. 'POST', 'GET', ...
+ * @param data The data which should be send in the body.
+ * @param callback Called when the request is done. Has the data as parameter if the call was a success, else the message.
+ * **/
 Connector.prototype.sendRequest = function (url, method, data, callback) {
-    var serverEndpoint = this.getServerEndpoint() + '/api' + url
+    var serverEndpoint = this.getServerEndpoint() + '/api' + url;
     console.log('Attempting a request to ' + url + ' with method ' + method);
 
     $.ajax({
@@ -38,14 +70,24 @@ Connector.prototype.sendRequest = function (url, method, data, callback) {
     });
 };
 
+/**
+ * Returns the server endpoint/host to which the requests will be send. The value will be retrieved from the local storage.
+ *
+ * @return Returns the server endpoint/host to which the requests will be send.
+ * **/
 Connector.prototype.getServerEndpoint = function () {
     if(!localStorage.imageDiffServerEndpoint){
         localStorage.imageDiffServerEndpoint = "http://127.0.0.1:3000";
     }
 
     return localStorage.imageDiffServerEndpoint;
-}
+};
 
+/**
+ * Sets the server endpoint/host to which the requests will be send. The value will be saved in the local storage.
+ *
+ * @param endpoint The endpoint/host to be saved.
+ * **/
 Connector.prototype.setServerEndpoint = function (endpoint) {
     localStorage.imageDiffServerEndpoint = endpoint;
-}
+};
