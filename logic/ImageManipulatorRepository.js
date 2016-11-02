@@ -63,11 +63,13 @@ ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function
 ImageManipulatorRepository.prototype.makeToNewReferenceImage = function (id, callback) {
     var imageSet = ImageMetaInformationModel.getImageSetById(id);
     var that = this;
-    
+
+    logger.info('Attempting to copy ' + imageSet.getNewImage().getPath() + ' to ' + config.getReferenceImageFolderPath() + path.sep + imageSet.getNewImage().getName());
+
     fs.copy(imageSet.getNewImage().getPath(), config.getReferenceImageFolderPath() + path.sep + imageSet.getNewImage().getName(), function (err) {
 
         // Error handling
-        if(err !== 'undefinded' || err !== null){
+        if(err){
             throw Error('Failed to copy new image reference images.', err);
         }
 
