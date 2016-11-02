@@ -5,10 +5,22 @@ var logger = require('winston');
 var ImageManipulator = require('./ImageManipulator');
 var config = require('./configurationLoader');
 
+/**
+ * Constructor.
+ * **/
 var ImageManipulatorRepository = function () {
     this.imageManipulator = new ImageManipulator();
 };
 
+/* ----- Methods ----- */
+
+/**
+ * Deletes an image set. It will be removed from the image meta information structure, the structure will be saved to file
+ * and the images will be deleted.
+ *
+ * @param id The id of the image set.
+ * @param callback Called when the complete deletion process is done. Has the updated image meta information model object as parameter.
+ * **/
 ImageManipulatorRepository.prototype.deleteImageSet = function (id, callback) {
     var imageSet = ImageMetaInformationModel.getImageSetById(id);
 
@@ -24,48 +36,87 @@ ImageManipulatorRepository.prototype.deleteImageSet = function (id, callback) {
     ImageMetaInformationModel.save();
 
     // Call callback when stuff is done
-    callback(ImageMetaInformationModel);
+    if(callback){
+        callback(ImageMetaInformationModel);
+    }
 };
 
-ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function () {
-    this.imageManipulator.createDiffImages(config.getAutoCropOption());
+/**
+ * Creates diff images for all images with the same name in the reference/new folders.
+ *
+ * @param callback Called when the complete deletion process is done. Has the updated image meta information model object as parameter.
+ * **/
+ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function (callback) {
+    this.imageManipulator.createDiffImages(config.getAutoCropOption(), function (metaInformationModel) {
+        if(callback){
+            callback(metaInformationModel);
+        }
+    });
 };
 
+/**
+ * Makes a new image to a reference image. Updates and save the meta information model.
+ *
+ *@param id Id of the image set for which the new image should be made a reference image.
+ * @param callback Called when the complete deletion process is done. Has the updated image meta information model object as parameter.
+ * **/
 ImageManipulatorRepository.prototype.makeToNewReferenceImage = function (id, callback) {
     var imageSet = ImageMetaInformationModel.getImageSetById(id);
     var that = this;
     
     fs.copy(imageSet.getNewImage().getPath(), config.getReferenceImageFolderPath() + path.sep + imageSet.getNewImage().getName(), function (err) {
 
+        // Error handling
         if(err !== 'undefinded' || err !== null){
-            // ToDo Error handling
+            throw Error('Failed to copy new image reference images.', err);
         }
 
+        // Create diff
         that.imageManipulator.createDiffImage(imageSet.getNewImage().getName(), config.getAutoCropOption(), function (resultSet) {
+            // Set new diff information to existing image set
             imageSet.setDifference(resultSet.getDifference());
             imageSet.setError(resultSet.getError());
             imageSet.setDistance(resultSet.getDistance());
             imageSet.setReferenceImage(resultSet.getReferenceImage());
             imageSet.setDiffImage(resultSet.getDiffImage());
 
+            // Save meta information
             ImageMetaInformationModel.calculateBiggestDifferences();
             ImageMetaInformationModel.setTimeStamp(new Date().toISOString());
             ImageMetaInformationModel.save();
-            callback(ImageMetaInformationModel);
+
+            // Call callback
+            if(callback){
+                callback(ImageMetaInformationModel);
+            }
         });
     });
 };
 
+/* ----- Helper Methods ----- */
+
+/**
+ * Deletes a file.
+ *
+ * @param path The file which should be deleted.
+ * **/
 ImageManipulatorRepository.prototype.__deleteFile = function (path) {
     if(this.__isFileExisting(path)){
         fs.unlink(path, function (err) {
             if(err){
                 logger.error('Failed to delete file: ' + path, err);
+                throw Error('Failed to delete file: ' + path, err);
             }
         });
     }
 };
 
+/**
+ * Checks if a file exists.
+ *
+ * @param path The path to a file.
+ * @return True if the file exists, else false.
+ * **/
 ImageManipulatorRepository.prototype.__isFileExisting = function (path) {
   try{
     fs.accessSync(path);
