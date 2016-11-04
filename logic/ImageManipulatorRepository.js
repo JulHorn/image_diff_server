@@ -47,7 +47,9 @@ ImageManipulatorRepository.prototype.deleteImageSet = function (id, callback) {
  * @param callback Called when the complete deletion process is done. Has the updated image meta information model object as parameter.
  * **/
 ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function (callback) {
+    logger.error('---------- Start ----------', new Date().toISOString());
     this.imageManipulator.createDiffImages(config.getAutoCropOption(), function (metaInformationModel) {
+        logger.error('---------- End ----------', new Date().toISOString());
         if(callback){
             callback(metaInformationModel);
         }

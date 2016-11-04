@@ -35,9 +35,7 @@ ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, call
     var referenceImagePath = config.getReferenceImageFolderPath() + path.sep + imageName;
     var newImagePath = config.getNewImageFolderPath() + path.sep + imageName;
     var diffImagePath = config.getResultImageFolderPath() + path.sep + imageName;
-    logger.info('Reference image:', referenceImagePath);
-    logger.info('New image path:', newImagePath);
-    logger.info('Diff image path:', diffImagePath);
+    logger.info('Creating diff image for:', imageName);
 
     // If one of the images do not exist, then quit
     if(!this.__isImageExisting(referenceImagePath) || !this.__isImageExisting(newImagePath)){
@@ -124,32 +122,29 @@ ImageManipulator.prototype.createDiffImages = function (autoCrop, callback) {
  * @param callback Will be called, when the method has finished to compute all images. Has the number of processed images as parameter.
  * **/
 ImageManipulator.prototype.__createDiffImages = function (imageNames, autoCrop, callback) {
-    var that = this;
-    var jobCounter = 0;
-    var numberOfJobs = imageNames.length;
+    // If no images are left to process, call the callback method and stop
+    if(imageNames.length == 0){
+        if(callback){
+            callback();
+        }
 
-    // If no images are to be processed -> call callback and do nothing more
-    if(numberOfJobs === 0){
-        callback(numberOfJobs);
+        return;
     }
 
-    imageNames.forEach(function (imageName) {
-        that.createDiffImage(imageName, autoCrop, function (resultSet) {
-            // Only add images if a a threshold was breached
-            if(resultSet.getDistance() > config.getMaxDistanceDifferenceThreshold()
-                || resultSet.getDifference() > config.getMaxPixelDifferenceThreshold()){
-                that.imageMetaInformationModel.addImageSet(resultSet);
-                logger.info('Image breached threshold:', imageName);
-            }
-            // Increase the number of finshed jobs
-            jobCounter++;
+    // Create diff image
+    var imageToProcess = imageNames.shift();
+    var that = this;
+    that.createDiffImage(imageToProcess, autoCrop, function (resultSet) {
+        // Only add images if a a threshold was breached
+        if(resultSet.getDistance() > config.getMaxDistanceDifferenceThreshold()
+            || resultSet.getDifference() > config.getMaxPixelDifferenceThreshold()){
+            that.imageMetaInformationModel.addImageSet(resultSet);
+        }
 
-            // Save meta information when all jobs have finished
-            if(jobCounter === numberOfJobs){
-                callback(numberOfJobs);
-            }
-        });
+        that.__createDiffImages(imageNames, autoCrop, callback);
     });
+
+
 };
 
 /**
