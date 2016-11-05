@@ -3,6 +3,7 @@ var router = express.Router();
 var ImageManipulator = require('../logic/ImageManipulator');
 var ImageManipulatorRepository = require('../logic/ImageManipulatorRepository');
 var logger = require('winston');
+var ImageMetaInformationModel = require('../logic/model/ImageMetaInformationModel');
 
 router.post('/refreshAll', function(req, res) {
     ImageManipulatorRepository.calculateDifferencesForAllImages(req.body.autoCrop, req.body.pixDiffThreshold, req.body.distThreshold);
@@ -27,6 +28,11 @@ router.delete('/:id', function (req, res) {
         res.statusCode = 200;
         res.json({ message: 'OK', data: JSON.stringify(imageMetaInformation)});
     });
+});
+
+router.get('/', function (req, res) {
+    res.statusCode = 200;
+    res.json({ message: 'OK', data: JSON.stringify(ImageMetaInformationModel)});
 });
 
 module.exports = router;
