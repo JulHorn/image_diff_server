@@ -126,6 +126,7 @@ ImageManipulator.prototype.__createDiffImages = function (imageNames, autoCrop, 
     logger.info("Number of images left to compare: ", imageNames.length);
     // If no images are left to process, call the callback method and stop
     if(imageNames.length == 0){
+        logger.info('No images left to compare.');
         if(callback){
             callback();
         }
@@ -157,43 +158,33 @@ ImageManipulator.prototype.__createDiffImages = function (imageNames, autoCrop, 
  * **/
 ImageManipulator.prototype.__createSingleImages = function (refImageNames, newImageNames, callback) {
     var that = this;
-    var numberOfJobs = newImageNames.length + refImageNames.length;
-    var jobCounter = 0;
 
-    // If no images are to be processed -> call callback and do nothing more
-    if(numberOfJobs === 0){
-        callback(numberOfJobs);
+    if(refImageNames.length == 0 && newImageNames.length == 0)
+    {
+        logger.info('No single images left to process');
+        callback();
+    } else {
+
+        logger.info('Single images left to process:', refImageNames.length + newImageNames.length);
+
+        // New and ref images
+        if(newImageNames.length > 0) {
+            var newImageName = newImageNames.shift();
+
+            jimp.read(config.getNewImageFolderPath() + path.sep + newImageName, function (err, newImage) {
+                that.imageMetaInformationModel.addImageSet(that.__createSingleImageSet(newImageName, newImage, 'There is no reference image existing yet.', false));
+                that.__createSingleImages(refImageNames, newImageNames, callback);
+            });
+        } else if(refImageNames.length > 0) {
+            var refImageName = refImageNames.shift();
+
+            // Reference images
+            jimp.read(config.getReferenceImageFolderPath() + path.sep + refImageName, function (err, refImage) {
+                that.imageMetaInformationModel.addImageSet(that.__createSingleImageSet(refImageName, refImage, 'There is no new image existing. Reference outdated?', true));
+                that.__createSingleImages(refImageNames, newImageNames, callback);
+            });
+        }
     }
-
-    // New images
-    newImageNames.forEach(function (newImageName) {
-        jimp.read(config.getNewImageFolderPath() + path.sep + newImageName, function (err, newImage){
-            that.imageMetaInformationModel.addImageSet(that.__createSingleImageSet(newImageName, newImage, 'There is no reference image existing yet.', false));
-
-            // Increase the number of finshed jobs
-            jobCounter++;
-
-            // Call callback if all images were processed
-            if(jobCounter >= numberOfJobs){
-                callback(numberOfJobs);
-            }
-        });
-    });
-
-    // Reference images
-    refImageNames.forEach(function (refImageName) {
-        jimp.read(config.getReferenceImageFolderPath() + path.sep + refImageName, function (err, refImage){
-            that.imageMetaInformationModel.addImageSet(that.__createSingleImageSet(refImageName, refImage, 'There is no new image existing. Reference outdated?', true));
-
-            // Increase the number of finshed jobs
-            jobCounter++;
-
-            // Call callback if all images were processed
-            if(jobCounter >= numberOfJobs){
-                callback(numberOfJobs);
-            }
-        });
-    });
 };
 
 /**
