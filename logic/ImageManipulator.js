@@ -67,11 +67,11 @@ ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, call
 
             // Create diff, ensure that folder structure exists and write file
             var diff = jimp.diff(referenceImage, newImage);
-            that.__ensureThatFolderStructureExist(config.getReferenceImageFolderPath());
+            that.__ensureThatFolderStructureExist(config.getResultImageFolderPath());
             diff.image.write(diffImagePath);
 
             // Create data structure for the gathering of meta informations (distance and difference are between 0 and 0 -> * 100 for percent)
-            callback(that.__createCompleteImageSet(imageName, referenceImage, newImagePath, diff.image, diff.percent * 100, jimp.distance(referenceImage, newImage) * 100, ''));
+            callback(that.__createCompleteImageSet(imageName, referenceImage, newImage, diff.image, diff.percent * 100, jimp.distance(referenceImage, newImage) * 100, ''));
         });
     });
 };
@@ -83,7 +83,7 @@ ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, call
  * @param autoCrop Determines if the new/reference images should be autocroped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
  * @param callback The callback method which is called, when diff process as finished. Has the ImageMetaInformationModel as parameter. Optional.
  * **/
-ImageManipulator.prototype.createDiffImages = function (autoCrop, callback) {
+ImageManipulator.prototype.createDiffImages = function (autoCrop, pixDiffThreshold, distThreshold, callback) {
     var that = this;
 
     // Ensure that the folders which should contain the images exist
@@ -100,7 +100,7 @@ ImageManipulator.prototype.createDiffImages = function (autoCrop, callback) {
 
             // Create diff images
             that.__createSingleImages(refDiffImageNames, newDiffImageNames, function () {
-                that.__createDiffImages(imageNames, autoCrop, function () {
+                that.__createDiffImages(imageNames, autoCrop, pixDiffThreshold, distThreshold, function () {
                     that.__saveMetaInformation();
                     if(callback) {
                         callback(that.imageMetaInformationModel);
@@ -121,30 +121,30 @@ ImageManipulator.prototype.createDiffImages = function (autoCrop, callback) {
  * @param autoCrop Determines if the new/reference images should be autocroped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
  * @param callback Will be called, when the method has finished to compute all images. Has the number of processed images as parameter.
  * **/
-ImageManipulator.prototype.__createDiffImages = function (imageNames, autoCrop, callback) {
+ImageManipulator.prototype.__createDiffImages = function (imageNames, autoCrop, pixDiffThreshold, distThreshold, callback) {
+
+    logger.info("Number of images left to compare: ", imageNames.length);
     // If no images are left to process, call the callback method and stop
     if(imageNames.length == 0){
         if(callback){
             callback();
         }
 
-        return;
+    } else {
+
+        // Create diff image
+        var imageToProcess = imageNames.shift();
+        var that = this;
+        that.createDiffImage(imageToProcess, autoCrop, function (resultSet) {
+            // Only add images if a a threshold was breached
+            if (resultSet.getDistance() > distThreshold
+                || resultSet.getDifference() > pixDiffThreshold) {
+                that.imageMetaInformationModel.addImageSet(resultSet);
+            }
+
+            that.__createDiffImages(imageNames, autoCrop, pixDiffThreshold, distThreshold, callback);
+        });
     }
-
-    // Create diff image
-    var imageToProcess = imageNames.shift();
-    var that = this;
-    that.createDiffImage(imageToProcess, autoCrop, function (resultSet) {
-        // Only add images if a a threshold was breached
-        if(resultSet.getDistance() > config.getMaxDistanceDifferenceThreshold()
-            || resultSet.getDifference() > config.getMaxPixelDifferenceThreshold()){
-            that.imageMetaInformationModel.addImageSet(resultSet);
-        }
-
-        that.__createDiffImages(imageNames, autoCrop, callback);
-    });
-
-
 };
 
 /**

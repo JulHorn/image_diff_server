@@ -46,10 +46,14 @@ ImageManipulatorRepository.prototype.deleteImageSet = function (id, callback) {
  *
  * @param callback Called when the complete deletion process is done. Has the updated image meta information model object as parameter.
  * **/
-ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function (callback) {
-    logger.error('---------- Start ----------', new Date().toISOString());
-    this.imageManipulator.createDiffImages(config.getAutoCropOption(), function (metaInformationModel) {
-        logger.error('---------- End ----------', new Date().toISOString());
+ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function (autoCrop, pixDiffThreshold, distThreshold, callback) {
+    logger.info('---------- Start ----------', new Date().toISOString());
+    var autoCropValue = autoCrop ? autoCrop :config.getAutoCropOption();
+    var pixDiffThresholdValue = pixDiffThreshold ? pixDiffThreshold : config.getMaxPixelDifferenceThreshold();
+    var distThresholdValue = distThreshold ? distThreshold : config.getMaxDistanceDifferenceThreshold();
+
+    this.imageManipulator.createDiffImages(autoCropValue, pixDiffThresholdValue, distThresholdValue, function (metaInformationModel) {
+        logger.info('---------- End ----------', new Date().toISOString());
         if(callback){
             callback(metaInformationModel);
         }
@@ -75,8 +79,8 @@ ImageManipulatorRepository.prototype.makeToNewReferenceImage = function (id, cal
             throw Error('Failed to copy new image reference images.', err);
         }
 
-        // Create diff
-        that.imageManipulator.createDiffImage(imageSet.getNewImage().getName(), config.getAutoCropOption(), function (resultSet) {
+        // Create diff -> Autocrop is set to false because the images should be identical
+        that.imageManipulator.createDiffImage(imageSet.getNewImage().getName(), false, function (resultSet) {
             // Set new diff information to existing image set
             imageSet.setDifference(resultSet.getDifference());
             imageSet.setError(resultSet.getError());

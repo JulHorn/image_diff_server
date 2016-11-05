@@ -57,9 +57,9 @@ Connector.prototype.sendRequest = function (url, method, data, callback) {
     .done(function (data) {
         console.log('Request was successfull: ', url, method, data);
 
-        if(typeof data.data === 'undefined' || data.data === null){
+        if(callback && (typeof data.data === 'undefined' || data.data === null)){
             callback(data.message);
-        } else {
+        } else if (callback){
             callback(JSON.parse(data.data));
         }
 

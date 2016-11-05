@@ -5,7 +5,7 @@ var ImageManipulatorRepository = require('../logic/ImageManipulatorRepository');
 var logger = require('winston');
 
 router.post('/refreshAll', function(req, res) {
-    ImageManipulatorRepository.calculateDifferencesForAllImages();
+    ImageManipulatorRepository.calculateDifferencesForAllImages(req.body.autoCrop, req.body.pixDiffThreshold, req.body.distThreshold);
 
     res.statusCode = 200;
     res.json({ message: 'OK'});
