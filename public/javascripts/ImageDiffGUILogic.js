@@ -65,13 +65,11 @@ ImageDiffGUILogic.prototype.__updateImageSetMetaInformation = function (resultIm
     var diffImg = parentElement.find('td[role="diffImage"]');
     var imageSuffix = '?timestamp=' + new Date().getTime();
 
-    // Set new images after a short delay because the new image might not be written yet otherwise
-    window.setTimeout(function () {
-        diffImg.find('a[role="imageLink"]').attr('href', resultImageSet.diffImage.path.replace('public', '.') + imageSuffix);
-        diffImg.find('img[role="image"]').attr('src', resultImageSet.diffImage.path.replace('public', '.') + imageSuffix);
-        refImg.find('a[role="imageLink"]').attr('href', resultImageSet.referenceImage.path.replace('public', '.') + imageSuffix);
-        refImg.find('img[role="image"]').attr('src', resultImageSet.referenceImage.path.replace('public', '.') + imageSuffix);
-    }, 200);
+    // Set new images
+    diffImg.find('a[role="imageLink"]').attr('href', resultImageSet.diffImage.path.replace('public', '.') + imageSuffix);
+    diffImg.find('img[role="image"]').attr('src', resultImageSet.diffImage.path.replace('public', '.') + imageSuffix);
+    refImg.find('a[role="imageLink"]').attr('href', resultImageSet.referenceImage.path.replace('public', '.') + imageSuffix);
+    refImg.find('img[role="image"]').attr('src', resultImageSet.referenceImage.path.replace('public', '.') + imageSuffix);
 
     // Set meta information
     refImg.find('*[role="imageName"]').text(resultImageSet.referenceImage.name);
