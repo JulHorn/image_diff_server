@@ -92,7 +92,11 @@ ImageManipulator.prototype.createDiffImages = function (autoCrop, pixDiffThresho
 
     // Read folder content and create the images
     fs.readdir(config.getReferenceImageFolderPath(), 'utf8', function (err, refImageNames) {
+        logger.info("Reference images loaded from:", config.getReferenceImageFolderPath());
+
         fs.readdir(config.getNewImageFolderPath(), 'utf8', function (err, newImageNames) {
+            logger.info("New images loaded from:", config.getReferenceImageFolderPath());
+
             // Get images that exist in both or only in one folder
             var imageNames = that.__getImageNames(refImageNames, newImageNames, false);
             var refDiffImageNames = that.__getImageNames(refImageNames, newImageNames, true);
@@ -125,7 +129,7 @@ ImageManipulator.prototype.__createDiffImages = function (imageNames, autoCrop, 
 
     logger.info("Number of images left to compare: ", imageNames.length);
     // If no images are left to process, call the callback method and stop
-    if(imageNames.length == 0){
+    if(imageNames.length == 0) {
         logger.info('No images left to compare.');
         if(callback){
             callback();
@@ -159,8 +163,7 @@ ImageManipulator.prototype.__createDiffImages = function (imageNames, autoCrop, 
 ImageManipulator.prototype.__createSingleImages = function (refImageNames, newImageNames, callback) {
     var that = this;
 
-    if(refImageNames.length == 0 && newImageNames.length == 0)
-    {
+    if(refImageNames.length == 0 && newImageNames.length == 0) {
         logger.info('No single images left to process');
         callback();
     } else {
