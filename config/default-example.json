@@ -1,6 +1,7 @@
 {
 	"server":{
-		"port":"3000"
+		"port":"3000",
+		"timeoutInMs": 600000
 	},
 	"images":{
 		"referenceImageFolder":"./public/images/reference",

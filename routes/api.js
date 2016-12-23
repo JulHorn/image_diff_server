@@ -4,12 +4,17 @@ var ImageManipulator = require('../logic/ImageManipulator');
 var ImageManipulatorRepository = require('../logic/ImageManipulatorRepository');
 var logger = require('winston');
 var ImageMetaInformationModel = require('../logic/model/ImageMetaInformationModel');
+var conf = require('../logic/configurationLoader');
 
 router.post('/refreshAll', function(req, res) {
-    ImageManipulatorRepository.calculateDifferencesForAllImages(req.body.autoCrop, req.body.pixDiffThreshold, req.body.distThreshold);
+    // This request might take a while to finish the computations -> Needs a longer timeout,
+    // so that the client will not run into a timeout
+    res.setTimeout(conf.getRequestTimeout());
 
-    res.statusCode = 200;
-    res.json({ message: 'OK'});
+    ImageManipulatorRepository.calculateDifferencesForAllImages(req.body.autoCrop, req.body.pixDiffThreshold, req.body.distThreshold, function () {
+        res.statusCode = 200;
+        res.json({ message: 'OK'});
+    });
 });
 
 router.put('/:id/makeToNewReferenceImage', function(req, res) {

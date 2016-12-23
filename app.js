@@ -7,7 +7,6 @@ var bodyParser = require('body-parser');
 
 var guiRoutes = require('./routes/gui');
 var apiRoutes = require('./routes/api');
-
 var app = express();
 
 // view engine setup

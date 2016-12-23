@@ -32,6 +32,13 @@ conf.prototype.getServerPort = function () {
 };
 
 /**
+ * Returns the amount of milliseconds after which a request should timeout.
+ * **/
+conf.prototype.getRequestTimeout = function () {
+    return this.getServerConf().get('timeoutInMs');
+};
+
+/**
  * Returns the image configuration.
  * **/
 conf.prototype.getImagesConfig = function () {
