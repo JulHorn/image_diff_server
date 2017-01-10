@@ -28,9 +28,6 @@ ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, call
     // Other vars
     var that = this;
 
-    // Clears the old meta information model to start from a clean plate and avoid invalite states
-    this.imageMetaInformationModel.clear();
-
     // Assign default value value is falsey
     autoCrop = autoCrop || false;
 
@@ -299,16 +296,6 @@ ImageManipulator.prototype.__getImageNames = function(fileNameArray1, fileNameAr
  * to file.
  * **/
 ImageManipulator.prototype.__saveMetaInformation = function () {
-    this.imageMetaInformationModel.calculateBiggestDifferences();
-    this.imageMetaInformationModel.setTimeStamp(new Date().toISOString());
-    this.imageMetaInformationModel.save();
-};
-
-/**
- * Calculates the the biggest percentual pixel difference/distance, sets the timestamp and saves the image meta information structure
- * to file.
- * **/
-ImageManipulator.prototype.__clearInformation = function () {
     this.imageMetaInformationModel.calculateBiggestDifferences();
     this.imageMetaInformationModel.setTimeStamp(new Date().toISOString());
     this.imageMetaInformationModel.save();
