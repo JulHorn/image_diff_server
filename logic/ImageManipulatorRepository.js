@@ -52,9 +52,11 @@ ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function
     var pixDiffThresholdValue = pixDiffThreshold ? pixDiffThreshold : config.getMaxPixelDifferenceThreshold();
     var distThresholdValue = distThreshold ? distThreshold : config.getMaxDistanceDifferenceThreshold();
 
+    logger.info("----- Options Start -----");
     logger.info("Auto cropping is enabled: ", autoCropValue);
     logger.info("Threshold for pixel difference:", pixDiffThresholdValue);
     logger.info("Distance threshold:", distThresholdValue);
+    logger.info("----- Options End -----");
 
     this.imageManipulator.createDiffImages(autoCropValue, pixDiffThresholdValue, distThresholdValue, function (metaInformationModel) {
         logger.info('---------- End ----------', new Date().toISOString());

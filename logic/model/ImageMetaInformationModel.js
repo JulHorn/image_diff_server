@@ -115,12 +115,17 @@ ImageMetaInformationModel.prototype.setTimeStamp = function (timeStamp) {
  * Saves meta information to file.
  * **/
 ImageMetaInformationModel.prototype.save = function () {
+
+    // Ensure that the folder structure for the meta information file exists
+    fs.ensureDirSync(config.getMetaInformationFilePath());
+
+    // Write the file
     fs.writeFile(config.getMetaInformationFilePath(), JSON.stringify(this), 'utf8', function (err) {
         if(err != null || typeof err == 'undefined'){
             logger.error('Failed to write meta information.', err);
+        } else {
+            logger.info('Writing meta information finished.', config.getMetaInformationFilePath());
         }
-
-        logger.info('Writing meta information finished.', config.getMetaInformationFilePath());
     });
 };
 
@@ -163,6 +168,7 @@ ImageMetaInformationModel.prototype.load = function () {
 ImageMetaInformationModel.prototype.clear = function () {
     this.__initMetaInformationModel();
     this.save();
+    logger.info('Cleared content of meta information model.');
 };
 
 /**

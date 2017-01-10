@@ -84,6 +84,8 @@ ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, call
  * written in the diff image folder. Updated the meta structure.
  *
  * @param autoCrop Determines if the new/reference images should be autocroped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
+ * @param pixDiffThreshold The pixel threshold.
+ * @param distThreshold The distance threshold.
  * @param callback The callback method which is called, when diff process as finished. Has the ImageMetaInformationModel as parameter. Optional.
  * **/
 ImageManipulator.prototype.createDiffImages = function (autoCrop, pixDiffThreshold, distThreshold, callback) {
@@ -97,7 +99,7 @@ ImageManipulator.prototype.createDiffImages = function (autoCrop, pixDiffThresho
     logger.info("Trying to load new images from:", config.getNewImageFolderPath());
 
     // Read folder content and create the images
-    var refImangeNames = fs.readdirSync(config.getReferenceImageFolderPath());
+    var refImageNames = fs.readdirSync(config.getReferenceImageFolderPath());
     var newImageNames = fs.readdirSync(config.getNewImageFolderPath());
 
     logger.info("Reference images loaded:", refImageNames.length);
