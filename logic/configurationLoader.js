@@ -74,6 +74,13 @@ conf.prototype.getMetaInformationFilePath = function () {
 };
 
 /**
+ * Returns the folder path in which the meta information file for the images will be stored.
+ * **/
+conf.prototype.getMetaInformationFolderPath = function () {
+    return path.dirname(this.getMetaInformationFilePath());
+};
+
+/**
  * Returns the threshold configuration.
  * **/
 conf.prototype.getThresholdConf = function () {

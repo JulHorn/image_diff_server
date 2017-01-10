@@ -117,7 +117,8 @@ ImageMetaInformationModel.prototype.setTimeStamp = function (timeStamp) {
 ImageMetaInformationModel.prototype.save = function () {
 
     // Ensure that the folder structure for the meta information file exists
-    fs.ensureDirSync(config.getMetaInformationFilePath());
+    logger.info('Ensuring that the meta information folder path exists:', config.getMetaInformationFolderPath());
+    fs.ensureDirSync(config.getMetaInformationFolderPath());
 
     // Write the file
     fs.writeFile(config.getMetaInformationFilePath(), JSON.stringify(this), 'utf8', function (err) {
