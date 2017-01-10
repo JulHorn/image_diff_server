@@ -8,10 +8,7 @@ var ImageModel = require('./ImageModel');
  * Constructor. Loads the meta information in the meta information text file, if it does exist.
  * **/
 var ImageMetaInformationModel = function () {
-    this.biggestPercentualPixelDifference = 0;
-    this.biggestDistanceDifference = 0;
-    this.timeStamp = '';
-    this.imageSets = [];
+    this.__initMetaInformationModel();
     this.load();
 };
 
@@ -161,6 +158,14 @@ ImageMetaInformationModel.prototype.load = function () {
 };
 
 /**
+ * Clears the content of the meta information model. The file with the meta information model will be updated.
+ * **/
+ImageMetaInformationModel.prototype.clear = function () {
+    this.__initMetaInformationModel();
+    this.save();
+};
+
+/**
  * Adds an image set. If an image set with the same (reference/new) image name exists, it will be deleted before adding the new one.
  *
  * @param imageSet The image set to add.
@@ -241,6 +246,16 @@ ImageMetaInformationModel.prototype.__getIndexOfImageSet = function (id) {
     return this.getImageSets().findIndex(function (imageSet) {
         return imageSet.getId() === id;
     });
+};
+
+/**
+ * Initializes the meta information model with empty values.
+ * **/
+ImageMetaInformationModel.prototype.__initMetaInformationModel = function () {
+    this.biggestPercentualPixelDifference = 0;
+    this.biggestDistanceDifference = 0;
+    this.timeStamp = '';
+    this.imageSets = [];
 };
 
 module.exports = new ImageMetaInformationModel();

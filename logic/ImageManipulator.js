@@ -28,6 +28,9 @@ ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, call
     // Other vars
     var that = this;
 
+    // Clears the old meta information model to start from a clean plate and avoid invalite states
+    this.imageMetaInformationModel.clear();
+
     // Assign default value value is falsey
     autoCrop = autoCrop || false;
 
@@ -90,29 +93,31 @@ ImageManipulator.prototype.createDiffImages = function (autoCrop, pixDiffThresho
     this.__ensureThatFolderStructureExist(config.getReferenceImageFolderPath());
     this.__ensureThatFolderStructureExist(config.getNewImageFolderPath());
 
+    logger.info("Trying to load reference images from:", config.getReferenceImageFolderPath());
+    logger.info("Trying to load new images from:", config.getNewImageFolderPath());
+
     // Read folder content and create the images
-    fs.readdir(config.getReferenceImageFolderPath(), 'utf8', function (err, refImageNames) {
-        logger.info("Reference images loaded from:", config.getReferenceImageFolderPath());
+    var refImangeNames = fs.readdirSync(config.getReferenceImageFolderPath());
+    var newImageNames = fs.readdirSync(config.getNewImageFolderPath());
 
-        fs.readdir(config.getNewImageFolderPath(), 'utf8', function (err, newImageNames) {
-            logger.info("New images loaded from:", config.getReferenceImageFolderPath());
+    logger.info("Reference images loaded:", refImageNames.length);
+    logger.info("New images loaded:", newImageNames.length);
 
-            // Get images that exist in both or only in one folder
-            var imageNames = that.__getImageNames(refImageNames, newImageNames, false);
-            var refDiffImageNames = that.__getImageNames(refImageNames, newImageNames, true);
-            var newDiffImageNames = that.__getImageNames(newImageNames, refImageNames, true);
+    // Get images that exist in both or only in one folder
+    var imageNames = that.__getImageNames(refImageNames, newImageNames, false);
+    var refDiffImageNames = that.__getImageNames(refImageNames, newImageNames, true);
+    var newDiffImageNames = that.__getImageNames(newImageNames, refImageNames, true);
 
-            // Create diff images
-            that.__createSingleImages(refDiffImageNames, newDiffImageNames, function () {
-                that.__createDiffImages(imageNames, autoCrop, pixDiffThreshold, distThreshold, function () {
-                    that.__saveMetaInformation();
-                    if(callback) {
-                        callback(that.imageMetaInformationModel);
-                    }
-                }); 
-            });
+    // Create diff images
+    that.__createSingleImages(refDiffImageNames, newDiffImageNames, function () {
+        that.__createDiffImages(imageNames, autoCrop, pixDiffThreshold, distThreshold, function () {
+            that.__saveMetaInformation();
+            if(callback) {
+                callback(that.imageMetaInformationModel);
+            }
         });
     });
+
 };
 
 /* ----- Creation Helper Methods ----- */
@@ -164,7 +169,7 @@ ImageManipulator.prototype.__createSingleImages = function (refImageNames, newIm
     var that = this;
 
     if(refImageNames.length == 0 && newImageNames.length == 0) {
-        logger.info('No single images left to process');
+        logger.info('No single images left to process.');
         callback();
     } else {
 
@@ -298,6 +303,16 @@ ImageManipulator.prototype.__saveMetaInformation = function () {
 };
 
 /**
+ * Calculates the the biggest percentual pixel difference/distance, sets the timestamp and saves the image meta information structure
+ * to file.
+ * **/
+ImageManipulator.prototype.__clearInformation = function () {
+    this.imageMetaInformationModel.calculateBiggestDifferences();
+    this.imageMetaInformationModel.setTimeStamp(new Date().toISOString());
+    this.imageMetaInformationModel.save();
+};
+
+/**
  * Autocrops two images.
  *
  * @param image1 The first image to autocrop.
@@ -316,7 +331,7 @@ ImageManipulator.prototype.__autoCrop = function (image1, image2, autoCrop) {
  *
  * @param folder The folder which should be created, if it does not already exist.
  * **/
-ImageManipulator.prototype.__ensureThatFolderStructureExist= function(folder){
+ImageManipulator.prototype.__ensureThatFolderStructureExist = function(folder){
     fs.ensureDirSync(folder);
 };
 
