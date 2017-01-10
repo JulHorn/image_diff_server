@@ -6,7 +6,7 @@ var logger = require('winston');
 var ImageMetaInformationModel = require('../logic/model/ImageMetaInformationModel');
 var conf = require('../logic/configurationLoader');
 
-router.post('/refreshAll', function(req, res) {
+router.post('/checkAll', function(req, res) {
     // This request might take a while to finish the computations -> Needs a longer timeout,
     // so that the client will not run into a timeout
     res.setTimeout(conf.getRequestTimeout());

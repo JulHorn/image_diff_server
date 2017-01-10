@@ -22,7 +22,7 @@ Connector.prototype.delete = function (id, callback) {
  * @param callback Called when the request is done.
  * **/
 Connector.prototype.refreshAll = function (callback) {
-    this.sendRequest('/refreshAll', 'POST', null, callback);
+    this.sendRequest('/checkAll', 'POST', null, callback);
 };
 
 /**
