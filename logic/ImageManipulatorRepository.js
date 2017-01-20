@@ -68,7 +68,17 @@ ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function
         logger.info('---------- End ----------', new Date().toISOString());
         if(callback){
             var isbiggestDistanceDiffThresholdBreached = metaInformationModel.getBiggestDistanceDifference()  <= distThresholdValue;
-            var isbiggestPixelDiffThresholdBreached = metaInformationModel.getBiggestPercentualPixelDifference()  <= pixDiffThresholdValue;
+            var isbiggestPixelDiffThresholdBreached = metaInformationModel.getBiggestPercentualPixelDifference()  <= ;
+
+            logger.info("Percentual pixel difference:"
+                + "\nThreshold breached " + isbiggestPixelDiffThresholdBreached
+                + "\nAllowed threshold: " + pixDiffThresholdValue
+                + "\nDifference:" + metaInformationModel.getBiggestPercentualPixelDifference());
+
+            logger.info("Distance difference:"
+                + "\nThreshold breached " + isbiggestDistanceDiffThresholdBreached
+                + "\nAllowed threshold: " + distThresholdValue
+                + "\nDifference:" + metaInformationModel.getBiggestDistanceDifference());
 
             callback(metaInformationModel, isbiggestDistanceDiffThresholdBreached && isbiggestPixelDiffThresholdBreached);
         }
