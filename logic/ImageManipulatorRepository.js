@@ -67,20 +67,20 @@ ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function
     this.imageManipulator.createDiffImages(autoCropValue, pixDiffThresholdValue, distThresholdValue, function (metaInformationModel) {
         logger.info('---------- End ----------', new Date().toISOString());
         if(callback){
-            var isbiggestDistanceDiffThresholdBreached = metaInformationModel.getBiggestDistanceDifference()  <= distThresholdValue;
-            var isbiggestPixelDiffThresholdBreached = metaInformationModel.getBiggestPercentualPixelDifference()  <= pixDiffThresholdValue;
+            var isBiggestDistanceDiffThresholdBreached = metaInformationModel.getBiggestDistanceDifference()  > distThresholdValue;
+            var isBiggestPixelDiffThresholdBreached = metaInformationModel.getBiggestPercentualPixelDifference()  > pixDiffThresholdValue;
 
             logger.info("Percentual pixel difference:"
-                + "\nThreshold breached " + isbiggestPixelDiffThresholdBreached
+                + "\nThreshold breached " + isBiggestPixelDiffThresholdBreached
                 + "\nAllowed threshold: " + pixDiffThresholdValue
                 + "\nDifference:" + metaInformationModel.getBiggestPercentualPixelDifference());
 
             logger.info("Distance difference:"
-                + "\nThreshold breached " + isbiggestDistanceDiffThresholdBreached
+                + "\nThreshold breached " + isBiggestDistanceDiffThresholdBreached
                 + "\nAllowed threshold: " + distThresholdValue
                 + "\nDifference:" + metaInformationModel.getBiggestDistanceDifference());
 
-            callback(metaInformationModel, isbiggestDistanceDiffThresholdBreached && isbiggestPixelDiffThresholdBreached);
+            callback(metaInformationModel, isBiggestDistanceDiffThresholdBreached || isBiggestPixelDiffThresholdBreached);
         }
     });
 };
