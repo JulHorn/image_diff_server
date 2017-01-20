@@ -11,9 +11,12 @@ router.post('/checkAll', function(req, res) {
     // so that the client will not run into a timeout
     res.setTimeout(conf.getRequestTimeout());
 
-    ImageManipulatorRepository.calculateDifferencesForAllImages(req.body.autoCrop, req.body.pixDiffThreshold, req.body.distThreshold, function () {
+    ImageManipulatorRepository.calculateDifferencesForAllImages(req.body.autoCrop
+        , req.body.pixDiffThreshold
+        , req.body.distThreshold
+        , function (metaInformationModel, isThresholdBreached) {
         res.statusCode = 200;
-        res.json({ message: 'OK'});
+        res.json({ message: 'OK', isThresholdBreached: isThresholdBreached});
     });
 });
 
@@ -27,6 +30,7 @@ router.put('/:id/makeToNewReferenceImage', function(req, res) {
 });
 
 router.delete('/:id', function (req, res) {
+    console.log("Del!");
     var setId = req.params.id;
 
     ImageManipulatorRepository.deleteImageSet(setId, function (imageMetaInformation) {

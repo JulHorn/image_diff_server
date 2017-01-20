@@ -35,6 +35,8 @@ ImageManipulatorRepository.prototype.deleteImageSet = function (id, callback) {
     ImageMetaInformationModel.setTimeStamp(new Date().toISOString());
     ImageMetaInformationModel.save();
 
+    logger.info('Deleted image set with id:', id);
+
     // Call callback when stuff is done
     if(callback){
         callback(ImageMetaInformationModel);
@@ -65,7 +67,10 @@ ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function
     this.imageManipulator.createDiffImages(autoCropValue, pixDiffThresholdValue, distThresholdValue, function (metaInformationModel) {
         logger.info('---------- End ----------', new Date().toISOString());
         if(callback){
-            callback(metaInformationModel);
+            var isbiggestDistanceDiffThresholdBreached = metaInformationModel.getBiggestDistanceDifference()  <= distThresholdValue;
+            var isbiggestPixelDiffThresholdBreached = metaInformationModel.getBiggestPercentualPixelDifference()  <= pixDiffThresholdValue;
+
+            callback(metaInformationModel, isbiggestDistanceDiffThresholdBreached && isbiggestPixelDiffThresholdBreached);
         }
     });
 };
