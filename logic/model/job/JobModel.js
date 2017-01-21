@@ -1,14 +1,18 @@
-var JobModel = function(jobName, jobFunction, functionParameters, callback, callbackParameters) {
+var JobModel = function(jobName, jobFunction, callback) {
     this.jobName = jobName;
     this.jobFunction = jobFunction;
-    this.functionParameters = functionParameters;
     this.callback = callback;
-    this.callbackParameters = callbackParameters;
     this.processedImageCount = 0;
-    this.imagesToBeProcessedCount = 0;
+    // Expect that only one image has to be processed as default and change the number in the method in which more than
+    // one image should be processed (e.g. check all images etc.)
+    this.imagesToBeProcessedCount = 1;
 };
 
 /* ----- Getter ----- */
+
+JobModel.prototype.getJobName = function () {
+    return this.jobName;
+};
 
 JobModel.prototype.getImagesToBeProcessedCount = function () {
     return this.imagesToBeProcessedCount;
@@ -22,16 +26,8 @@ JobModel.prototype.getJobFunction = function () {
     return this.jobFunction;
 };
 
-JobModel.prototype.getJobFunctionParameters = function () {
-    return this.getJobFunctionParameters();
-};
-
-JobModel.prototype.getCallback = function () {
+JobModel.prototype.getCallbackFunction = function () {
     return this.callback;
-};
-
-JobModel.prototype.getCallbackParameters = function () {
-    return this.callbackParameters;
 };
 
 /* ----- Setter/Adder ----- */

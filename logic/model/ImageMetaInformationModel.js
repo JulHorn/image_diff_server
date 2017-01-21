@@ -147,10 +147,16 @@ ImageMetaInformationModel.prototype.load = function () {
     logger.info('Loading meta information.', config.getMetaInformationFilePath());
 
     // Blocking file readto ensure that the complete data is loaded before further actions are taken
-    var data = fs.readFileSync(config.getMetaInformationFilePath(), 'utf8');
+    var metaFile = fs.readFileSync(config.getMetaInformationFilePath(), 'utf8');
 
-    // Load data in object structure
-    var data = JSON.parse(data);
+    // Load data in object structure, delete file if it is corrupt
+    try {
+        var data = JSON.parse(metaFile);
+    } catch (exception) {
+        logger.error('Failed to parse meta information file. Working from a blank slate.');
+        return;
+    }
+
     this.setTimeStamp(data.timeStamp);
     data.imageSets.forEach(function (imageSetData) {
         var imageSet = new ImageSet();

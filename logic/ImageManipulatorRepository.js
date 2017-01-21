@@ -4,6 +4,8 @@ var path = require('path');
 var logger = require('winston');
 var ImageManipulator = require('./ImageManipulator');
 var config = require('./configurationLoader');
+var jobHandler = require('./JobHandler');
+var CheckAllJobModel = require('./model/job/CheckAllJob');
 
 /**
  * Constructor.
@@ -15,38 +17,12 @@ var ImageManipulatorRepository = function () {
 /* ----- Methods ----- */
 
 /**
- * Deletes an image set. It will be removed from the image meta information structure, the structure will be saved to file
- * and the images will be deleted.
- *
- * @param id The id of the image set.
- * @param callback Called when the complete deletion process is done. Has the updated image meta information model object as parameter.
- * **/
-ImageManipulatorRepository.prototype.deleteImageSet = function (id, callback) {
-    var imageSet = ImageMetaInformationModel.getImageSetById(id);
-
-    // Delete image which are part of the set
-    this.__deleteFile(imageSet.getReferenceImage().getPath());
-    this.__deleteFile(imageSet.getNewImage().getPath());
-    this.__deleteFile(imageSet.getDiffImage().getPath());
-
-    // Delete information about the data set and save the information
-    ImageMetaInformationModel.deleteImageSet(id);
-    ImageMetaInformationModel.calculateBiggestDifferences();
-    ImageMetaInformationModel.setTimeStamp(new Date().toISOString());
-    ImageMetaInformationModel.save();
-
-    logger.info('Deleted image set with id:', id);
-
-    // Call callback when stuff is done
-    if(callback){
-        callback(ImageMetaInformationModel);
-    }
-};
-
-/**
  * Creates diff images for all images with the same name in the reference/new folders.
  *
- * @param callback Called when the complete deletion process is done. Has the updated image meta information model object as parameter.
+ * @param autoCrop
+ * @param pixDiffThreshold
+ * @param distThreshold
+ * @param callback Called when the complete deletion process is done. Has the updated image meta information model object as job.
  * **/
 ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function (autoCrop, pixDiffThreshold, distThreshold, callback) {
     logger.info('---------- Start ----------', new Date().toISOString());
@@ -63,33 +39,35 @@ ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function
     // Clears the old meta information model to start from a clean plate and avoid invalite states
     ImageMetaInformationModel.clear();
 
-    // Creating diff images
-    this.imageManipulator.createDiffImages(autoCropValue, pixDiffThresholdValue, distThresholdValue, function (metaInformationModel) {
-        logger.info('---------- End ----------', new Date().toISOString());
-        if(callback){
-            var isBiggestDistanceDiffThresholdBreached = metaInformationModel.getBiggestDistanceDifference()  > distThresholdValue;
-            var isBiggestPixelDiffThresholdBreached = metaInformationModel.getBiggestPercentualPixelDifference()  > pixDiffThresholdValue;
+    // Add create diff images job to the job handler
+    jobHandler.addJob(
+        new CheckAllJobModel(this.imageManipulator.createDiffImages, autoCropValue, pixDiffThresholdValue, distThresholdValue, function (metaInformationModel) {
+            logger.info('---------- End ----------', new Date().toISOString());
+            if (callback) {
+                var isBiggestDistanceDiffThresholdBreached = metaInformationModel.getBiggestDistanceDifference() > distThresholdValue;
+                var isBiggestPixelDiffThresholdBreached = metaInformationModel.getBiggestPercentualPixelDifference() > pixDiffThresholdValue;
 
-            logger.info("Percentual pixel difference:"
-                + "\nThreshold breached " + isBiggestPixelDiffThresholdBreached
-                + "\nAllowed threshold: " + pixDiffThresholdValue
-                + "\nDifference:" + metaInformationModel.getBiggestPercentualPixelDifference());
+                logger.info("Percentual pixel difference:"
+                    + "\nThreshold breached " + isBiggestPixelDiffThresholdBreached
+                    + "\nAllowed threshold: " + pixDiffThresholdValue
+                    + "\nDifference:" + metaInformationModel.getBiggestPercentualPixelDifference());
 
-            logger.info("Distance difference:"
-                + "\nThreshold breached " + isBiggestDistanceDiffThresholdBreached
-                + "\nAllowed threshold: " + distThresholdValue
-                + "\nDifference:" + metaInformationModel.getBiggestDistanceDifference());
+                logger.info("Distance difference:"
+                    + "\nThreshold breached " + isBiggestDistanceDiffThresholdBreached
+                    + "\nAllowed threshold: " + distThresholdValue
+                    + "\nDifference:" + metaInformationModel.getBiggestDistanceDifference());
 
-            callback(metaInformationModel, isBiggestDistanceDiffThresholdBreached || isBiggestPixelDiffThresholdBreached);
-        }
-    });
+                callback(metaInformationModel, isBiggestDistanceDiffThresholdBreached || isBiggestPixelDiffThresholdBreached);
+            }
+        })
+    );
 };
 
 /**
  * Makes a new image to a reference image. Updates and save the meta information model.
  *
  *@param id Id of the image set for which the new image should be made a reference image.
- * @param callback Called when the complete deletion process is done. Has the updated image meta information model object as parameter.
+ * @param callback Called when the complete deletion process is done. Has the updated image meta information model object as job.
  * **/
 ImageManipulatorRepository.prototype.makeToNewReferenceImage = function (id, callback) {
     var imageSet = ImageMetaInformationModel.getImageSetById(id);
@@ -124,6 +102,35 @@ ImageManipulatorRepository.prototype.makeToNewReferenceImage = function (id, cal
             }
         });
     });
+};
+
+/**
+ * Deletes an image set. It will be removed from the image meta information structure, the structure will be saved to file
+ * and the images will be deleted.
+ *
+ * @param id The id of the image set.
+ * @param callback Called when the complete deletion process is done. Has the updated image meta information model object as job.
+ * **/
+ImageManipulatorRepository.prototype.deleteImageSet = function (id, callback) {
+    var imageSet = ImageMetaInformationModel.getImageSetById(id);
+
+    // Delete image which are part of the set
+    this.__deleteFile(imageSet.getReferenceImage().getPath());
+    this.__deleteFile(imageSet.getNewImage().getPath());
+    this.__deleteFile(imageSet.getDiffImage().getPath());
+
+    // Delete information about the data set and save the information
+    ImageMetaInformationModel.deleteImageSet(id);
+    ImageMetaInformationModel.calculateBiggestDifferences();
+    ImageMetaInformationModel.setTimeStamp(new Date().toISOString());
+    ImageMetaInformationModel.save();
+
+    logger.info('Deleted image set with id:', id);
+
+    // Call callback when stuff is done
+    if(callback){
+        callback(ImageMetaInformationModel);
+    }
 };
 
 /* ----- Helper Methods ----- */

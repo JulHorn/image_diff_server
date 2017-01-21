@@ -5,6 +5,7 @@ var config = require('./configurationLoader');
 var ImageSetModel = require('./model/ImageSetModel');
 var ImageMetaInformationModel = require('./model/ImageMetaInformationModel');
 var logger = require('winston');
+var jobHandler = require('./JobHandler');
 
 /**
  * Constructor.
@@ -21,14 +22,14 @@ var ImageManipulator = function () {
  *
  * @param imageName The name of the images that should be compared. The image must have the same name in the reference and new folder. The diff image will have the name, too.
  * @param autoCrop Determines if the new/reference images should be autocroped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
- * @param callback The callback function which is called, when the method has finished the comparison. The callback has an imageSet as parameter.
+ * @param callback The callback function which is called, when the method has finished the comparison. The callback has an imageSet as job.
  * **/
 ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, callback) {
 
     // Other vars
     var that = this;
 
-    // Assign default value value is falsey
+    // Assign default value value is falsy
     autoCrop = autoCrop || false;
 
     // Get images
@@ -55,7 +56,7 @@ ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, call
             // If the image size is not identical and autocrop is off
             if((referenceImage.bitmap.height !== newImage.bitmap.height
                 || referenceImage.bitmap.width !== newImage.bitmap.width) && !autoCrop){
-                var errorText = 'Image dimesions are not equal: '
+                var errorText = 'Image dimensions are not equal: '
                     + 'reference: ' + referenceImage.bitmap.height + '/' + referenceImage.bitmap.width
                     + 'reference: ' + referenceImage.bitmap.height + '/' + referenceImage.bitmap.width;
                 logger.error(errorText);
@@ -69,6 +70,8 @@ ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, call
             var diff = jimp.diff(referenceImage, newImage);
             that.__ensureThatFolderStructureExist(config.getResultImageFolderPath());
             diff.image.write(diffImagePath, function () {
+                // Update the processed image count
+                jobHandler.incrementProcessImageCounter();
                 // Create data structure for the gathering of meta informations (distance and difference are between 0 and 0 -> * 100 for percent)
                 callback(that.__createCompleteImageSet(imageName, referenceImage, newImage, diff.image, diff.percent * 100, jimp.distance(referenceImage, newImage) * 100, ''));
             });
@@ -83,7 +86,7 @@ ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, call
  * @param autoCrop Determines if the new/reference images should be autocroped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
  * @param pixDiffThreshold The pixel threshold.
  * @param distThreshold The distance threshold.
- * @param callback The callback method which is called, when diff process as finished. Has the ImageMetaInformationModel as parameter. Optional.
+ * @param callback The callback method which is called, when diff process as finished. Has the ImageMetaInformationModel as job. Optional.
  * **/
 ImageManipulator.prototype.createDiffImages = function (autoCrop, pixDiffThreshold, distThreshold, callback) {
     var that = this;
@@ -95,9 +98,9 @@ ImageManipulator.prototype.createDiffImages = function (autoCrop, pixDiffThresho
     logger.info("Trying to load reference images from:", config.getReferenceImageFolderPath());
     logger.info("Trying to load new images from:", config.getNewImageFolderPath());
 
-    // Read folder content and create the images
-    var refImageNames = fs.readdirSync(config.getReferenceImageFolderPath());
-    var newImageNames = fs.readdirSync(config.getNewImageFolderPath());
+    // Read supported images
+    var refImageNames = fs.readdirSync(config.getReferenceImageFolderPath()).filter(this.__imageFilter);
+    var newImageNames = fs.readdirSync(config.getNewImageFolderPath()).filter(this.__imageFilter);
 
     logger.info("Reference images loaded:", refImageNames.length);
     logger.info("New images loaded:", newImageNames.length);
@@ -106,6 +109,9 @@ ImageManipulator.prototype.createDiffImages = function (autoCrop, pixDiffThresho
     var imageNames = that.__getImageNames(refImageNames, newImageNames, false);
     var refDiffImageNames = that.__getImageNames(refImageNames, newImageNames, true);
     var newDiffImageNames = that.__getImageNames(newImageNames, refImageNames, true);
+
+    // Tell the job how many images have to be processed
+    jobHandler.setImagesToBeProcessedCount(refDiffImageNames.length + newDiffImageNames.length + imageNames.length);
 
     // Create diff images
     that.__createSingleImages(refDiffImageNames, newDiffImageNames, function () {
@@ -127,7 +133,9 @@ ImageManipulator.prototype.createDiffImages = function (autoCrop, pixDiffThresho
  *
  * @param imageNames Array of image names which should be compared.
  * @param autoCrop Determines if the new/reference images should be autocroped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
- * @param callback Will be called, when the method has finished to compute all images. Has the number of processed images as parameter.
+ * @param pixDiffThreshold
+ * @param distThreshold
+ * @param callback Will be called, when the method has finished to compute all images. Has the number of processed images as job.
  * **/
 ImageManipulator.prototype.__createDiffImages = function (imageNames, autoCrop, pixDiffThreshold, distThreshold, callback) {
 
@@ -162,7 +170,7 @@ ImageManipulator.prototype.__createDiffImages = function (imageNames, autoCrop, 
  *
  * @param refImageNames Array of image names which exist in the reference image folder, but not in the new image folder.
  * @param newImageNames Array of image names which exist in the new image folder, but not in the new reference folder.
- * @param callback Will be called, when the method has finished to compute all images. Has the number of processed images as parameter.
+ * @param callback Will be called, when the method has finished to compute all images. Has the number of processed images as job.
  * **/
 ImageManipulator.prototype.__createSingleImages = function (refImageNames, newImageNames, callback) {
     var that = this;
@@ -337,6 +345,15 @@ ImageManipulator.prototype.__isImageExisting = function (imagePath) {
     } catch(err) {
         return false;
     }
+};
+
+/**
+ * A simple filter function for arrays to determine wheter a file is one of the supported image types.
+ *
+ * @param imageName The image name including its type suffix.
+ * **/
+ImageManipulator.prototype.__imageFilter = function (imageName) {
+    return imageName.endsWith('.png') || imageName.endsWith('.jpg');
 };
 
 module.exports = ImageManipulator;
