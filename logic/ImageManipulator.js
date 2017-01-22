@@ -126,6 +126,47 @@ ImageManipulator.prototype.createDiffImages = function (autoCrop, pixDiffThresho
 };
 
 /**
+ * Makes a new image to a reference image. Updates and save the meta information model.
+ *
+ * @param id Id of the image set for which the new image should be made a reference image.
+ * @param callback Called when the complete deletion process is done. Has the updated image meta information model object as job.
+ * **/
+ImageManipulator.prototype.makeToNewReferenceImage = function (id, callback) {
+    var imageSet = ImageMetaInformationModel.getImageSetById(id);
+    var that = this;
+
+    logger.info('Attempting to copy ' + imageSet.getNewImage().getPath() + ' to ' + config.getReferenceImageFolderPath() + path.sep + imageSet.getNewImage().getName());
+
+    fs.copy(imageSet.getNewImage().getPath(), config.getReferenceImageFolderPath() + path.sep + imageSet.getNewImage().getName(), function (err) {
+
+        // Error handling
+        if(err){
+            throw Error('Failed to copy new image reference images.', err);
+        }
+
+        // Create diff -> Autocrop is set to false because the images should be identical
+        that.createDiffImage(imageSet.getNewImage().getName(), false, function (resultSet) {
+            // Set new diff information to existing image set
+            imageSet.setDifference(resultSet.getDifference());
+            imageSet.setError(resultSet.getError());
+            imageSet.setDistance(resultSet.getDistance());
+            imageSet.setReferenceImage(resultSet.getReferenceImage());
+            imageSet.setDiffImage(resultSet.getDiffImage());
+
+            // Save meta information
+            ImageMetaInformationModel.calculateBiggestDifferences();
+            ImageMetaInformationModel.setTimeStamp(new Date().toISOString());
+            ImageMetaInformationModel.save();
+
+            // Call callback
+            if(callback){
+                callback(ImageMetaInformationModel);
+            }
+        });
+    });
+};
+
+/**
  * Deletes an image set. It will be removed from the image meta information structure, the structure will be saved to file
  * and the images will be deleted.
  *

@@ -7,6 +7,7 @@ var config = require('./configurationLoader');
 var jobHandler = require('./JobHandler');
 var CheckAllJobModel = require('./model/job/CheckAllJob');
 var DeleteJob = require('./model/job/DeleteJob');
+var CheckOneJob = require('./model/job/CheckOneJob');
 
 /**
  * Constructor.
@@ -68,42 +69,18 @@ ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function
 /**
  * Makes a new image to a reference image. Updates and save the meta information model.
  *
- *@param id Id of the image set for which the new image should be made a reference image.
+ * @param id Id of the image set for which the new image should be made a reference image.
  * @param callback Called when the complete deletion process is done. Has the updated image meta information model object as job.
  * **/
 ImageManipulatorRepository.prototype.makeToNewReferenceImage = function (id, callback) {
-    var imageSet = ImageMetaInformationModel.getImageSetById(id);
-    var that = this;
-
-    logger.info('Attempting to copy ' + imageSet.getNewImage().getPath() + ' to ' + config.getReferenceImageFolderPath() + path.sep + imageSet.getNewImage().getName());
-
-    fs.copy(imageSet.getNewImage().getPath(), config.getReferenceImageFolderPath() + path.sep + imageSet.getNewImage().getName(), function (err) {
-
-        // Error handling
-        if(err){
-            throw Error('Failed to copy new image reference images.', err);
-        }
-
-        // Create diff -> Autocrop is set to false because the images should be identical
-        that.imageManipulator.createDiffImage(imageSet.getNewImage().getName(), false, function (resultSet) {
-            // Set new diff information to existing image set
-            imageSet.setDifference(resultSet.getDifference());
-            imageSet.setError(resultSet.getError());
-            imageSet.setDistance(resultSet.getDistance());
-            imageSet.setReferenceImage(resultSet.getReferenceImage());
-            imageSet.setDiffImage(resultSet.getDiffImage());
-
-            // Save meta information
-            ImageMetaInformationModel.calculateBiggestDifferences();
-            ImageMetaInformationModel.setTimeStamp(new Date().toISOString());
-            ImageMetaInformationModel.save();
-
-            // Call callback
-            if(callback){
+    // Add create diff images job to the job handler
+    jobHandler.addJob(
+        new CheckOneJob(id, function () {
+            if (callback) {
                 callback(ImageMetaInformationModel);
             }
-        });
-    });
+        }
+    ));
 };
 
 /**
@@ -114,7 +91,7 @@ ImageManipulatorRepository.prototype.makeToNewReferenceImage = function (id, cal
  * @param callback Called when the complete deletion process is done. Has the updated image meta information model object as job.
  * **/
 ImageManipulatorRepository.prototype.deleteImageSet = function (id, callback) {
-    // Add create diff images job to the job handler
+    // Add delete job to the job handler
     jobHandler.addJob(
        new DeleteJob(id, function () {
            if (callback) {
