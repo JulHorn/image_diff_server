@@ -1,6 +1,6 @@
 var fs = require('fs-extra');
 var logger = require('winston');
-var config = require('../configurationLoader');
+var config = require('../ConfigurationLoader');
 var ImageSet = require('./ImageSetModel');
 var ImageModel = require('./ImageModel');
 

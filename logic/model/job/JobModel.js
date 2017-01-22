@@ -1,6 +1,6 @@
 var ImageManipulator = require('./../../ImageManipulator');
 
-var JobModel = function(jobName, callback) {
+var Job = function(jobName, callback) {
     this.jobName = jobName;
     this.callback = callback;
     this.processedImageCount = 0;
@@ -12,38 +12,38 @@ var JobModel = function(jobName, callback) {
 
 /* ----- Getter ----- */
 
-JobModel.prototype.getJobName = function () {
+Job.prototype.getJobName = function () {
     return this.jobName;
 };
 
-JobModel.prototype.getImagesToBeProcessedCount = function () {
+Job.prototype.getImagesToBeProcessedCount = function () {
     return this.imagesToBeProcessedCount;
 };
 
-JobModel.prototype.getProcessedImageCount = function () {
+Job.prototype.getProcessedImageCount = function () {
     return this.processedImageCount;
 };
 
-JobModel.prototype.getCallbackFunction = function () {
+Job.prototype.getCallbackFunction = function () {
     return this.callback;
 };
 
-JobModel.prototype.getImageManipulator = function () {
+Job.prototype.getImageManipulator = function () {
   return this.imageManipulator;
 };
 
 /* ----- Setter/Adder ----- */
 
-JobModel.prototype.setImagesToBeProcessedCount = function(imagesToBeProcessedCount) {
+Job.prototype.setImagesToBeProcessedCount = function(imagesToBeProcessedCount) {
     this.imagesToBeProcessedCount = imagesToBeProcessedCount;
 };
 
-JobModel.prototype.setProcessedImageCount = function(processedImageCount) {
+Job.prototype.setProcessedImageCount = function(processedImageCount) {
     this.processedImageCount = processedImageCount;
 };
 
-JobModel.prototype.incrementProcessImageCounter = function() {
+Job.prototype.incrementProcessImageCounter = function() {
     this.processedImageCount = this.processedImageCount + 1;
 };
 
-module.exports = JobModel;
+module.exports = Job;

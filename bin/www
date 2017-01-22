@@ -7,7 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('image_diff_server:server');
 var http = require('http');
-var conf = require('../logic/configurationLoader');
+var conf = require('../logic/ConfigurationLoader');
 
 /**
  * Get port from environment and store in Express.

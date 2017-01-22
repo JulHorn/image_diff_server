@@ -2,9 +2,8 @@ var express = require('express');
 var router = express.Router();
 var ImageManipulator = require('../logic/ImageManipulator');
 var ImageManipulatorRepository = require('../logic/ImageManipulatorRepository');
-var logger = require('winston');
 var ImageMetaInformationModel = require('../logic/model/ImageMetaInformationModel');
-var conf = require('../logic/configurationLoader');
+var conf = require('../logic/ConfigurationLoader');
 
 router.post('/checkAll', function(req, res) {
     // This request might take a while to finish the computations -> Needs a longer timeout,
