@@ -1,11 +1,13 @@
-var JobModel = function(jobName, jobFunction, callback) {
+var ImageManipulator = require('./../../ImageManipulator');
+
+var JobModel = function(jobName, callback) {
     this.jobName = jobName;
-    this.jobFunction = jobFunction;
     this.callback = callback;
     this.processedImageCount = 0;
     // Expect that only one image has to be processed as default and change the number in the method in which more than
     // one image should be processed (e.g. check all images etc.)
     this.imagesToBeProcessedCount = 1;
+    this.imageManipulator = new ImageManipulator();
 };
 
 /* ----- Getter ----- */
@@ -22,12 +24,12 @@ JobModel.prototype.getProcessedImageCount = function () {
     return this.processedImageCount;
 };
 
-JobModel.prototype.getJobFunction = function () {
-    return this.jobFunction;
-};
-
 JobModel.prototype.getCallbackFunction = function () {
     return this.callback;
+};
+
+JobModel.prototype.getImageManipulator = function () {
+  return this.imageManipulator;
 };
 
 /* ----- Setter/Adder ----- */

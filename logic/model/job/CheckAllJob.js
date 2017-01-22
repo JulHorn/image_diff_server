@@ -1,7 +1,7 @@
 var JobModel = require('./JobModel');
 
-var CheckAllJob = function (jobFunction, autoCrop, pixDiffThreshold, distThreshold, callback) {
-    this.prototype = new JobModel('Check All', jobFunction, callback);
+var CheckAllJob = function (autoCrop, pixDiffThreshold, distThreshold, callback) {
+    this.prototype = new JobModel('Check All', callback);
     this.autoCrop = autoCrop;
     this.pixDiffThreshold = pixDiffThreshold;
     this.distThreshold = distThreshold;
@@ -10,7 +10,7 @@ var CheckAllJob = function (jobFunction, autoCrop, pixDiffThreshold, distThresho
 /* ----- Action ----- */
 
 CheckAllJob.prototype.execute = function (callback) {
-    this.getJobFunction(this.autoCrop, this.pixDiffThreshold, this.distThreshold, this.getCallbackFunction);
+    this.prototype.getImageManipulator().createDiffImages(this.autoCrop, this.pixDiffThreshold, this.distThreshold, this.prototype.getCallbackFunction());
 
     // Call when the execution has finished
     callback();

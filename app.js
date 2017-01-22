@@ -8,6 +8,7 @@ var bodyParser = require('body-parser');
 var guiRoutes = require('./routes/gui');
 var apiRoutes = require('./routes/api');
 var app = express();
+var cors = require('cors');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -20,6 +21,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Enable cors cross domain requests/responses
+app.use(cors());
 
 // Set up routes
 app.use('/gui', guiRoutes);

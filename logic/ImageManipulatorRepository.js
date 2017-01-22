@@ -38,10 +38,10 @@ ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function
 
     // Clears the old meta information model to start from a clean plate and avoid invalite states
     ImageMetaInformationModel.clear();
-
+try {
     // Add create diff images job to the job handler
     jobHandler.addJob(
-        new CheckAllJobModel(this.imageManipulator.createDiffImages, autoCropValue, pixDiffThresholdValue, distThresholdValue, function (metaInformationModel) {
+        new CheckAllJobModel(autoCropValue, pixDiffThresholdValue, distThresholdValue, function (metaInformationModel) {
             logger.info('---------- End ----------', new Date().toISOString());
             if (callback) {
                 var isBiggestDistanceDiffThresholdBreached = metaInformationModel.getBiggestDistanceDifference() > distThresholdValue;
@@ -61,6 +61,9 @@ ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function
             }
         })
     );
+} catch (exception) {
+    console.log(exception);
+}
 };
 
 /**

@@ -13,6 +13,7 @@ var Connector = function () {
  * @param callback Called when the request is done.
  * **/
 Connector.prototype.delete = function (id, callback) {
+    console.log('Was here', id);
     this.sendRequest('/'+ id, 'DELETE', null, callback);
 };
 
@@ -47,7 +48,7 @@ Connector.prototype.makteToNewReferenceImage = function (id, callback) {
  * **/
 Connector.prototype.sendRequest = function (url, method, data, callback) {
     var serverEndpoint = this.getServerEndpoint() + '/api' + url;
-    console.log('Attempting a request to ' + url + ' with method ' + method);
+    console.log('Attempting a request to ' + url + ' with method ' + method + ' and data ' + data);
 
     $.ajax({
         method: method,

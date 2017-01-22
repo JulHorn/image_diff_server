@@ -25,7 +25,7 @@ JobHandler.prototype.addJob = function (job) {
         && (this.jobQueue.length > 1 || this.isJobRunning)) {
         logger.info('There is already a job being executed. Execution behaviour is set to discard. Discarding new job.');
     } else {
-        logger.info('Adding new job to the queue:', job.getJobName());
+        logger.info('Adding new job to the queue:', job.prototype.getJobName());
         this.jobQueue.push(job);
         this.__executeJob();
     }
@@ -33,19 +33,19 @@ JobHandler.prototype.addJob = function (job) {
 
 JobHandler.prototype.setImagesToBeProcessedCount = function(imagesToBeProcessedCount) {
     if(this.isJobRunning && this.runningJob) {
-        this.runningJob.setImagesToBeProcessedCount(imagesToBeProcessedCount);
+        this.runningJob.prototype.setImagesToBeProcessedCount(imagesToBeProcessedCount);
     }
 };
 
 JobHandler.prototype.setProcessedImageCount = function(processedImageCount) {
     if(this.isJobRunning && this.runningJob) {
-        this.runningJob.setProcessedImageCount(processedImageCount);
+        this.runningJob.prototype.setProcessedImageCount(processedImageCount);
     }
 };
 
 JobHandler.prototype.incrementProcessImageCounter = function() {
     if(this.isJobRunning && this.runningJob) {
-        this.runningJob.incrementProcessImageCounter();
+        this.runningJob.prototype.incrementProcessImageCounter();
     }
 };
 
@@ -59,7 +59,7 @@ JobHandler.prototype.__executeJob = function() {
         this.isJobRunning = true;
         this.runningJob = this.jobQueue.shift();
 
-        logger.info('Executing job:', this.runningJob.getJobName());
+        logger.info('Executing job:', this.runningJob.prototype.getJobName());
         this.runningJob.execute(function () {
             that.isJobRunning = false;
             that.runningJob = null;

@@ -289,13 +289,13 @@ ImageManipulator.prototype.__getImageNames = function(fileNameArray1, fileNameAr
     // Get the images that are only in the first array
     if(differentImages){
         return fileNameArray1.filter(function(element){
-            return !fileNameArray2.includes(element) && element.toLowerCase().endsWith('.png');
+            return !fileNameArray2.includes(element);
         });
     }
 
     // Get the images that are in both arrays
     return fileNameArray1.filter(function(element){
-        return fileNameArray2.includes(element) && element.toLowerCase().endsWith('.png');
+        return fileNameArray2.includes(element);
     });
 };
 
@@ -353,7 +353,7 @@ ImageManipulator.prototype.__isImageExisting = function (imagePath) {
  * @param imageName The image name including its type suffix.
  * **/
 ImageManipulator.prototype.__imageFilter = function (imageName) {
-    return imageName.endsWith('.png') || imageName.endsWith('.jpg');
+    return imageName.toLowerCase().endsWith('.png');
 };
 
 module.exports = ImageManipulator;
