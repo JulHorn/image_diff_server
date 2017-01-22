@@ -22,7 +22,7 @@ router.post('/checkAll', function(req, res) {
 
 router.put('/:id/makeToNewReferenceImage', function(req, res) {
     var setId = req.params.id;
-console.log('MakeNew');
+
     ImageManipulatorRepository.makeToNewReferenceImage(setId, function (imageMetaInformation) {
         res.statusCode = 200;
         res.json({message: 'OK', data: JSON.stringify(imageMetaInformation)});
@@ -30,7 +30,6 @@ console.log('MakeNew');
 });
 
 router.delete('/:id', function (req, res) {
-    console.log("Del!");
     var setId = req.params.id;
 
     ImageManipulatorRepository.deleteImageSet(setId, function (imageMetaInformation) {

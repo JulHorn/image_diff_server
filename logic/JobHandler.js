@@ -59,6 +59,7 @@ JobHandler.prototype.__executeJob = function() {
         this.isJobRunning = true;
         this.runningJob = this.jobQueue.shift();
 
+        // ToDo: Error handling: If something happens, the job locks the execution queue forever
         logger.info('Executing job:', this.runningJob.prototype.getJobName());
         this.runningJob.execute(function () {
             that.isJobRunning = false;

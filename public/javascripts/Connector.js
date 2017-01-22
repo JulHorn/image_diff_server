@@ -13,7 +13,6 @@ var Connector = function () {
  * @param callback Called when the request is done.
  * **/
 Connector.prototype.delete = function (id, callback) {
-    console.log('Was here', id);
     this.sendRequest('/'+ id, 'DELETE', null, callback);
 };
 

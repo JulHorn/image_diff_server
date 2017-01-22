@@ -6,6 +6,7 @@ var ImageManipulator = require('./ImageManipulator');
 var config = require('./configurationLoader');
 var jobHandler = require('./JobHandler');
 var CheckAllJobModel = require('./model/job/CheckAllJob');
+var DeleteJob = require('./model/job/DeleteJob');
 
 /**
  * Constructor.
@@ -22,7 +23,7 @@ var ImageManipulatorRepository = function () {
  * @param autoCrop
  * @param pixDiffThreshold
  * @param distThreshold
- * @param callback Called when the complete deletion process is done. Has the updated image meta information model object as job.
+ * @param callback Called when the complete image comparison process is done. Has the updated image meta information model object as job.
  * **/
 ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function (autoCrop, pixDiffThreshold, distThreshold, callback) {
     logger.info('---------- Start ----------', new Date().toISOString());
@@ -38,32 +39,30 @@ ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function
 
     // Clears the old meta information model to start from a clean plate and avoid invalite states
     ImageMetaInformationModel.clear();
-try {
+
     // Add create diff images job to the job handler
     jobHandler.addJob(
         new CheckAllJobModel(autoCropValue, pixDiffThresholdValue, distThresholdValue, function (metaInformationModel) {
             logger.info('---------- End ----------', new Date().toISOString());
-            if (callback) {
-                var isBiggestDistanceDiffThresholdBreached = metaInformationModel.getBiggestDistanceDifference() > distThresholdValue;
-                var isBiggestPixelDiffThresholdBreached = metaInformationModel.getBiggestPercentualPixelDifference() > pixDiffThresholdValue;
 
-                logger.info("Percentual pixel difference:"
-                    + "\nThreshold breached " + isBiggestPixelDiffThresholdBreached
-                    + "\nAllowed threshold: " + pixDiffThresholdValue
-                    + "\nDifference:" + metaInformationModel.getBiggestPercentualPixelDifference());
+            var isBiggestDistanceDiffThresholdBreached = metaInformationModel.getBiggestDistanceDifference() > distThresholdValue;
+            var isBiggestPixelDiffThresholdBreached = metaInformationModel.getBiggestPercentualPixelDifference() > pixDiffThresholdValue;
 
-                logger.info("Distance difference:"
-                    + "\nThreshold breached " + isBiggestDistanceDiffThresholdBreached
-                    + "\nAllowed threshold: " + distThresholdValue
-                    + "\nDifference:" + metaInformationModel.getBiggestDistanceDifference());
+            logger.info("Percentual pixel difference:"
+                + "\nThreshold breached " + isBiggestPixelDiffThresholdBreached
+                + "\nAllowed threshold: " + pixDiffThresholdValue
+                + "\nDifference:" + metaInformationModel.getBiggestPercentualPixelDifference());
 
+            logger.info("Distance difference:"
+                + "\nThreshold breached " + isBiggestDistanceDiffThresholdBreached
+                + "\nAllowed threshold: " + distThresholdValue
+                + "\nDifference:" + metaInformationModel.getBiggestDistanceDifference());
+
+                if (callback) {
                 callback(metaInformationModel, isBiggestDistanceDiffThresholdBreached || isBiggestPixelDiffThresholdBreached);
             }
         })
     );
-} catch (exception) {
-    console.log(exception);
-}
 };
 
 /**
@@ -115,59 +114,14 @@ ImageManipulatorRepository.prototype.makeToNewReferenceImage = function (id, cal
  * @param callback Called when the complete deletion process is done. Has the updated image meta information model object as job.
  * **/
 ImageManipulatorRepository.prototype.deleteImageSet = function (id, callback) {
-    var imageSet = ImageMetaInformationModel.getImageSetById(id);
-
-    // Delete image which are part of the set
-    this.__deleteFile(imageSet.getReferenceImage().getPath());
-    this.__deleteFile(imageSet.getNewImage().getPath());
-    this.__deleteFile(imageSet.getDiffImage().getPath());
-
-    // Delete information about the data set and save the information
-    ImageMetaInformationModel.deleteImageSet(id);
-    ImageMetaInformationModel.calculateBiggestDifferences();
-    ImageMetaInformationModel.setTimeStamp(new Date().toISOString());
-    ImageMetaInformationModel.save();
-
-    logger.info('Deleted image set with id:', id);
-
-    // Call callback when stuff is done
-    if(callback){
-        callback(ImageMetaInformationModel);
-    }
-};
-
-/* ----- Helper Methods ----- */
-
-/**
- * Deletes a file.
- *
- * @param path The file which should be deleted.
- * **/
-ImageManipulatorRepository.prototype.__deleteFile = function (path) {
-    if(this.__isFileExisting(path)){
-        fs.unlink(path, function (err) {
-            if(err){
-                logger.error('Failed to delete file: ' + path, err);
-                throw Error('Failed to delete file: ' + path, err);
-            }
-        });
-    }
-};
-
-/**
- * Checks if a file exists.
- *
- * @param path The path to a file.
- * @return True if the file exists, else false.
- * **/
-ImageManipulatorRepository.prototype.__isFileExisting = function (path) {
-  try{
-    fs.accessSync(path);
-  } catch(err) {
-      return false;
-  }
-
-  return true;
+    // Add create diff images job to the job handler
+    jobHandler.addJob(
+       new DeleteJob(id, function () {
+           if (callback) {
+               callback(ImageMetaInformationModel);
+           }
+       }
+    ));
 };
 
 module.exports = new ImageManipulatorRepository();

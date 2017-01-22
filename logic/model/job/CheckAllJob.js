@@ -12,7 +12,7 @@ var CheckAllJob = function (autoCrop, pixDiffThreshold, distThreshold, callback)
 CheckAllJob.prototype.execute = function (callback) {
     this.prototype.getImageManipulator().createDiffImages(this.autoCrop, this.pixDiffThreshold, this.distThreshold, this.prototype.getCallbackFunction());
 
-    // Call when the execution has finished
+    // Notify the job handler that this job is finished
     callback();
 };
 

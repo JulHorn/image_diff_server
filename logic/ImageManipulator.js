@@ -125,6 +125,33 @@ ImageManipulator.prototype.createDiffImages = function (autoCrop, pixDiffThresho
 
 };
 
+/**
+ * Deletes an image set. It will be removed from the image meta information structure, the structure will be saved to file
+ * and the images will be deleted.
+ *
+ * @param id The id of the image set.
+ * @param callback Called when the complete deletion process is done. Has the updated image meta information model object as job.
+ * **/
+ImageManipulator.prototype.deleteImageSet = function (id, callback) {
+    var imageSet = this.imageMetaInformationModel.getImageSetById(id);
+
+    // Delete image which are part of the set
+    this.__deleteFile(imageSet.getReferenceImage().getPath());
+    this.__deleteFile(imageSet.getNewImage().getPath());
+    this.__deleteFile(imageSet.getDiffImage().getPath());
+
+    // Delete information about the data set and save the information
+    this.imageMetaInformationModel.deleteImageSet(id);
+    this.__saveMetaInformation();
+
+    logger.info('Deleted image set with id:', id);
+
+    // Call callback when stuff is done
+    if(callback){
+        callback(this.imageMetaInformationModel);
+    }
+};
+
 /* ----- Creation Helper Methods ----- */
 
 /**
@@ -354,6 +381,22 @@ ImageManipulator.prototype.__isImageExisting = function (imagePath) {
  * **/
 ImageManipulator.prototype.__imageFilter = function (imageName) {
     return imageName.toLowerCase().endsWith('.png');
+};
+
+/**
+ * Deletes a file.
+ *
+ * @param path The file which should be deleted.
+ * **/
+ImageManipulator.prototype.__deleteFile = function (path) {
+    if(this.__isImageExisting(path)){
+        fs.unlink(path, function (err) {
+            if(err){
+                logger.error('Failed to delete file: ' + path, err);
+                throw Error('Failed to delete file: ' + path, err);
+            }
+        });
+    }
 };
 
 module.exports = ImageManipulator;
