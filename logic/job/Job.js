@@ -1,4 +1,4 @@
-var ImageManipulator = require('./../../ImageManipulator');
+var ImageManipulator = require('./../ImageManipulator');
 
 var Job = function(jobName, callback) {
     this.jobName = jobName;

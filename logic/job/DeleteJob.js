@@ -1,4 +1,4 @@
-var JobModel = require('./JobModel');
+var JobModel = require('./Job');
 
 var DeleteJob = function (id, callback) {
     this.prototype = new JobModel('Delete Set', callback);

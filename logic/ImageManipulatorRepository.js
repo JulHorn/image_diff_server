@@ -5,9 +5,9 @@ var logger = require('winston');
 var ImageManipulator = require('./ImageManipulator');
 var config = require('./ConfigurationLoader');
 var jobHandler = require('./JobHandler');
-var CheckAllJobModel = require('./model/job/CheckAllJob');
-var DeleteJob = require('./model/job/DeleteJob');
-var CheckOneJob = require('./model/job/CheckOneJob');
+var CheckAllJobModel = require('./job/CheckAllJob');
+var DeleteJob = require('./job/DeleteJob');
+var CheckOneJob = require('./job/CheckOneJob');
 
 /**
  * Constructor.

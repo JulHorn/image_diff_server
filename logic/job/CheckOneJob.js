@@ -1,4 +1,4 @@
-var JobModel = require('./JobModel');
+var JobModel = require('./Job');
 
 var CheckOneJob = function (id, callback) {
     this.prototype = new JobModel('Check One', callback);
