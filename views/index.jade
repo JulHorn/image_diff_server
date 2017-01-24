@@ -9,11 +9,15 @@ block content
     label Number of sets:
     label(id='numberOfSets')  #{data.getImageSets().length}
   div
-    label Max percentage of different pixels:
+    label Percentage of different pixels:
     label(id='maxPixelPercentage') #{data.getBiggestPercentualPixelDifference()}
+    label of allowed #{config.getMaxPixelDifferenceThreshold()}
   div
     label Max distance:
     label(id='maxDistance') #{data.getBiggestDistanceDifference()}
+    label of allowed #{config.getMaxDistanceDifferenceThreshold()}
+  div
+    label Autocropping is activated: #{config.getAutoCropOption()}
   div
       label Server Address:
       input(type='text', id='serverAddress')
