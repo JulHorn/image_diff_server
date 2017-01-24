@@ -8,10 +8,14 @@ var CheckOneJob = function (id, callback) {
 /* ----- Action ----- */
 
 CheckOneJob.prototype.execute = function (callback) {
-    this.prototype.getImageManipulator().makeToNewReferenceImage(this.id, this.prototype.getCallbackFunction());
+    var that = this;
 
-    // Notify the job handler that this job is finished
-    callback();
+    this.prototype.getImageManipulator().makeToNewReferenceImage(this.id, function(imageMetaModel) {
+        that.prototype.getCallbackFunction()(imageMetaModel);
+
+        // Notify the job handler that this job is finished
+        callback();
+    });
 };
 
 module.exports = CheckOneJob;

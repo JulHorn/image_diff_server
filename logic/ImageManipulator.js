@@ -249,6 +249,7 @@ ImageManipulator.prototype.__createSingleImages = function (refImageNames, newIm
     } else {
 
         logger.info('Single images left to process:', refImageNames.length + newImageNames.length);
+        jobHandler.incrementProcessImageCounter();
 
         // New and ref images
         if(newImageNames.length > 0) {

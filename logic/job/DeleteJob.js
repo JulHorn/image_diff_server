@@ -8,10 +8,14 @@ var DeleteJob = function (id, callback) {
 /* ----- Action ----- */
 
 DeleteJob.prototype.execute = function (callback) {
-    this.prototype.getImageManipulator().deleteImageSet(this.id, this.prototype.getCallbackFunction());
+    var that = this;
 
-    // Notify the job handler that this job is finished
-    callback();
+    this.prototype.getImageManipulator().deleteImageSet(this.id, function(imageMetaModel) {
+        that.prototype.getCallbackFunction()(imageMetaModel);
+
+        // Notify the job handler that this job is finished
+        callback();
+    });
 };
 
 module.exports = DeleteJob;

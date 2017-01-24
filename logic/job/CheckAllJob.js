@@ -26,10 +26,14 @@ CheckAllJob.prototype = Object.create(Job.prototype);
  * @param callback The callback which will be called after the job execution is finished.
  * **/
 CheckAllJob.prototype.execute = function (callback) {
-    this.prototype.getImageManipulator().createDiffImages(this.autoCrop, this.pixDiffThreshold, this.distThreshold, this.prototype.getCallbackFunction());
+    var that = this;
 
-    // Notify the job handler that this job is finished
-    callback();
+    this.prototype.getImageManipulator().createDiffImages(this.autoCrop, this.pixDiffThreshold, this.distThreshold, function(imageMetaModel) {
+        that.prototype.getCallbackFunction()(imageMetaModel);
+
+        // Notify the job handler that this job is finished
+        callback();
+    });
 };
 
 /* ----- Getter ----- */

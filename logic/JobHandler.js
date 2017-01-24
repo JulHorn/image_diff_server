@@ -26,6 +26,21 @@ JobHandler.prototype.getRunningJob = function () {
     return this.runningJob;
 };
 
+JobHandler.prototype.getRunningJobProgressedImages = function () {
+    if(this.runningJob) {
+
+        return this.runningJob.prototype.getProcessedImageCount();
+    }
+    return 0;
+};
+
+JobHandler.prototype.getRunningJobImagesToProgressTotal = function () {
+    if(this.runningJob) {
+        return this.runningJob.prototype.getImagesToBeProcessedCount();
+    }
+    return 0;
+};
+
 /* ----- Setter/Adder ----- */
 
 /**

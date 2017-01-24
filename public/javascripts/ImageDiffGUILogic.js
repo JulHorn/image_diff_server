@@ -5,7 +5,7 @@ var ImageDiffGUILogic = function () {
     this.bindEvents();
     this.connector = new Connector();
 
-    // Get the server endpoint to which the requests will be send and display it in the textfield
+    // Get the server endpoint to which the requests will be send and display it in the text field
     $('#serverAddress').val(this.connector.getServerEndpoint());
 };
 
