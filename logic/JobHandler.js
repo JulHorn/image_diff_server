@@ -1,4 +1,5 @@
 var logger = require('winston');
+var configuration = require('../logic/ConfigurationLoader');
 
 /**
  * Constructor.
@@ -11,7 +12,7 @@ var logger = require('winston');
 var JobHandler = function() {
     this.isJobRunning = false;
     // ToDo: Load behaviour from config file -> Better to use an int/constant whatever?
-    this.behaviour = 'discard';
+    this.behaviour = configuration.getWorkingMode();
     this.jobQueue = [];
     this.runningJob = null;
 };
@@ -50,7 +51,7 @@ JobHandler.prototype.getRunningJobImagesToProgressTotal = function () {
  * **/
 JobHandler.prototype.addJob = function (job) {
     // Discard job if something is already in the queue
-    if(this.behaviour == 'discard'
+    if(this.behaviour == 0
         && (this.jobQueue.length > 1
         || this.isJobRunning)) {
         logger.info('There is already a job being executed. Execution behaviour is set to discard. Discarding new job.');
