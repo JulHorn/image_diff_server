@@ -2,12 +2,12 @@ var Job = require('./Job');
 
 /**
  * Job which computes diff images for all images with the same name in the reference/new folder (configured in the config file). The diff images will
- * written in the diff image folder. Updated the meta structure.
+ * written in the diff image folder. Updates the meta structure.
  *
  * @param autoCrop Determines if the new/reference images should be autocroped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
  * @param pixDiffThreshold The pixel threshold.
  * @param distThreshold The distance threshold.
- * @param callback The callback method which is called, when diff process as finished. Has the ImageMetaInformationModel as job. Optional.
+ * @param callback The callback method which is called, when diff process as finished. Has the ImageMetaInformationModel as parameter. Optional.
  * **/
 var CheckAllJob = function (autoCrop, pixDiffThreshold, distThreshold, callback) {
     this.prototype = new Job('Check All', callback);
