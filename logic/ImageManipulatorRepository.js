@@ -90,7 +90,7 @@ ImageManipulatorRepository.prototype.makeToNewReferenceImage = function (id, cal
  * @param id The id of the image set.
  * @param callback Called when the complete deletion process is done. Has the updated image meta information model object as job.
  * **/
-ImageManipulatorRepository.prototype.deleteImageSet = function (id, callback) {
+ImageManipulatorRepository.prototype.deleteImageSetFromModel = function (id, callback) {
     // Add delete job to the job handler
     jobHandler.addJob(
        new DeleteJob(id, function () {

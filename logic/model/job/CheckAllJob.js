@@ -7,7 +7,7 @@ var Job = require('./JobModel');
  * @param autoCrop Determines if the new/reference images should be autocroped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
  * @param pixDiffThreshold The pixel threshold.
  * @param distThreshold The distance threshold.
- * @param callback The callback method which is called, when diff process as finished. Has the ImageMetaInformationModel as job. Optional.
+ * @param callback The callback method which is called, when diff process as finished. Has the imageMetaInformationModel as job. Optional.
  * **/
 var CheckAllJob = function (autoCrop, pixDiffThreshold, distThreshold, callback) {
     this.prototype = new Job('Check All', callback);

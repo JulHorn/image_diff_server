@@ -86,7 +86,7 @@ ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, call
  * @param autoCrop Determines if the new/reference images should be autocroped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
  * @param pixDiffThreshold The pixel threshold.
  * @param distThreshold The distance threshold.
- * @param callback The callback method which is called, when diff process as finished. Has the ImageMetaInformationModel as job. Optional.
+ * @param callback The callback method which is called, when diff process as finished. Has the imageMetaInformationModel as job. Optional.
  * **/
 ImageManipulator.prototype.createDiffImages = function (autoCrop, pixDiffThreshold, distThreshold, callback) {
     var that = this;
@@ -167,29 +167,21 @@ ImageManipulator.prototype.makeToNewReferenceImage = function (id, callback) {
 };
 
 /**
- * Deletes an image set. It will be removed from the image meta information structure, the structure will be saved to file
- * and the images will be deleted.
+ * Deletes images of an image set.
  *
- * @param id The id of the image set.
+ * @param imageSet The image set from which the images should be deleted.
  * @param callback Called when the complete deletion process is done. Has the updated image meta information model object as job.
  * **/
-ImageManipulator.prototype.deleteImageSet = function (id, callback) {
-    var imageSet = this.imageMetaInformationModel.getImageSetById(id);
+ImageManipulator.prototype.deleteImageSetImages = function (imageSet, callback) {
 
     // Delete image which are part of the set
     this.__deleteFile(imageSet.getReferenceImage().getPath());
     this.__deleteFile(imageSet.getNewImage().getPath());
     this.__deleteFile(imageSet.getDiffImage().getPath());
 
-    // Delete information about the data set and save the information
-    this.imageMetaInformationModel.deleteImageSet(id);
-    this.__saveMetaInformation();
-
-    logger.info('Deleted image set with id:', id);
-
     // Call callback when stuff is done
     if(callback){
-        callback(this.imageMetaInformationModel);
+        callback();
     }
 };
 

@@ -192,10 +192,10 @@ ImageMetaInformationModel.prototype.addImageSet = function (imageSet) {
         oldImageSet = this.getImageSetByName(imageSet.getNewImage().getName());
 
         if(oldImageSet !== null){
-            this.deleteImageSet(oldImageSet.getId());
+            this.deleteImageSetFromModel(oldImageSet.getId());
         }
     } else {
-        this.deleteImageSet(oldImageSet.getId());
+        this.deleteImageSetFromModel(oldImageSet.getId());
     }
 
     // Add new image set
@@ -207,7 +207,7 @@ ImageMetaInformationModel.prototype.addImageSet = function (imageSet) {
  *
  * @param id The id of the image set to be deleted.
  * **/
-ImageMetaInformationModel.prototype.deleteImageSet = function (id) {
+ImageMetaInformationModel.prototype.deleteImageSetFromModel = function (id) {
     var index = this.__getIndexOfImageSet(id);
 
     // Error handling

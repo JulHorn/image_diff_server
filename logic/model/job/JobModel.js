@@ -1,4 +1,5 @@
 var ImageManipulator = require('./../../ImageManipulator');
+var imageMetaInformationModel = require('../ImageMetaInformationModel');
 
 var Job = function(jobName, callback) {
     this.jobName = jobName;
@@ -32,6 +33,10 @@ Job.prototype.getImageManipulator = function () {
   return this.imageManipulator;
 };
 
+Job.prototype.getMetaInformationModel = function () {
+  return imageMetaInformationModel;
+};
+
 /* ----- Setter/Adder ----- */
 
 Job.prototype.setImagesToBeProcessedCount = function(imagesToBeProcessedCount) {
@@ -44,6 +49,18 @@ Job.prototype.setProcessedImageCount = function(processedImageCount) {
 
 Job.prototype.incrementProcessImageCounter = function() {
     this.processedImageCount = this.processedImageCount + 1;
+};
+
+/* ----- Helper ----- */
+
+/**
+ * Calculates the the biggest percentual pixel difference/distance, sets the timestamp and saves the image meta information structure
+ * to file.
+ * **/
+Job.prototype.saveMetaInformation = function () {
+    imageMetaInformationModel.calculateBiggestDifferences();
+    imageMetaInformationModel.setTimeStamp(new Date().toISOString());
+    imageMetaInformationModel.save();
 };
 
 module.exports = Job;

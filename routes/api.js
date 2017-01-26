@@ -31,7 +31,7 @@ router.put('/:id/makeToNewReferenceImage', function(req, res) {
 router.delete('/:id', function (req, res) {
     var setId = req.params.id;
 
-    ImageManipulatorRepository.deleteImageSet(setId, function (imageMetaInformation) {
+    ImageManipulatorRepository.deleteImageSetFromModel(setId, function (imageMetaInformation) {
         res.statusCode = 200;
         res.json({ message: 'OK', data: JSON.stringify(imageMetaInformation)});
     });
