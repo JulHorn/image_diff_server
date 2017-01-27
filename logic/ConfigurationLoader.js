@@ -74,14 +74,14 @@ Configuration.prototype.getResultImageFolderPath = function () {
 };
 
 /**
- * Returns the file path in which the meta information for the images will be stored.
+ * Returns the file path in which the imageMetaInformationModel information for the images will be stored.
  * **/
 Configuration.prototype.getMetaInformationFilePath = function () {
     return path.normalize(this.getImagesConfig().get('metaInformationFile'));
 };
 
 /**
- * Returns the folder path in which the meta information file for the images will be stored.
+ * Returns the folder path in which the imageMetaInformationModel information file for the images will be stored.
  * **/
 Configuration.prototype.getMetaInformationFolderPath = function () {
     return path.dirname(this.getMetaInformationFilePath());

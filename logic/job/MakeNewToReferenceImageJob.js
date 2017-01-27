@@ -35,10 +35,10 @@ MakeNewToReferenceImageJob.prototype.execute = function (callback) {
 };
 
 /**
- * Makes a new image to a reference image. Updates and save the meta information model.
+ * Makes a new image to a reference image. Updates and save the imageMetaInformationModel information model.
  *
  * @param id Id of the image set for which the new image should be made a reference image.
- * @param callback Called when the complete deletion process is done. Has the updated image meta information model object as job.
+ * @param callback Called when the complete deletion process is done. Has the updated image imageMetaInformationModel information model object as job.
  * **/
 MakeNewToReferenceImageJob.prototype.__makeToNewReferenceImage = function (id, callback) {
     var imageSet = this.getImageMetaInformationModel().getImageSetById(id);
@@ -61,7 +61,7 @@ MakeNewToReferenceImageJob.prototype.__makeToNewReferenceImage = function (id, c
             imageSet.setReferenceImage(resultSet.getReferenceImage());
             imageSet.setDiffImage(resultSet.getDiffImage());
 
-            // Save meta information
+            // Save imageMetaInformationModel information
             that.saveMetaInformation();
 
             // Call callback

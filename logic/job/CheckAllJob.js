@@ -6,7 +6,7 @@ var fs = require('fs-extra');
 
 /**
  * Job which computes diff images for all images with the same name in the reference/new folder (configured in the config file). The diff images will
- * written in the diff image folder. Updated the meta structure.
+ * written in the diff image folder. Updated the imageMetaInformationModel structure.
  *
  * @param autoCrop Determines if the new/reference images should be autocroped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
  * @param pixDiffThreshold The pixel threshold.
@@ -48,7 +48,7 @@ CheckAllJob.prototype.execute = function (callback) {
 
 /**
  * Computes diff images for all images with the same name in the reference/new folder (configured in the config file). The diff images will
- * written in the diff image folder. Updated the meta structure.
+ * written in the diff image folder. Updated the imageMetaInformationModel structure.
  *
  * @param autoCrop Determines if the new/reference images should be autocroped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
  * @param pixDiffThreshold The pixel threshold.
@@ -93,7 +93,7 @@ CheckAllJob.prototype.createDiffImages = function (autoCrop, pixDiffThreshold, d
 
 /**
  * Creates diff images of images with the same name in the reference/new folder.
- * Updates the image meta information structure, but does not save it.
+ * Updates the image imageMetaInformationModel information structure, but does not save it.
  *
  * @param imageNames Array of image names which should be compared.
  * @param autoCrop Determines if the new/reference images should be autocroped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
@@ -133,8 +133,8 @@ CheckAllJob.prototype.__createDiffImages = function (imageNames, autoCrop, pixDi
 };
 
 /**
- * Adds images with new reference/new pedant to the image meta information structure.
- * Updates the image meta information structure, but does not save it.
+ * Adds images with new reference/new pedant to the image imageMetaInformationModel information structure.
+ * Updates the image imageMetaInformationModel information structure, but does not save it.
  *
  * @param refImageNames Array of image names which exist in the reference image folder, but not in the new image folder.
  * @param newImageNames Array of image names which exist in the new image folder, but not in the new reference folder.

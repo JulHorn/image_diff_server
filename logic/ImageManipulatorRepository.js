@@ -24,7 +24,7 @@ var ImageManipulatorRepository = function () {
  * @param autoCrop
  * @param pixDiffThreshold
  * @param distThreshold
- * @param callback Called when the complete image comparison process is done. Has the updated image meta information model object as job.
+ * @param callback Called when the complete image comparison process is done. Has the updated image imageMetaInformationModel information model object as job.
  * **/
 ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function (autoCrop, pixDiffThreshold, distThreshold, callback) {
     logger.info('---------- Start ----------', new Date().toISOString());
@@ -38,7 +38,7 @@ ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function
     logger.info("Distance threshold:", distThresholdValue);
     logger.info("----- Options End -----");
 
-    // Clears the old meta information model to start from a clean plate and avoid invalite states
+    // Clears the old imageMetaInformationModel information model to start from a clean plate and avoid invalite states
     ImageMetaInformationModel.clear();
 
     // Add create diff images job to the job handler
@@ -67,10 +67,10 @@ ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function
 };
 
 /**
- * Makes a new image to a reference image. Updates and save the meta information model.
+ * Makes a new image to a reference image. Updates and save the imageMetaInformationModel information model.
  *
  * @param id Id of the image set for which the new image should be made a reference image.
- * @param callback Called when the complete deletion process is done. Has the updated image meta information model object as job.
+ * @param callback Called when the complete deletion process is done. Has the updated image imageMetaInformationModel information model object as job.
  * **/
 ImageManipulatorRepository.prototype.makeToNewReferenceImage = function (id, callback) {
     // Add create diff images job to the job handler
@@ -84,11 +84,11 @@ ImageManipulatorRepository.prototype.makeToNewReferenceImage = function (id, cal
 };
 
 /**
- * Deletes an image set. It will be removed from the image meta information structure, the structure will be saved to file
+ * Deletes an image set. It will be removed from the image imageMetaInformationModel information structure, the structure will be saved to file
  * and the images will be deleted.
  *
  * @param id The id of the image set.
- * @param callback Called when the complete deletion process is done. Has the updated image meta information model object as job.
+ * @param callback Called when the complete deletion process is done. Has the updated image imageMetaInformationModel information model object as job.
  * **/
 ImageManipulatorRepository.prototype.deleteImageSetFromModel = function (id, callback) {
     // Add delete job to the job handler

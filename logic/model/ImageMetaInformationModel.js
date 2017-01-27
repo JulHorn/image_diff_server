@@ -5,7 +5,7 @@ var ImageSet = require('./ImageSetModel');
 var ImageModel = require('./ImageModel');
 
 /**
- * Constructor. Loads the meta information in the meta information text file, if it does exist.
+ * Constructor. Loads the imageMetaInformationModel information in the imageMetaInformationModel information text file, if it does exist.
  * **/
 var ImageMetaInformationModel = function () {
     this.__initMetaInformationModel();
@@ -61,7 +61,7 @@ ImageMetaInformationModel.prototype.getImageSetById = function(id){
         return imageSet.getId() === id;
     });
 
-    // If the image does not already exist in the meta informations sturcture, then return null
+    // If the image does not already exist in the imageMetaInformationModel informations sturcture, then return null
     if(result.length === 0){
         return null;
     }
@@ -89,7 +89,7 @@ ImageMetaInformationModel.prototype.getImageSetByName = function(imageName){
             || imageSet.getNewImage().getName() == imageName;
     });
 
-    // If the image does not already exist in the meta informations sturcture, then return null
+    // If the image does not already exist in the imageMetaInformationModel informations sturcture, then return null
     if(result.length === 0){
         return null;
     }
@@ -112,26 +112,26 @@ ImageMetaInformationModel.prototype.setTimeStamp = function (timeStamp) {
 /* ----- Action Methods ----- */
 
 /**
- * Saves meta information to file.
+ * Saves imageMetaInformationModel information to file.
  * **/
 ImageMetaInformationModel.prototype.save = function () {
 
-    // Ensure that the folder structure for the meta information file exists
-    logger.info('Ensuring that the meta information folder path exists:', config.getMetaInformationFolderPath());
+    // Ensure that the folder structure for the imageMetaInformationModel information file exists
+    logger.info('Ensuring that the imageMetaInformationModel information folder path exists:', config.getMetaInformationFolderPath());
     fs.ensureDirSync(config.getMetaInformationFolderPath());
 
     // Write the file
     fs.writeFile(config.getMetaInformationFilePath(), JSON.stringify(this), 'utf8', function (err) {
         if(err != null || typeof err == 'undefined'){
-            logger.error('Failed to write meta information.', err);
+            logger.error('Failed to write imageMetaInformationModel information.', err);
         } else {
-            logger.info('Writing meta information finished.', config.getMetaInformationFilePath());
+            logger.info('Writing imageMetaInformationModel information finished.', config.getMetaInformationFilePath());
         }
     });
 };
 
 /**
- * Loads the meta information file. If it does not exist, the program will work without meta information until some are created.
+ * Loads the imageMetaInformationModel information file. If it does not exist, the program will work without imageMetaInformationModel information until some are created.
  * **/
 ImageMetaInformationModel.prototype.load = function () {
     var that = this;
@@ -144,7 +144,7 @@ ImageMetaInformationModel.prototype.load = function () {
         return;
     }
 
-    logger.info('Loading meta information.', config.getMetaInformationFilePath());
+    logger.info('Loading imageMetaInformationModel information.', config.getMetaInformationFilePath());
 
     // Blocking file readto ensure that the complete data is loaded before further actions are taken
     var metaFile = fs.readFileSync(config.getMetaInformationFilePath(), 'utf8');
@@ -153,7 +153,7 @@ ImageMetaInformationModel.prototype.load = function () {
     try {
         var data = JSON.parse(metaFile);
     } catch (exception) {
-        logger.error('Failed to parse meta information file. Working from a blank slate.');
+        logger.error('Failed to parse imageMetaInformationModel information file. Working from a blank slate.');
         return;
     }
 
@@ -166,16 +166,16 @@ ImageMetaInformationModel.prototype.load = function () {
 
     // Calculate the biggest image difference of all sets
     this.calculateBiggestDifferences();
-    logger.info('Loading meta information finished.', config.getMetaInformationFilePath());
+    logger.info('Loading imageMetaInformationModel information finished.', config.getMetaInformationFilePath());
 };
 
 /**
- * Clears the content of the meta information model. The file with the meta information model will be updated.
+ * Clears the content of the imageMetaInformationModel information model. The file with the imageMetaInformationModel information model will be updated.
  * **/
 ImageMetaInformationModel.prototype.clear = function () {
     this.__initMetaInformationModel();
     this.save();
-    logger.info('Cleared content of meta information model.');
+    logger.info('Cleared content of imageMetaInformationModel information model.');
 };
 
 /**
@@ -262,7 +262,7 @@ ImageMetaInformationModel.prototype.__getIndexOfImageSet = function (id) {
 };
 
 /**
- * Initializes the meta information model with empty values.
+ * Initializes the imageMetaInformationModel information model with empty values.
  * **/
 ImageMetaInformationModel.prototype.__initMetaInformationModel = function () {
     this.biggestPercentualPixelDifference = 0;

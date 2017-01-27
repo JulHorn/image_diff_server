@@ -14,7 +14,7 @@ var ImageManipulator = function () {};
 
 /**
  * Creates a diff image of the reference and new image and saves it to the, in the configuration file configured, folder path.
- * Does not update the meta information itself.
+ * Does not update the imageMetaInformationModel information itself.
  *
  * @param imageName The name of the images that should be compared. The image must have the same name in the reference and new folder. The diff image will have the name, too.
  * @param autoCrop Determines if the new/reference images should be autocroped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
@@ -66,7 +66,7 @@ ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, call
             var diff = jimp.diff(referenceImage, newImage);
             fs.ensureDirSync(config.getResultImageFolderPath());
             diff.image.write(diffImagePath, function () {
-                // Create data structure for the gathering of meta information (distance and difference are between 0 and 0 -> * 100 for percent)
+                // Create data structure for the gathering of imageMetaInformationModel information (distance and difference are between 0 and 0 -> * 100 for percent)
                 callback(that.createCompleteImageSet(imageName, referenceImage, newImage, diff.image, diff.percent * 100, jimp.distance(referenceImage, newImage) * 100, ''));
             });
         });
@@ -77,7 +77,7 @@ ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, call
  * Deletes images of an image set.
  *
  * @param imageSet The image set from which the images should be deleted.
- * @param callback Called when the complete deletion process is done. Has the updated image meta information model object as job.
+ * @param callback Called when the complete deletion process is done. Has the updated image imageMetaInformationModel information model object as job.
  * **/
 ImageManipulator.prototype.deleteImageSetImages = function (imageSet, callback) {
 

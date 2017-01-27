@@ -13,6 +13,7 @@ var Job = function(jobName, callback) {
     this.processedImageCount = 0;
     this.imagesToBeProcessedCount = 0;
     this.imageManipulator = new ImageManipulator();
+    this.imageMetaInformationModel = imageMetaInformationModel;
 };
 
 /* ----- Getter ----- */
@@ -45,7 +46,7 @@ Job.prototype.getImageManipulator = function () {
 };
 
 Job.prototype.getImageMetaInformationModel = function () {
-  return imageMetaInformationModel;
+  return this.imageMetaInformationModel;
 };
 
 /* ----- Setter/Adder ----- */
@@ -65,7 +66,7 @@ Job.prototype.incrementProcessImageCounter = function() {
 /* ----- Helper ----- */
 
 /**
- * Calculates the the biggest percentual pixel difference/distance, sets the timestamp and saves the image meta information structure
+ * Calculates the the biggest percentual pixel difference/distance, sets the timestamp and saves the image imageMetaInformationModel information structure
  * to file.
  * **/
 Job.prototype.saveMetaInformation = function () {

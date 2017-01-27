@@ -27,11 +27,11 @@ DeleteJob.prototype.execute = function (callback) {
 };
 
 /**
- * Deletes an image set. It will be removed from the image meta information structure, the structure will be saved to file
+ * Deletes an image set. It will be removed from the image imageMetaInformationModel information structure, the structure will be saved to file
  * and the images will be deleted.
  *
  * @param id The id of the image set.
- * @param callback Called when the complete deletion process is done. Has the updated image meta information model object as parameter.
+ * @param callback Called when the complete deletion process is done. Has the updated image imageMetaInformationModel information model object as parameter.
  * **/
 DeleteJob.prototype.deleteImageSetFromModel = function (id, callback) {
     // Delete information about the data set and save the information
