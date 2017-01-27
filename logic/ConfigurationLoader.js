@@ -39,6 +39,13 @@ Configuration.prototype.getRequestTimeout = function () {
 };
 
 /**
+ * Returns the working mode. Currently 0 = "discard" or 1 = "queue".
+ * **/
+Configuration.prototype.getWorkingMode = function () {
+    return this.getServerConf().get('workingMode');
+};
+
+/**
  * Returns the image configuration.
  * **/
 Configuration.prototype.getImagesConfig = function () {

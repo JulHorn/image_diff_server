@@ -54,7 +54,8 @@ table th {
   text-overflow:ellipsis;
   overflow:hidden;
   white-space:nowrap;
-  text-align: left;
+  text-align: center;
+  font-size: 14px;
 }
 
 table tbody {

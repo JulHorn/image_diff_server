@@ -77,7 +77,8 @@ Connector.prototype.sendRequest = function (url, method, data, callback) {
  * **/
 Connector.prototype.getServerEndpoint = function () {
     if(!localStorage.imageDiffServerEndpoint){
-        localStorage.imageDiffServerEndpoint = "http://127.0.0.1:3000";
+        localStorage.imageDiffServerEndpoint = location.protocol
+            + '//' + location.hostname + (location.port ? ':' +location.port : '')
     }
 
     return localStorage.imageDiffServerEndpoint;

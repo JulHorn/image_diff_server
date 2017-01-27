@@ -1,6 +1,12 @@
 var ImageManipulator = require('../ImageManipulator');
 var imageMetaInformationModel = require('../model/ImageMetaInformationModel');
 
+/**
+ * Creates a new general job.
+ *
+ * @param jobName The name of the jjob. Used for descriptional purposes.
+ * @param callback The callback which will be called when the execution of this job has finished.
+ * **/
 var Job = function(jobName, callback) {
     this.jobName = jobName;
     this.callback = callback;
@@ -47,22 +53,29 @@ var Job = function(jobName, callback) {
 
 /* ----- Getter ----- */
 
+/**
+ * Returns the name of the job.
+ *
+ * @return Returns the name of the job.
+ * **/
 Job.prototype.getJobName = function () {
     return this.jobName;
 };
 
-Job.prototype.getImagesToBeProcessedCount = function () {
-    return this.imagesToBeProcessedCount;
-};
-
-Job.prototype.getProcessedImageCount = function () {
-    return this.processedImageCount;
-};
-
+/**
+ * Returns the callback function which will be given as parameter to the executed job execution.
+ *
+ * @return Returns the callback function which will be given as parameter to the executed job execution.
+ * **/
 Job.prototype.getCallbackFunction = function () {
     return this.callback;
 };
 
+/**
+ * Returns the object to manipulate images/create diffs.
+ *
+ * @return Returns the object to manipulate images/create diffs.
+ * **/
 Job.prototype.getImageManipulator = function () {
   return this.imageManipulator;
 };
