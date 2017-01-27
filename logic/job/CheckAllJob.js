@@ -56,8 +56,8 @@ CheckAllJob.prototype.createDiffImages = function (autoCrop, pixDiffThreshold, d
     var that = this;
 
     // Ensure that the folders which should contain the images exist
-    this.prototype.getImageManipulator().__ensureThatFolderStructureExist(config.getReferenceImageFolderPath());
-    this.prototype.getImageManipulator().__ensureThatFolderStructureExist(config.getNewImageFolderPath());
+    fs.ensureDirSync(config.getReferenceImageFolderPath());
+    fs.ensureDirSync(config.getNewImageFolderPath());
 
     logger.info("Trying to load reference images from:", config.getReferenceImageFolderPath());
     logger.info("Trying to load new images from:", config.getNewImageFolderPath());
@@ -152,7 +152,7 @@ CheckAllJob.prototype.__createSingleImages = function (refImageNames, newImageNa
             var newImageName = newImageNames.shift();
 
             this.prototype.getImageManipulator().loadImage(config.getNewImageFolderPath() + path.sep + newImageName, function (err, newImage) {
-                that.prototype.getImageMetaInformationModel().addImageSet(that.prototype.getImageManipulator().__createSingleImageSet(newImageName, newImage, 'There is no reference image existing yet.', false));
+                that.prototype.getImageMetaInformationModel().addImageSet(that.prototype.getImageManipulator().createSingleImageSet(newImageName, newImage, 'There is no reference image existing yet.', false));
 
                 // Increase the number of processed images by one
                 that.prototype.incrementProcessImageCounter();
@@ -164,7 +164,7 @@ CheckAllJob.prototype.__createSingleImages = function (refImageNames, newImageNa
 
             // Reference images
             this.prototype.getImageManipulator().loadImage(config.getReferenceImageFolderPath() + path.sep + refImageName, function (err, refImage) {
-                that.prototype.getImageMetaInformationModel().addImageSet(that.prototype.getImageManipulator().__createSingleImageSet(refImageName, refImage, 'There is no new image existing. Reference outdated?', true));
+                that.prototype.getImageMetaInformationModel().addImageSet(that.prototype.getImageManipulator().createSingleImageSet(refImageName, refImage, 'There is no new image existing. Reference outdated?', true));
 
                 // Increase the number of processed images by one
                 that.prototype.incrementProcessImageCounter();

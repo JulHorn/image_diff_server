@@ -1,17 +1,14 @@
+var ImageSetModel = require('./model/ImageSetModel');
 var jimp = require('jimp');
 var fs = require('fs-extra');
 var path = require('path');
 var config = require('./ConfigurationLoader');
-var ImageSetModel = require('./model/ImageSetModel');
-var ImageMetaInformationModel = require('./model/ImageMetaInformationModel');
 var logger = require('winston');
 
 /**
  * Constructor.
  * **/
-var ImageManipulator = function () {
-    this.imageMetaInformationModel = ImageMetaInformationModel;
-};
+var ImageManipulator = function () {};
 
 /* ----- Create Methods ----- */
 
@@ -49,8 +46,8 @@ ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, call
     }
 
     // Compute differences
-    jimp.read(referenceImagePath, function (err, referenceImage) {
-        jimp.read(newImagePath, function (err, newImage) {
+    this.loadImage(referenceImagePath, function (err, referenceImage) {
+        that.loadImage(newImagePath, function (err, newImage) {
 
             // If the image size is not identical and autocrop is off
             if((referenceImage.bitmap.height !== newImage.bitmap.height
@@ -67,24 +64,12 @@ ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, call
 
             // Create diff, ensure that folder structure exists and write file
             var diff = jimp.diff(referenceImage, newImage);
-            that.__ensureThatFolderStructureExist(config.getResultImageFolderPath());
+            fs.ensureDirSync(config.getResultImageFolderPath());
             diff.image.write(diffImagePath, function () {
-                // Create data structure for the gathering of meta informations (distance and difference are between 0 and 0 -> * 100 for percent)
-                callback(that.__createCompleteImageSet(imageName, referenceImage, newImage, diff.image, diff.percent * 100, jimp.distance(referenceImage, newImage) * 100, ''));
+                // Create data structure for the gathering of meta information (distance and difference are between 0 and 0 -> * 100 for percent)
+                callback(that.createCompleteImageSet(imageName, referenceImage, newImage, diff.image, diff.percent * 100, jimp.distance(referenceImage, newImage) * 100, ''));
             });
         });
-    });
-};
-
-/**
- * Loads an image via jimp.
- *
- * @param imagePath The complete path to the image file.
- * @param callback Called when the image was loaded. Returns the image as jimp object and an error object.
- * **/
-ImageManipulator.prototype.loadImage = function (imagePath, callback) {
-    jimp.read(imagePath, function (err, newImage) {
-        callback(err, newImage);
     });
 };
 
@@ -107,6 +92,18 @@ ImageManipulator.prototype.deleteImageSetImages = function (imageSet, callback) 
     }
 };
 
+/**
+ * Loads an image via jimp.
+ *
+ * @param imagePath The complete path to the image file.
+ * @param callback Called when the image was loaded. Returns the image as jimp object and an error object.
+ * **/
+ImageManipulator.prototype.loadImage = function (imagePath, callback) {
+    jimp.read(imagePath, function (err, newImage) {
+        callback(err, newImage);
+    });
+};
+
 /* ----- Creation Helper Methods ----- */
 
 /**
@@ -119,7 +116,7 @@ ImageManipulator.prototype.deleteImageSetImages = function (imageSet, callback) 
  *
  * @return The constructed image set containing the information.
  * **/
-ImageManipulator.prototype.__createSingleImageSet = function (imageName, image, error, isReferenceImage) {
+ImageManipulator.prototype.createSingleImageSet = function (imageName, image, error, isReferenceImage) {
     var imageSet = new ImageSetModel();
 
     // Set error values
@@ -156,7 +153,7 @@ ImageManipulator.prototype.__createSingleImageSet = function (imageName, image, 
  *
  * @return The constructed image set containing the information.
  * **/
-ImageManipulator.prototype.__createCompleteImageSet = function(imageName, referenceImage, newImage, diffImage, difference, distance, error){
+ImageManipulator.prototype.createCompleteImageSet = function(imageName, referenceImage, newImage, diffImage, difference, distance, error){
     var imageSet = new ImageSetModel();
 
     imageSet.setDifference(difference);
@@ -195,15 +192,6 @@ ImageManipulator.prototype.__autoCrop = function (image1, image2, autoCrop) {
         image1.autocrop();
         image2.autocrop();
     }
-};
-
-/**
- * Ensures that the folder structure exists, if it does not already exist.
- *
- * @param folder The folder which should be created, if it does not already exist.
- * **/
-ImageManipulator.prototype.__ensureThatFolderStructureExist = function(folder){
-    fs.ensureDirSync(folder);
 };
 
 /**
