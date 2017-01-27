@@ -1,22 +1,25 @@
 var Job = require('./Job');
 
 var DeleteJob = function (id, callback) {
-    this.prototype = new Job('Delete Set', callback);
+    Job.call(this, 'Delete Set', callback);
     this.id = id;
 };
+
+// Do inheritance
+DeleteJob.prototype = Object.create(Job.prototype);
 
 /* ----- Action ----- */
 
 DeleteJob.prototype.execute = function (callback) {
-        var imageSet = this.prototype.getImageMetaInformationModel().getImageSetById(this.id);
+        var imageSet = this.getImageMetaInformationModel().getImageSetById(this.id);
         var that = this;
 
         // Sinlge option -> Only one image has to be processed
-        this.prototype.setImagesToBeProcessedCount(1);
+        this.setImagesToBeProcessedCount(1);
 
         // Delete images
-        this.prototype.getImageManipulator().deleteImageSetImages(imageSet, function () {
-            that.deleteImageSetFromModel(that.id, that.prototype.getCallbackFunction());
+        this.getImageManipulator().deleteImageSetImages(imageSet, function () {
+            that.deleteImageSetFromModel(that.id, that.getCallbackFunction());
 
             // Notify the job handler that this job is finished
             callback();
@@ -32,15 +35,15 @@ DeleteJob.prototype.execute = function (callback) {
  * **/
 DeleteJob.prototype.deleteImageSetFromModel = function (id, callback) {
     // Delete information about the data set and save the information
-    this.prototype.getImageMetaInformationModel().deleteImageSetFromModel(id);
-    this.prototype.saveMetaInformation();
+    this.getImageMetaInformationModel().deleteImageSetFromModel(id);
+    this.saveMetaInformation();
 
     // One image set was deleted -> Update job process state
-    this.prototype.incrementProcessImageCounter();
+    this.incrementProcessImageCounter();
 
     // Call callback of the job creator when stuff is done
     if(callback){
-        callback(this.prototype.getImageMetaInformationModel());
+        callback(this.getImageMetaInformationModel());
     }
 };
 

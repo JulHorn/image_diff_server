@@ -11,7 +11,6 @@ var configuration = require('./ConfigurationLoader');
  * **/
 var JobHandler = function() {
     this.isJobRunning = false;
-    // ToDo: Load behaviour from config file -> Better to use an int/constant whatever?
     this.behaviour = configuration.getWorkingMode();
     this.jobQueue = [];
     this.runningJob = null;

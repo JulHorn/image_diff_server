@@ -14,11 +14,14 @@ var fs = require('fs-extra');
  * @param callback The callback method which is called, when diff process as finished. Has the imageMetaInformationModel as job. Optional.
  * **/
 var CheckAllJob = function (autoCrop, pixDiffThreshold, distThreshold, callback) {
-    this.prototype = new Job('Check All', callback);
+    Job.call(this, 'Check All', callback);
     this.autoCrop = autoCrop;
     this.pixDiffThreshold = pixDiffThreshold;
     this.distThreshold = distThreshold;
 };
+
+// Do inheritance
+CheckAllJob.prototype = Object.create(Job.prototype);
 
 /* ----- Action ----- */
 
@@ -31,11 +34,11 @@ CheckAllJob.prototype.execute = function (callback) {
     var that = this;
 
     this.createDiffImages(this.autoCrop, this.pixDiffThreshold, this.distThreshold, function () {
-        var jobCreatorCallback = that.prototype.getCallbackFunction();
+        var jobCreatorCallback = that.getCallbackFunction();
 
         /// Call callback of the job creator when stuff is done
         if (jobCreatorCallback) {
-            jobCreatorCallback(that.prototype.getImageMetaInformationModel());
+            jobCreatorCallback(that.getImageMetaInformationModel());
         }
 
         // Notify the job handler that this job is finished
@@ -75,14 +78,14 @@ CheckAllJob.prototype.createDiffImages = function (autoCrop, pixDiffThreshold, d
     var newDiffImageNames = this.__getImageNames(newImageNames, refImageNames, true);
 
     // Tell the job how many images have to be processed
-    this.prototype.setImagesToBeProcessedCount(refDiffImageNames.length + newDiffImageNames.length + imageNames.length);
+    this.setImagesToBeProcessedCount(refDiffImageNames.length + newDiffImageNames.length + imageNames.length);
 
     // Create diff images
     this.__createSingleImages(refDiffImageNames, newDiffImageNames, function () {
         that.__createDiffImages(imageNames, autoCrop, pixDiffThreshold, distThreshold, function () {
-            that.prototype.saveMetaInformation();
+            that.saveMetaInformation();
             if(callback) {
-                callback(that.prototype.getImageMetaInformationModel());
+                callback(that.getImageMetaInformationModel());
             }
         });
     });
@@ -113,8 +116,8 @@ CheckAllJob.prototype.__createDiffImages = function (imageNames, autoCrop, pixDi
         // Create diff image
         var imageToProcess = imageNames.shift();
         var that = this;
-        //this.prototype.incrementProcessImageCounter();
-        that.prototype.getImageManipulator().createDiffImage(imageToProcess, autoCrop, function (resultSet) {
+        //this.incrementProcessImageCounter();
+        that.getImageManipulator().createDiffImage(imageToProcess, autoCrop, function (resultSet) {
             // Only add images if a a threshold was breached
             if (resultSet.getDistance() > distThreshold
                 || resultSet.getDifference() > pixDiffThreshold) {
@@ -122,7 +125,7 @@ CheckAllJob.prototype.__createDiffImages = function (imageNames, autoCrop, pixDi
             }
 
             // Increase the number of processed images by one
-            that.prototype.incrementProcessImageCounter();
+            that.incrementProcessImageCounter();
 
             that.__createDiffImages(imageNames, autoCrop, pixDiffThreshold, distThreshold, callback);
         });
@@ -151,11 +154,11 @@ CheckAllJob.prototype.__createSingleImages = function (refImageNames, newImageNa
         if(newImageNames.length > 0) {
             var newImageName = newImageNames.shift();
 
-            this.prototype.getImageManipulator().loadImage(config.getNewImageFolderPath() + path.sep + newImageName, function (err, newImage) {
-                that.prototype.getImageMetaInformationModel().addImageSet(that.prototype.getImageManipulator().createSingleImageSet(newImageName, newImage, 'There is no reference image existing yet.', false));
+            this.getImageManipulator().loadImage(config.getNewImageFolderPath() + path.sep + newImageName, function (err, newImage) {
+                that.getImageMetaInformationModel().addImageSet(that.getImageManipulator().createSingleImageSet(newImageName, newImage, 'There is no reference image existing yet.', false));
 
                 // Increase the number of processed images by one
-                that.prototype.incrementProcessImageCounter();
+                that.incrementProcessImageCounter();
 
                 that.__createSingleImages(refImageNames, newImageNames, callback);
             });
@@ -163,11 +166,11 @@ CheckAllJob.prototype.__createSingleImages = function (refImageNames, newImageNa
             var refImageName = refImageNames.shift();
 
             // Reference images
-            this.prototype.getImageManipulator().loadImage(config.getReferenceImageFolderPath() + path.sep + refImageName, function (err, refImage) {
-                that.prototype.getImageMetaInformationModel().addImageSet(that.prototype.getImageManipulator().createSingleImageSet(refImageName, refImage, 'There is no new image existing. Reference outdated?', true));
+            this.getImageManipulator().loadImage(config.getReferenceImageFolderPath() + path.sep + refImageName, function (err, refImage) {
+                that.getImageMetaInformationModel().addImageSet(that.getImageManipulator().createSingleImageSet(refImageName, refImage, 'There is no new image existing. Reference outdated?', true));
 
                 // Increase the number of processed images by one
-                that.prototype.incrementProcessImageCounter();
+                that.incrementProcessImageCounter();
 
                 that.__createSingleImages(refImageNames, newImageNames, callback);
             });

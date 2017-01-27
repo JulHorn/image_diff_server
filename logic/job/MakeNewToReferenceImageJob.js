@@ -4,9 +4,12 @@ var config = require('../ConfigurationLoader');
 var path = require('path');
 
 var MakeNewToReferenceImageJob = function (id, callback) {
-    this.prototype = new Job('Make to new baseline image', callback);
+    Job.call(this, 'Make to new baseline image', callback);
     this.id = id;
 };
+
+// Do inheritance
+MakeNewToReferenceImageJob.prototype = Object.create(Job.prototype);
 
 /* ----- Action ----- */
 
@@ -14,12 +17,12 @@ MakeNewToReferenceImageJob.prototype.execute = function (callback) {
     var that = this;
 
     // Sinlge option -> Only one image has to be processed
-    this.prototype.setImagesToBeProcessedCount(1);
+    this.setImagesToBeProcessedCount(1);
 
     this.__makeToNewReferenceImage(this.id, function () {
-        var jobCreatorCallback = that.prototype.getCallbackFunction();
+        var jobCreatorCallback = that.getCallbackFunction();
         // Update the processed image count
-        that.prototype.incrementProcessImageCounter();
+        that.incrementProcessImageCounter();
 
         /// Call callback of the job creator when stuff is done
         if (jobCreatorCallback) {
@@ -38,7 +41,7 @@ MakeNewToReferenceImageJob.prototype.execute = function (callback) {
  * @param callback Called when the complete deletion process is done. Has the updated image meta information model object as job.
  * **/
 MakeNewToReferenceImageJob.prototype.__makeToNewReferenceImage = function (id, callback) {
-    var imageSet = this.prototype.getImageMetaInformationModel().getImageSetById(id);
+    var imageSet = this.getImageMetaInformationModel().getImageSetById(id);
     var that = this;
 
     // Copy new image to reference image
@@ -50,7 +53,7 @@ MakeNewToReferenceImageJob.prototype.__makeToNewReferenceImage = function (id, c
         }
 
         // Create diff -> Autocrop is set to false because the images should be identical
-        that.prototype.getImageManipulator().createDiffImage(imageSet.getNewImage().getName(), false, function (resultSet) {
+        that.getImageManipulator().createDiffImage(imageSet.getNewImage().getName(), false, function (resultSet) {
             // Set new diff information to existing image set
             imageSet.setDifference(resultSet.getDifference());
             imageSet.setError(resultSet.getError());
@@ -59,11 +62,11 @@ MakeNewToReferenceImageJob.prototype.__makeToNewReferenceImage = function (id, c
             imageSet.setDiffImage(resultSet.getDiffImage());
 
             // Save meta information
-            that.prototype.saveMetaInformation();
+            that.saveMetaInformation();
 
             // Call callback
             if(callback){
-                callback(that.prototype.getImageMetaInformationModel());
+                callback(that.getImageMetaInformationModel());
             }
         });
     });
