@@ -1,10 +1,10 @@
-var JobModel = require('./Job');
+var Job = require('./Job');
 var fs = require('fs-extra');
 var config = require('../ConfigurationLoader');
 var path = require('path');
 
 var MakeNewToReferenceImageJob = function (id, callback) {
-    this.prototype = new JobModel('Make to new baseline image', callback);
+    this.prototype = new Job('Make to new baseline image', callback);
     this.id = id;
 };
 

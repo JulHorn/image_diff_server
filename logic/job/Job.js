@@ -5,9 +5,7 @@ var Job = function(jobName, callback) {
     this.jobName = jobName;
     this.callback = callback;
     this.processedImageCount = 0;
-    // Expect that only one image has to be processed as default and change the number in the method in which more than
-    // one image should be processed (e.g. check all images etc.)
-    this.imagesToBeProcessedCount = 1;
+    this.imagesToBeProcessedCount = 0;
     this.imageManipulator = new ImageManipulator();
 };
 

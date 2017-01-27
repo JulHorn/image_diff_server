@@ -47,24 +47,6 @@ JobHandler.prototype.addJob = function (job) {
     }
 };
 
-JobHandler.prototype.setImagesToBeProcessedCount = function(imagesToBeProcessedCount) {
-    if(this.isJobRunning && this.runningJob) {
-        this.runningJob.prototype.setImagesToBeProcessedCount(imagesToBeProcessedCount);
-    }
-};
-
-JobHandler.prototype.setProcessedImageCount = function(processedImageCount) {
-    if(this.isJobRunning && this.runningJob) {
-        this.runningJob.prototype.setProcessedImageCount(processedImageCount);
-    }
-};
-
-JobHandler.prototype.incrementProcessImageCounter = function() {
-    if(this.isJobRunning && this.runningJob) {
-        this.runningJob.prototype.incrementProcessImageCounter();
-    }
-};
-
 /* ----- Privates ----- */
 
 /**
