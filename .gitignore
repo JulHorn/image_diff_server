@@ -1,1 +1,12 @@
 node_modules/
+.idea/copyright/profiles_settings.xml
+.idea/deployment.xml
+.idea/encodings.xml
+.idea/image_diff_server.iml
+.idea/jsLibraryMappings.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/workspace.xml
+config/default.json
+data/metaInformation.json

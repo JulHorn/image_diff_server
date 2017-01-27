@@ -1,4 +1,4 @@
-var JobModel = require('./JobModel');
+var JobModel = require('./Job');
 
 var DeleteJob = function (id, callback) {
     this.prototype = new JobModel('Delete Set', callback);
@@ -17,10 +17,10 @@ DeleteJob.prototype.execute = function (callback) {
         // Delete images
         this.prototype.getImageManipulator().deleteImageSetImages(imageSet, function () {
             that.deleteImageSetFromModel(that.id, that.prototype.getCallbackFunction());
-        });
 
-        // Notify the job handler that this job is finished
-        callback();
+            // Notify the job handler that this job is finished
+            callback();
+        });
 };
 
 /**

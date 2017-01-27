@@ -1,4 +1,4 @@
-var Job = require('./JobModel');
+var Job = require('./Job');
 
 /**
  * Job which computes diff images for all images with the same name in the reference/new folder (configured in the config file). The diff images will

@@ -1,5 +1,5 @@
-var ImageManipulator = require('./../../ImageManipulator');
-var imageMetaInformationModel = require('../ImageMetaInformationModel');
+var ImageManipulator = require('../ImageManipulator');
+var imageMetaInformationModel = require('../model/ImageMetaInformationModel');
 
 var Job = function(jobName, callback) {
     this.jobName = jobName;

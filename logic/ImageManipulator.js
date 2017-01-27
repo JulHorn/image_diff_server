@@ -70,8 +70,6 @@ ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, call
             var diff = jimp.diff(referenceImage, newImage);
             that.__ensureThatFolderStructureExist(config.getResultImageFolderPath());
             diff.image.write(diffImagePath, function () {
-                // Update the processed image count
-                jobHandler.incrementProcessImageCounter();
                 // Create data structure for the gathering of meta informations (distance and difference are between 0 and 0 -> * 100 for percent)
                 callback(that.__createCompleteImageSet(imageName, referenceImage, newImage, diff.image, diff.percent * 100, jimp.distance(referenceImage, newImage) * 100, ''));
             });
@@ -123,47 +121,6 @@ ImageManipulator.prototype.createDiffImages = function (autoCrop, pixDiffThresho
         });
     });
 
-};
-
-/**
- * Makes a new image to a reference image. Updates and save the meta information model.
- *
- * @param id Id of the image set for which the new image should be made a reference image.
- * @param callback Called when the complete deletion process is done. Has the updated image meta information model object as job.
- * **/
-ImageManipulator.prototype.makeToNewReferenceImage = function (id, callback) {
-    var imageSet = ImageMetaInformationModel.getImageSetById(id);
-    var that = this;
-
-    logger.info('Attempting to copy ' + imageSet.getNewImage().getPath() + ' to ' + config.getReferenceImageFolderPath() + path.sep + imageSet.getNewImage().getName());
-
-    fs.copy(imageSet.getNewImage().getPath(), config.getReferenceImageFolderPath() + path.sep + imageSet.getNewImage().getName(), function (err) {
-
-        // Error handling
-        if(err){
-            throw Error('Failed to copy new image reference images.', err);
-        }
-
-        // Create diff -> Autocrop is set to false because the images should be identical
-        that.createDiffImage(imageSet.getNewImage().getName(), false, function (resultSet) {
-            // Set new diff information to existing image set
-            imageSet.setDifference(resultSet.getDifference());
-            imageSet.setError(resultSet.getError());
-            imageSet.setDistance(resultSet.getDistance());
-            imageSet.setReferenceImage(resultSet.getReferenceImage());
-            imageSet.setDiffImage(resultSet.getDiffImage());
-
-            // Save meta information
-            ImageMetaInformationModel.calculateBiggestDifferences();
-            ImageMetaInformationModel.setTimeStamp(new Date().toISOString());
-            ImageMetaInformationModel.save();
-
-            // Call callback
-            if(callback){
-                callback(ImageMetaInformationModel);
-            }
-        });
-    });
 };
 
 /**

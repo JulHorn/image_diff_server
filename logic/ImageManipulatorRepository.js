@@ -5,9 +5,9 @@ var logger = require('winston');
 var ImageManipulator = require('./ImageManipulator');
 var config = require('./ConfigurationLoader');
 var jobHandler = require('./JobHandler');
-var CheckAllJobModel = require('./model/job/CheckAllJob');
-var DeleteJob = require('./model/job/DeleteJob');
-var CheckOneJob = require('./model/job/CheckOneJob');
+var CheckAllJobModel = require('./job/CheckAllJob');
+var DeleteJob = require('./job/DeleteJob');
+var MakeToNewReferenceImageJob = require('./job/MakeNewToReferenceImageJob');
 
 /**
  * Constructor.
@@ -72,10 +72,10 @@ ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function
  * @param id Id of the image set for which the new image should be made a reference image.
  * @param callback Called when the complete deletion process is done. Has the updated image meta information model object as job.
  * **/
-ImageManipulatorRepository.prototype.makeToNewReferenceImage = function (id, callback) {
+ImageManipulatorRepository.prototype.__makeToNewReferenceImage = function (id, callback) {
     // Add create diff images job to the job handler
     jobHandler.addJob(
-        new CheckOneJob(id, function () {
+        new MakeToNewReferenceImageJob(id, function () {
             if (callback) {
                 callback(ImageMetaInformationModel);
             }
