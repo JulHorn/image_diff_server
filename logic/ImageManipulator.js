@@ -5,7 +5,6 @@ var config = require('./ConfigurationLoader');
 var ImageSetModel = require('./model/ImageSetModel');
 var ImageMetaInformationModel = require('./model/ImageMetaInformationModel');
 var logger = require('winston');
-var jobHandler = require('./JobHandler');
 
 /**
  * Constructor.
@@ -78,49 +77,15 @@ ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, call
 };
 
 /**
- * Computes diff images for all images with the same name in the reference/new folder (configured in the config file). The diff images will
- * written in the diff image folder. Updated the meta structure.
+ * Loads an image via jimp.
  *
- * @param autoCrop Determines if the new/reference images should be autocroped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
- * @param pixDiffThreshold The pixel threshold.
- * @param distThreshold The distance threshold.
- * @param callback The callback method which is called, when diff process as finished. Has the imageMetaInformationModel as job. Optional.
+ * @param imagePath The complete path to the image file.
+ * @param callback Called when the image was loaded. Returns the image as jimp object and an error object.
  * **/
-ImageManipulator.prototype.createDiffImages = function (autoCrop, pixDiffThreshold, distThreshold, callback) {
-    var that = this;
-
-    // Ensure that the folders which should contain the images exist
-    this.__ensureThatFolderStructureExist(config.getReferenceImageFolderPath());
-    this.__ensureThatFolderStructureExist(config.getNewImageFolderPath());
-
-    logger.info("Trying to load reference images from:", config.getReferenceImageFolderPath());
-    logger.info("Trying to load new images from:", config.getNewImageFolderPath());
-
-    // Read supported images
-    var refImageNames = fs.readdirSync(config.getReferenceImageFolderPath()).filter(this.__imageFilter);
-    var newImageNames = fs.readdirSync(config.getNewImageFolderPath()).filter(this.__imageFilter);
-
-    logger.info("Reference images loaded:", refImageNames.length);
-    logger.info("New images loaded:", newImageNames.length);
-
-    // Get images that exist in both or only in one folder
-    var imageNames = that.__getImageNames(refImageNames, newImageNames, false);
-    var refDiffImageNames = that.__getImageNames(refImageNames, newImageNames, true);
-    var newDiffImageNames = that.__getImageNames(newImageNames, refImageNames, true);
-
-    // Tell the job how many images have to be processed
-    jobHandler.setImagesToBeProcessedCount(refDiffImageNames.length + newDiffImageNames.length + imageNames.length);
-
-    // Create diff images
-    that.__createSingleImages(refDiffImageNames, newDiffImageNames, function () {
-        that.__createDiffImages(imageNames, autoCrop, pixDiffThreshold, distThreshold, function () {
-            that.__saveMetaInformation();
-            if(callback) {
-                callback(that.imageMetaInformationModel);
-            }
-        });
+ImageManipulator.prototype.loadImage = function (imagePath, callback) {
+    jimp.read(imagePath, function (err, newImage) {
+        callback(err, newImage);
     });
-
 };
 
 /**
@@ -143,81 +108,6 @@ ImageManipulator.prototype.deleteImageSetImages = function (imageSet, callback) 
 };
 
 /* ----- Creation Helper Methods ----- */
-
-/**
- * Creates diff images of images with the same name in the reference/new folder.
- * Updates the image meta information structure, but does not save it.
- *
- * @param imageNames Array of image names which should be compared.
- * @param autoCrop Determines if the new/reference images should be autocroped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
- * @param pixDiffThreshold
- * @param distThreshold
- * @param callback Will be called, when the method has finished to compute all images. Has the number of processed images as job.
- * **/
-ImageManipulator.prototype.__createDiffImages = function (imageNames, autoCrop, pixDiffThreshold, distThreshold, callback) {
-
-    logger.info("Number of images left to compare: ", imageNames.length);
-    // If no images are left to process, call the callback method and stop
-    if(imageNames.length == 0) {
-        logger.info('No images left to compare.');
-        if(callback){
-            callback();
-        }
-
-    } else {
-
-        // Create diff image
-        var imageToProcess = imageNames.shift();
-        var that = this;
-        that.createDiffImage(imageToProcess, autoCrop, function (resultSet) {
-            // Only add images if a a threshold was breached
-            if (resultSet.getDistance() > distThreshold
-                || resultSet.getDifference() > pixDiffThreshold) {
-                that.imageMetaInformationModel.addImageSet(resultSet);
-            }
-
-            that.__createDiffImages(imageNames, autoCrop, pixDiffThreshold, distThreshold, callback);
-        });
-    }
-};
-
-/**
- * Adds images with new reference/new pedant to the image meta information structure.
- * Updates the image meta information structure, but does not save it.
- *
- * @param refImageNames Array of image names which exist in the reference image folder, but not in the new image folder.
- * @param newImageNames Array of image names which exist in the new image folder, but not in the new reference folder.
- * @param callback Will be called, when the method has finished to compute all images. Has the number of processed images as job.
- * **/
-ImageManipulator.prototype.__createSingleImages = function (refImageNames, newImageNames, callback) {
-    var that = this;
-
-    if(refImageNames.length == 0 && newImageNames.length == 0) {
-        logger.info('No single images left to process.');
-        callback();
-    } else {
-
-        logger.info('Single images left to process:', refImageNames.length + newImageNames.length);
-
-        // New and ref images
-        if(newImageNames.length > 0) {
-            var newImageName = newImageNames.shift();
-
-            jimp.read(config.getNewImageFolderPath() + path.sep + newImageName, function (err, newImage) {
-                that.imageMetaInformationModel.addImageSet(that.__createSingleImageSet(newImageName, newImage, 'There is no reference image existing yet.', false));
-                that.__createSingleImages(refImageNames, newImageNames, callback);
-            });
-        } else if(refImageNames.length > 0) {
-            var refImageName = refImageNames.shift();
-
-            // Reference images
-            jimp.read(config.getReferenceImageFolderPath() + path.sep + refImageName, function (err, refImage) {
-                that.imageMetaInformationModel.addImageSet(that.__createSingleImageSet(refImageName, refImage, 'There is no new image existing. Reference outdated?', true));
-                that.__createSingleImages(refImageNames, newImageNames, callback);
-            });
-        }
-    }
-};
 
 /**
  * Creates an image set for one image only (there exists only a reference or new image).
@@ -294,39 +184,6 @@ ImageManipulator.prototype.__createCompleteImageSet = function(imageName, refere
 /* ----- Other helper methods ----- */
 
 /**
- * Gets the images which are in one array and not the other or which in both arrays.
- *
- * @param fileNameArray1 The first array.
- * @param fileNameArray2 The second array.
- * @param differentImages If true, returns the the images which are in array 1 and not array 2. If false, returns the images
- * which are in both arrays.
- * **/
-ImageManipulator.prototype.__getImageNames = function(fileNameArray1, fileNameArray2, differentImages){
-
-    // Get the images that are only in the first array
-    if(differentImages){
-        return fileNameArray1.filter(function(element){
-            return !fileNameArray2.includes(element);
-        });
-    }
-
-    // Get the images that are in both arrays
-    return fileNameArray1.filter(function(element){
-        return fileNameArray2.includes(element);
-    });
-};
-
-/**
- * Calculates the the biggest percentual pixel difference/distance, sets the timestamp and saves the image meta information structure
- * to file.
- * **/
-ImageManipulator.prototype.__saveMetaInformation = function () {
-    this.imageMetaInformationModel.calculateBiggestDifferences();
-    this.imageMetaInformationModel.setTimeStamp(new Date().toISOString());
-    this.imageMetaInformationModel.save();
-};
-
-/**
  * Autocrops two images.
  *
  * @param image1 The first image to autocrop.
@@ -362,15 +219,6 @@ ImageManipulator.prototype.__isImageExisting = function (imagePath) {
     } catch(err) {
         return false;
     }
-};
-
-/**
- * A simple filter function for arrays to determine wheter a file is one of the supported image types.
- *
- * @param imageName The image name including its type suffix.
- * **/
-ImageManipulator.prototype.__imageFilter = function (imageName) {
-    return imageName.toLowerCase().endsWith('.png');
 };
 
 /**

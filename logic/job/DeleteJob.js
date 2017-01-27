@@ -8,7 +8,7 @@ var DeleteJob = function (id, callback) {
 /* ----- Action ----- */
 
 DeleteJob.prototype.execute = function (callback) {
-        var imageSet = this.prototype.getMetaInformationModel().getImageSetById(this.id);
+        var imageSet = this.prototype.getImageMetaInformationModel().getImageSetById(this.id);
         var that = this;
 
         // Sinlge option -> Only one image has to be processed
@@ -32,7 +32,7 @@ DeleteJob.prototype.execute = function (callback) {
  * **/
 DeleteJob.prototype.deleteImageSetFromModel = function (id, callback) {
     // Delete information about the data set and save the information
-    this.prototype.getMetaInformationModel().deleteImageSetFromModel(id);
+    this.prototype.getImageMetaInformationModel().deleteImageSetFromModel(id);
     this.prototype.saveMetaInformation();
 
     // One image set was deleted -> Update job process state
@@ -40,7 +40,7 @@ DeleteJob.prototype.deleteImageSetFromModel = function (id, callback) {
 
     // Call callback of the job creator when stuff is done
     if(callback){
-        callback(this.prototype.getMetaInformationModel());
+        callback(this.prototype.getImageMetaInformationModel());
     }
 };
 

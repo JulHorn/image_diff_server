@@ -38,7 +38,7 @@ MakeNewToReferenceImageJob.prototype.execute = function (callback) {
  * @param callback Called when the complete deletion process is done. Has the updated image meta information model object as job.
  * **/
 MakeNewToReferenceImageJob.prototype.__makeToNewReferenceImage = function (id, callback) {
-    var imageSet = this.prototype.getMetaInformationModel().getImageSetById(id);
+    var imageSet = this.prototype.getImageMetaInformationModel().getImageSetById(id);
     var that = this;
 
     // Copy new image to reference image
@@ -63,7 +63,7 @@ MakeNewToReferenceImageJob.prototype.__makeToNewReferenceImage = function (id, c
 
             // Call callback
             if(callback){
-                callback(that.prototype.getMetaInformationModel());
+                callback(that.prototype.getImageMetaInformationModel());
             }
         });
     });
