@@ -57,12 +57,15 @@ Connector.prototype.sendRequest = function (url, method, data, callback) {
     .done(function (data) {
         console.log('Request was successfull: ', url, method, data);
 
-        if(callback && (typeof data.data === 'undefined' || data.data === null)){
-            callback(data.message);
-        } else if (callback){
-            callback(JSON.parse(data.data));
+        if (callback) {
+            if (typeof data.data === 'undefined' || data.data === null) {
+                callback(data.message);
+            }else if (typeof data.data == 'object') {
+                callback(data.data);
+            } else {
+                callback(JSON.parse(data.data));
+            }
         }
-
     })
     .fail(function (data) {
         console.log('Request failure: ', url, method, data);

@@ -11,19 +11,25 @@ DeleteJob.prototype = Object.create(Job.prototype);
 /* ----- Action ----- */
 
 DeleteJob.prototype.execute = function (callback) {
-        var imageSet = this.getImageMetaInformationModel().getImageSetById(this.id);
-        var that = this;
+    var imageSet = this.getImageMetaInformationModel().getImageSetById(this.id);
+    var that = this;
 
-        // Sinlge option -> Only one image has to be processed
-        this.setImagesToBeProcessedCount(1);
+    // Sinlge option -> Only one image has to be processed
+    this.setImagesToBeProcessedCount(1);
 
-        // Delete images
-        this.getImageManipulator().deleteImageSetImages(imageSet, function () {
-            that.deleteImageSetFromModel(that.id, that.getCallbackFunction());
+    // Delete images
+    this.getImageManipulator().deleteImageSetImages(imageSet, function () {
+        that.deleteImageSetFromModel(that.id, function () {
+            var jobCreatorCallback = that.getCallbackFunction();
 
-            // Notify the job handler that this job is finished
-            callback();
+            if(jobCreatorCallback) {
+                jobCreatorCallback(that);
+            }
         });
+
+        // Notify the job handler that this job is finished
+        callback();
+    });
 };
 
 /**
@@ -43,7 +49,7 @@ DeleteJob.prototype.deleteImageSetFromModel = function (id, callback) {
 
     // Call callback of the job creator when stuff is done
     if(callback){
-        callback(this.getImageMetaInformationModel());
+        callback();
     }
 };
 

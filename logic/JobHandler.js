@@ -1,3 +1,4 @@
+var Job = require('./job/Job');
 var logger = require('winston');
 var configuration = require('./ConfigurationLoader');
 
@@ -13,7 +14,11 @@ var JobHandler = function() {
     this.isJobRunning = false;
     this.behaviour = configuration.getWorkingMode();
     this.jobQueue = [];
+    this.jobHistory = [];
     this.runningJob = null;
+
+    // Add an empty job which can always be returned
+    this.jobHistory.push(new Job());
 };
 
 /* ----- Getter ----- */
@@ -22,8 +27,15 @@ JobHandler.prototype.isJobRunning = function () {
     return this.isJobRunning;
 };
 
-JobHandler.prototype.getRunningJob = function () {
-    return this.runningJob;
+JobHandler.prototype.getLastActiveJob = function () {
+    if(this.runningJob) {
+        return this.runningJob;
+    } else if(this.jobHistory.length > 0) {
+        return this.jobHistory[this.jobHistory.length - 1];
+    }
+
+    logger.error('No job available to return. Something seems to be amiss in the Job Handler.');
+    throw Error('No job available to return. Something seems to be amiss in the Job Handler.');
 };
 
 /* ----- Setter/Adder ----- */
@@ -68,7 +80,9 @@ JobHandler.prototype.__executeJob = function() {
             // ToDo: Error handling: If something happens, the job locks the execution queue forever
             logger.info('Executing job:', this.runningJob.getJobName());
             this.runningJob.execute(function () {
+                // When finished: Put the job on the history stack
                 that.isJobRunning = false;
+                that.jobHistory.push(that.runningJob);
                 that.runningJob = null;
 
                 // Execute the next job

@@ -26,7 +26,7 @@ MakeNewToReferenceImageJob.prototype.execute = function (callback) {
 
         /// Call callback of the job creator when stuff is done
         if (jobCreatorCallback) {
-            jobCreatorCallback();
+            jobCreatorCallback(that);
         }
 
         // Notify the job handler that this job is finished
@@ -66,7 +66,7 @@ MakeNewToReferenceImageJob.prototype.__makeToNewReferenceImage = function (id, c
 
             // Call callback
             if(callback){
-                callback(that.getImageMetaInformationModel());
+                callback();
             }
         });
     });

@@ -43,24 +43,24 @@ ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function
 
     // Add create diff images job to the job handler
     jobHandler.addJob(
-        new CheckAllJobModel(autoCropValue, pixDiffThresholdValue, distThresholdValue, function (metaInformationModel) {
+        new CheckAllJobModel(autoCropValue, pixDiffThresholdValue, distThresholdValue, function (job) {
             logger.info('---------- End ----------', new Date().toISOString());
 
-            var isBiggestDistanceDiffThresholdBreached = metaInformationModel.getBiggestDistanceDifference() > distThresholdValue;
-            var isBiggestPixelDiffThresholdBreached = metaInformationModel.getBiggestPercentualPixelDifference() > pixDiffThresholdValue;
+            var isBiggestDistanceDiffThresholdBreached = job.getImageMetaInformationModel().getBiggestDistanceDifference() > distThresholdValue;
+            var isBiggestPixelDiffThresholdBreached = job.getImageMetaInformationModel().getBiggestPercentualPixelDifference() > pixDiffThresholdValue;
 
             logger.info("Percentual pixel difference:"
                 + "\nThreshold breached " + isBiggestPixelDiffThresholdBreached
                 + "\nAllowed threshold: " + pixDiffThresholdValue
-                + "\nDifference:" + metaInformationModel.getBiggestPercentualPixelDifference());
+                + "\nDifference:" + job.getImageMetaInformationModel().getBiggestPercentualPixelDifference());
 
             logger.info("Distance difference:"
                 + "\nThreshold breached " + isBiggestDistanceDiffThresholdBreached
                 + "\nAllowed threshold: " + distThresholdValue
-                + "\nDifference:" + metaInformationModel.getBiggestDistanceDifference());
+                + "\nDifference:" + job.getImageMetaInformationModel().getBiggestDistanceDifference());
 
                 if (callback) {
-                callback(metaInformationModel, isBiggestDistanceDiffThresholdBreached || isBiggestPixelDiffThresholdBreached);
+                callback(job, isBiggestDistanceDiffThresholdBreached || isBiggestPixelDiffThresholdBreached);
             }
         })
     );
@@ -75,9 +75,9 @@ ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function
 ImageManipulatorRepository.prototype.makeToNewReferenceImage = function (id, callback) {
     // Add create diff images job to the job handler
     jobHandler.addJob(
-        new MakeToNewReferenceImageJob(id, function () {
+        new MakeToNewReferenceImageJob(id, function (job) {
             if (callback) {
-                callback(ImageMetaInformationModel);
+                callback(job);
             }
         }
     ));
@@ -93,12 +93,17 @@ ImageManipulatorRepository.prototype.makeToNewReferenceImage = function (id, cal
 ImageManipulatorRepository.prototype.deleteImageSetFromModel = function (id, callback) {
     // Add delete job to the job handler
     jobHandler.addJob(
-       new DeleteJob(id, function () {
+       new DeleteJob(id, function (job) {
            if (callback) {
-               callback(ImageMetaInformationModel);
+               callback(job);
            }
        }
     ));
 };
+
+ImageManipulatorRepository.prototype.getLastActiveJob = function (callback) {
+    callback(jobHandler.getLastActiveJob());
+};
+
 
 module.exports = new ImageManipulatorRepository();

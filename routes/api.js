@@ -1,8 +1,7 @@
 var express = require('express');
 var router = express.Router();
-var ImageManipulator = require('../logic/ImageManipulator');
-var ImageManipulatorRepository = require('../logic/ImageManipulatorRepository');
-var ImageMetaInformationModel = require('../logic/model/ImageMetaInformationModel');
+var imageManipulatorRepository = require('../logic/ImageManipulatorRepository');
+var imageMetaInformationModel = require('../logic/model/ImageMetaInformationModel');
 var conf = require('../logic/ConfigurationLoader');
 
 router.post('/checkAll', function(req, res) {
@@ -10,36 +9,36 @@ router.post('/checkAll', function(req, res) {
     // so that the client will not run into a timeout
     res.setTimeout(conf.getRequestTimeout());
 
-    ImageManipulatorRepository.calculateDifferencesForAllImages(req.body.autoCrop
+    imageManipulatorRepository.calculateDifferencesForAllImages(req.body.autoCrop
         , req.body.pixDiffThreshold
         , req.body.distThreshold
-        , function (metaInformationModel, isThresholdBreached) {
+        , function (job, isThresholdBreached) {
         res.statusCode = 200;
-        res.json({ message: 'OK', isThresholdBreached: isThresholdBreached});
+        res.json({ message: 'OK', data: job, isThresholdBreached: isThresholdBreached});
     });
 });
 
 router.put('/:id/makeToNewReferenceImage', function(req, res) {
     var setId = req.params.id;
 
-    ImageManipulatorRepository.makeToNewReferenceImage(setId, function (imageMetaInformation) {
+    imageManipulatorRepository.makeToNewReferenceImage(setId, function (job) {
         res.statusCode = 200;
-        res.json({message: 'OK', data: JSON.stringify(imageMetaInformation)});
+        res.json({message: 'OK', data: job});
     });
 });
 
 router.delete('/:id', function (req, res) {
     var setId = req.params.id;
 
-    ImageManipulatorRepository.deleteImageSetFromModel(setId, function (imageMetaInformation) {
+    imageManipulatorRepository.deleteImageSetFromModel(setId, function (job) {
         res.statusCode = 200;
-        res.json({ message: 'OK', data: JSON.stringify(imageMetaInformation)});
+        res.json({ message: 'OK', data: job});
     });
 });
 
 router.get('/', function (req, res) {
     res.statusCode = 200;
-    res.json({ message: 'OK', data: JSON.stringify(ImageMetaInformationModel)});
+    res.json({ message: 'OK', data: imageMetaInformationModel.getLastActiveJob()});
 });
 
 module.exports = router;

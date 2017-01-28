@@ -38,7 +38,7 @@ CheckAllJob.prototype.execute = function (callback) {
 
         /// Call callback of the job creator when stuff is done
         if (jobCreatorCallback) {
-            jobCreatorCallback(that.getImageMetaInformationModel());
+            jobCreatorCallback(that);
         }
 
         // Notify the job handler that this job is finished

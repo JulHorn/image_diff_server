@@ -20,7 +20,6 @@ Table.prototype.bindEvents = function () {
     // Bind delete action to delete buttons
     this.$container.on('click', 'button[data-action=delete]', function () {
         that.connector.delete($(this).data('id'), function (data) {
-
         });
         $(this).parents('tr').remove();
     });
@@ -31,7 +30,7 @@ Table.prototype.bindEvents = function () {
         var button = $(this);
         var id = $(this).data('id');
         that.connector.makteToNewReferenceImage(id, function (data) {
-            var resultImageSet = that.__getImageSetById(id, data);
+            var resultImageSet = that.__getImageSetById(id, data.imageMetaInformationModel);
             informationLabel.text('New reference image');
 
             that.__updateImageSetMetaInformation(resultImageSet, button.parents('tr'));

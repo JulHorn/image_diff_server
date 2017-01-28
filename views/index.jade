@@ -4,16 +4,16 @@ block content
   h1= title
   div
     label Timestamp:
-    label(id='timeStamp') #{data.getTimeStamp()}
+    label(id='timeStamp') #{data.imageMetaInformationModel.getTimeStamp()}
   div
     label Number of sets:
-    label(id='numberOfSets')  #{data.getImageSets().length}
+    label(id='numberOfSets')  #{data.imageMetaInformationModel.getImageSets().length}
   div
     label Max percentage of different pixels:
-    label(id='maxPixelPercentage') #{data.getBiggestPercentualPixelDifference()}
+    label(id='maxPixelPercentage') #{data.imageMetaInformationModel.getBiggestPercentualPixelDifference()}
   div
     label Max distance:
-    label(id='maxDistance') #{data.getBiggestDistanceDifference()}
+    label(id='maxDistance') #{data.imageMetaInformationModel.getBiggestDistanceDifference()}
   div
       label Server Address:
       input(type='text', id='serverAddress')
@@ -21,7 +21,7 @@ block content
     div
         button(data-action='refreshAll') Refresh All
         label(id='refreshAllText')
-  - var imageSets = data.getImageSets()
+  - var imageSets = data.imageMetaInformationModel.getImageSets()
   table
     thead
         tr

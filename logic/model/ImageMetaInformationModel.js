@@ -49,7 +49,6 @@ ImageMetaInformationModel.prototype.getImageSets = function(){
     return this.imageSets;
 };
 
-
 /**
  * Returns the image set with a specific id.
  *
