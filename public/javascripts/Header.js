@@ -1,10 +1,11 @@
 /**
+ * @param connector
  * @param callback Called when the UI needs an update.
  * **/
 var Header = function (connector, callback) {
     this.callback = callback;
     this.connector = connector;
-    this.$container = $('body');
+    this.$container = $('#header');
 
     this.bindEvents();
 
@@ -38,7 +39,7 @@ Header.prototype.bindEvents = function () {
  * @param data Contains all information about the run job.
  * **/
 Header.prototype.draw = function (data) {
-    this.$container.find('#timeStamp').text(data.imageMetaInformationModeltimeStamp);
+    this.$container.find('#timeStamp').text(data.imageMetaInformationModel.timeStamp);
     this.$container.find('#numberOfSets').text(data.imageMetaInformationModel.imageSets.length);
     this.$container.find('#maxPixelPercentage').text(data.imageMetaInformationModel.biggestPercentualPixelDifference);
     this.$container.find('#maxDistance').text(data.imageMetaInformationModel.biggestDistanceDifference);

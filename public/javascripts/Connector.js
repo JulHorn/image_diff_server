@@ -7,13 +7,22 @@ var Connector = function () {
 /* -----  Specialised Request Methods ----- */
 
 /**
+ * Gets the currently active job.
+ *
+ * @param callback Called when the request is done.
+ * **/
+Connector.prototype.getActiveJob = function (callback) {
+    this.sendRequest('/', 'GET', null, callback);
+};
+
+/**
  * Deletes an image set.
  *
  * @param id The id of the image set to be deleted.
  * @param callback Called when the request is done.
  * **/
 Connector.prototype.delete = function (id, callback) {
-    this.sendRequest('/'+ id, 'DELETE', null, callback);
+    this.sendRequest('/' + id, 'DELETE', null, callback);
 };
 
 /**

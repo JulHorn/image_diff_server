@@ -6,6 +6,7 @@ var ChangeNotificator = function () {
     this.connector = new Connector();
 
     this.registerComponents();
+    this.__init();
 };
 
 /* ----- Methods ----- */
@@ -24,5 +25,14 @@ ChangeNotificator.prototype.registerComponents = function () {
 ChangeNotificator.prototype.__notify = function (data) {
     this.components.forEach(function (component) {
         component.draw(data);
+    });
+};
+
+ChangeNotificator.prototype.__init = function () {
+    var that = this;
+
+    this.connector.getActiveJob(function (data) {
+        console.log('data', data);
+        that.__notify(data);
     });
 };

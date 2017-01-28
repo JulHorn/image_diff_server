@@ -2,81 +2,83 @@ extends layout
 
 block content
   h1= title
-  div
-    label Timestamp:
-    label(id='timeStamp') #{data.imageMetaInformationModel.getTimeStamp()}
-  div
-    label Number of sets:
-    label(id='numberOfSets')  #{data.imageMetaInformationModel.getImageSets().length}
-  div
-    label Max percentage of different pixels:
-    label(id='maxPixelPercentage') #{data.imageMetaInformationModel.getBiggestPercentualPixelDifference()}
-  div
-    label Max distance:
-    label(id='maxDistance') #{data.imageMetaInformationModel.getBiggestDistanceDifference()}
-  div
-      label Server Address:
-      input(type='text', id='serverAddress')
-      button(data-action='saveServerAddress') Save
-    div
-        button(data-action='refreshAll') Refresh All
-        label(id='refreshAllText')
-  - var imageSets = data.imageMetaInformationModel.getImageSets()
-  table
-    thead
-        tr
-            th Baseline
-            th New Image
-            th Diff Image
-    tbody
-        each set, index in imageSets
+  div(id='header')
+      div
+        label Timestamp:
+        label(id='timeStamp')
+      div
+        label Number of sets:
+        label(id='numberOfSets')
+      div
+        label Max percentage of different pixels:
+        label(id='maxPixelPercentage')
+      div
+        label Max distance:
+        label(id='maxDistance')
+      div
+          label Server Address:
+          input(type='text', id='serverAddress')
+          button(data-action='saveServerAddress') Save
+        div
+            button(data-action='refreshAll') Check All
+            label(id='refreshAllText')
+    div(id='table')
+      - var imageSets = data.imageMetaInformationModel.getImageSets()
+      table
+        thead
             tr
-                td(role='referenceImage')
-                    a(href=set.getReferenceImage().getPath().replace('public', '.'), role='imageLink')
-                        img(src=set.getReferenceImage().getPath().replace('public', '.'), role='image')
-                    div
-                        label Name:
-                        label(role='imageName') #{set.getReferenceImage().getName()}
-                    div
-                        label Height:
-                        label(role='height') #{set.getReferenceImage().getHeight()}
-                    div
-                        label Width:
-                        label(role='width') #{set.getReferenceImage().getWidth()}
-                    button(data-id=set.getId(), data-action='delete') Delete
-                td(role='newImage')
-                    a(href=set.getNewImage().getPath().replace('public', '.'), role='imageLink')
-                        img(src=set.getNewImage().getPath().replace('public', '.'), role='image')
-                    div
-                        label Name:
-                        label(role='imageName') #{set.getNewImage().getName()}
-                    div
-                        label Height:
-                        label(role='height') #{set.getNewImage().getHeight()}
-                    div
-                        label Width:
-                        label(role='width') #{set.getNewImage().getWidth()}
-                    div
-                        button(data-id=set.getId(), data-action='add') New Baseline
-                        label
-                td(role='diffImage')
-                    a(href=set.getDiffImage().getPath().replace('public', '.'), role='imageLink')
-                        img(src=set.getDiffImage().getPath().replace('public', '.'), role='image')
-                    div
-                        label Name:
-                        label(role='imageName') #{set.getDiffImage().getName()}
-                    div
-                        label Height:
-                        label(role='height') #{set.getDiffImage().getHeight()}
-                    div
-                        label Width:
-                        label(role='width') #{set.getDiffImage().getWidth()}
-                    div
-                        label Percentual Difference:
-                        label(role='percPixelDifference') #{set.getDifference()}
-                    div
-                        label Distance:
-                        label(role='distanceDifference') #{set.getDistance()}
-                    div
-                        label Error:
-                        label(role='error') #{set.getError()}
+                th Baseline
+                th New Image
+                th Diff Image
+        tbody
+            each set, index in imageSets
+                tr
+                    td(role='referenceImage')
+                        a(href=set.getReferenceImage().getPath().replace('public', '.'), role='imageLink')
+                            img(src=set.getReferenceImage().getPath().replace('public', '.'), role='image')
+                        div
+                            label Name:
+                            label(role='imageName') #{set.getReferenceImage().getName()}
+                        div
+                            label Height:
+                            label(role='height') #{set.getReferenceImage().getHeight()}
+                        div
+                            label Width:
+                            label(role='width') #{set.getReferenceImage().getWidth()}
+                        button(data-id=set.getId(), data-action='delete') Delete
+                    td(role='newImage')
+                        a(href=set.getNewImage().getPath().replace('public', '.'), role='imageLink')
+                            img(src=set.getNewImage().getPath().replace('public', '.'), role='image')
+                        div
+                            label Name:
+                            label(role='imageName') #{set.getNewImage().getName()}
+                        div
+                            label Height:
+                            label(role='height') #{set.getNewImage().getHeight()}
+                        div
+                            label Width:
+                            label(role='width') #{set.getNewImage().getWidth()}
+                        div
+                            button(data-id=set.getId(), data-action='add') New Baseline
+                            label
+                    td(role='diffImage')
+                        a(href=set.getDiffImage().getPath().replace('public', '.'), role='imageLink')
+                            img(src=set.getDiffImage().getPath().replace('public', '.'), role='image')
+                        div
+                            label Name:
+                            label(role='imageName') #{set.getDiffImage().getName()}
+                        div
+                            label Height:
+                            label(role='height') #{set.getDiffImage().getHeight()}
+                        div
+                            label Width:
+                            label(role='width') #{set.getDiffImage().getWidth()}
+                        div
+                            label Percentual Difference:
+                            label(role='percPixelDifference') #{set.getDifference()}
+                        div
+                            label Distance:
+                            label(role='distanceDifference') #{set.getDistance()}
+                        div
+                            label Error:
+                            label(role='error') #{set.getError()}

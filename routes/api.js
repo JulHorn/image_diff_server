@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var imageManipulatorRepository = require('../logic/ImageManipulatorRepository');
-var imageMetaInformationModel = require('../logic/model/ImageMetaInformationModel');
 var conf = require('../logic/ConfigurationLoader');
 
 router.post('/checkAll', function(req, res) {
@@ -37,8 +36,10 @@ router.delete('/:id', function (req, res) {
 });
 
 router.get('/', function (req, res) {
-    res.statusCode = 200;
-    res.json({ message: 'OK', data: imageMetaInformationModel.getLastActiveJob()});
+    imageManipulatorRepository.getLastActiveJob(function (data) {
+        res.statusCode = 200;
+        res.json({ message: 'OK', data: data });
+    });
 });
 
 module.exports = router;

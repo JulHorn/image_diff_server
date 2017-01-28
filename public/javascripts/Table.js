@@ -1,10 +1,11 @@
 /**
+ * @param connector
  * @param callback Called when the UI needs an update.
  * **/
 var Table = function (connector, callback) {
     this.callback = callback;
     this.connector = connector;
-    this.$container = $('table');
+    this.$container = $('#table');
 
     this.bindEvents();
 };
