@@ -33,6 +33,13 @@ Header.prototype.bindEvents = function () {
         });
         $('#refreshAllText').text('Started to recalculate all image differences. This might take a while.');
     });
+
+    // Refresh data from server
+    this.$container.on('click', 'button[data-action=refresh]', function () {
+        that.connector.getActiveJob(function (data) {
+            that.callback(data);
+        });
+    });
 };
 
 /**
