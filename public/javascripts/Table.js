@@ -43,7 +43,36 @@ Table.prototype.bindEvents = function () {
 * @param data Contains all information about the run job.
 * **/
 Table.prototype.draw = function (data) {
+    var $contentTableBody = this.$container.find('tbody');
+    var that = this;
 
+    $contentTableBody.empty();
+
+    data.imageMetaInformationModel.imageSets.forEach(function (imageSet) {
+        var rowContent = '';
+
+        rowContent += '<td role="referenceImage">';
+        rowContent += that.__createDefaultCellContent(imageSet.referenceImage);
+        rowContent += '<button data-id="' + imageSet.id + '" data-action="delete">Delete</button>';
+        rowContent += '</td>';
+
+        rowContent += '<td role="newImage">';
+        rowContent += that.__createDefaultCellContent(imageSet.newImage);
+        rowContent += '<button data-id="' + imageSet.id + '" data-action="add">New Reference</button>';
+        rowContent += '</td>';
+
+        rowContent += '<td role="diffImage">';
+        rowContent += that.__createDefaultCellContent(imageSet.diffImage);
+        rowContent += '<label>Percentual difference:</label>';
+        rowContent += '<label role="percPixelDifference">' + imageSet.difference + '</label><br>';
+        rowContent += '<label>Distance:</label>';
+        rowContent += '<label role="distanceDifference">' + imageSet.distance + '</label><br>';
+        rowContent += '<label>Error:</label>';
+        rowContent += '<label role="error">' + imageSet.error + '</label><br>';
+        rowContent += '</td>';
+
+        $contentTableBody.append($('<tr>' + rowContent + '</tr>>'));
+    });
 };
 
 /**
@@ -59,6 +88,25 @@ Table.prototype.__getImageSetById = function (id, imageMetaModel) {
     })[0];
 };
 
+Table.prototype.__createDefaultCellContent = function (image) {
+    var cellContent = '';
+
+    cellContent += '<a href="' + image.path.replace('public', '.') + '" role="imageLink">';
+    cellContent += '<img src="' + image.path.replace('public', '.') + '" role="image"/>';
+    cellContent += '</a>';
+
+    cellContent += '<div>';
+    cellContent += '<label>Name:</label>';
+    cellContent += '<label role="imageName">' + image.name + '</label><br>';
+    cellContent += '<label>Height:</label>';
+    cellContent += '<label role="height">' + image.height + 'px</label><br>';
+    cellContent += '<label>Width:</label>';
+    cellContent += '<label role="width">' + image.width + 'px</label><br>';
+    cellContent += '</div>';
+
+    return cellContent;
+};
+
 /**
  * Updates the image information/imageMetaInformationModel information.
  *
@@ -67,7 +115,7 @@ Table.prototype.__getImageSetById = function (id, imageMetaModel) {
  * **/
 Table.prototype.__updateImageSetMetaInformation = function (resultImageSet, parentElement) {
     var refImg = parentElement.find('td[role="referenceImage"]');
-    var newImg = parentElement.find('td[role="newImage"]');
+    // var newImg = parentElement.find('td[role="newImage"]');
     var diffImg = parentElement.find('td[role="diffImage"]');
     var imageSuffix = '?timestamp=' + new Date().getTime();
 
