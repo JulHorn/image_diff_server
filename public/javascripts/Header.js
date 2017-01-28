@@ -43,4 +43,5 @@ Header.prototype.draw = function (data) {
     this.$container.find('#numberOfSets').text(data.imageMetaInformationModel.imageSets.length);
     this.$container.find('#maxPixelPercentage').text(data.imageMetaInformationModel.biggestPercentualPixelDifference);
     this.$container.find('#maxDistance').text(data.imageMetaInformationModel.biggestDistanceDifference);
+    this.$container.find('#progressIndicator').text(data.processedImageCount + '/' + data.imagesToBeProcessedCount);
 };

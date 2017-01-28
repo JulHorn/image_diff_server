@@ -32,7 +32,6 @@ ChangeNotificator.prototype.__init = function () {
     var that = this;
 
     this.connector.getActiveJob(function (data) {
-        console.log('data', data);
         that.__notify(data);
     });
 };
