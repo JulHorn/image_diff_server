@@ -201,13 +201,7 @@ ImageManipulator.prototype.__autoCrop = function (image1, image2, autoCrop) {
  * @return True if the image does exist, else false.
  * **/
 ImageManipulator.prototype.__isImageExisting = function (imagePath) {
-    try{
-        fs.accessSync(imagePath);
-        return fs.statSync(imagePath).isFile();
-    } catch(err) {
-        logger.error("Failed to load file " + imagePath, err);
-        return false;
-    }
+    return fs.existsSync(imagePath) && fs.statSync(imagePath).isFile();
 };
 
 /**
