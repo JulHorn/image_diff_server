@@ -215,7 +215,7 @@ CheckAllJob.prototype.getMaxDistanceDifferenceThreshold = function () {
  * @param imageName The image name including its type suffix.
  * **/
 CheckAllJob.prototype.__imageFilter = function (imageName) {
-    return imageName.toLowerCase().endsWith('.png');
+    return this.__endsWith(imageName.toLowerCase(), '.png');
 };
 
 /**
@@ -239,6 +239,13 @@ CheckAllJob.prototype.__getImageNames = function(fileNameArray1, fileNameArray2,
     return fileNameArray1.filter(function(element){
         return fileNameArray2.includes(element);
     });
+};
+
+/**
+ * Own implementation for downward compatibility.
+ **/
+CheckAllJob.prototype.__endsWith = function (str, suffix) {
+    return str.indexOf(suffix, str.length - suffix.length) !== -1;
 };
 
 module.exports = CheckAllJob;
