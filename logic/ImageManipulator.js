@@ -36,10 +36,10 @@ ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, call
 
     // If one of the images do not exist, then quit
     if(!this.__isImageExisting(referenceImagePath) || !this.__isImageExisting(newImagePath)){
-        var errorText = 'Reference or new image does not exist:'
-            + referenceImagePath
+        var errorText = 'Reference or new image does not exist:\n'
+            + 'Reference: ' + referenceImagePath
             + "\n"
-            +  newImagePath;
+            +  'New: ' + newImagePath;
 
         logger.error(errorText);
         throw Error(errorText);
@@ -205,6 +205,7 @@ ImageManipulator.prototype.__isImageExisting = function (imagePath) {
         fs.accessSync(imagePath);
         return fs.statSync(imagePath).isFile();
     } catch(err) {
+        logger.error("Failed to load file " + imagePath, err);
         return false;
     }
 };
