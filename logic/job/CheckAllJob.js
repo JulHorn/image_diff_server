@@ -217,6 +217,7 @@ CheckAllJob.prototype.getMaxDistanceDifferenceThreshold = function () {
 CheckAllJob.prototype.__imageFilter = function (imageName) {
     var suffix = '.png';
 
+    // indexOf instead of endsWith because of backwards compatibility
     return imageName.toLowerCase().indexOf(suffix, imageName.length - suffix.length) !== -1;
 };
 
@@ -229,18 +230,35 @@ CheckAllJob.prototype.__imageFilter = function (imageName) {
  * which are in both arrays.
  * **/
 CheckAllJob.prototype.__getImageNames = function(fileNameArray1, fileNameArray2, differentImages){
+    var that = this;
 
     // Get the images that are only in the first array
     if(differentImages){
         return fileNameArray1.filter(function(element){
-            return !fileNameArray2.includes(element);
+            return !that.__arrayIncludes(fileNameArray2, element);
         });
     }
 
     // Get the images that are in both arrays
     return fileNameArray1.filter(function(element){
-        return fileNameArray2.includes(element);
+        return that.__arrayIncludes(fileNameArray2, element);
     });
+};
+
+/**
+ * Used instead of array.includes() because of backwards compatibility
+ * **/
+CheckAllJob.prototype.__arrayIncludes = function (array, value) {
+    var result = false;
+
+    array.forEach(function (element) {
+        if(element === value) {
+            result = true;
+            return;
+        }
+    });
+
+    return result;
 };
 
 module.exports = CheckAllJob;
