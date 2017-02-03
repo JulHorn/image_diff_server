@@ -14,7 +14,7 @@ var fs = require('fs-extra');
  * @param callback The callback method which is called, when diff process as finished. Has the imageMetaInformationModel as job. Optional.
  * **/
 var CheckAllJob = function (autoCrop, pixDiffThreshold, distThreshold, callback) {
-    Job.call(this, 'Check All', callback);
+    Job.call(this, 'CheckAll', callback);
     this.autoCrop = autoCrop;
     this.pixDiffThreshold = pixDiffThreshold;
     this.distThreshold = distThreshold;
@@ -259,6 +259,14 @@ CheckAllJob.prototype.__arrayIncludes = function (array, value) {
     });
 
     return result;
+};
+
+CheckAllJob.prototype.load = function (data) {
+    this.__load(data);
+
+    this.autoCrop = data.autoCrop;
+    this.pixDiffThreshold = data.pixDiffThreshold;
+    this.distThreshold = data.distThreshold;
 };
 
 module.exports = CheckAllJob;

@@ -4,7 +4,7 @@ var config = require('../ConfigurationLoader');
 var path = require('path');
 
 var MakeNewToReferenceImageJob = function (id, callback) {
-    Job.call(this, 'Make to new baseline image', callback);
+    Job.call(this, 'MakeToNewBaselineImage', callback);
     this.id = id;
 };
 
@@ -70,6 +70,12 @@ MakeNewToReferenceImageJob.prototype.__makeToNewReferenceImage = function (id, c
             }
         });
     });
+};
+
+MakeNewToReferenceImageJob.prototype.load = function (data) {
+    this.__load(data);
+
+    this.id = data.id;
 };
 
 module.exports = MakeNewToReferenceImageJob;

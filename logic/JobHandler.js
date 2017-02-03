@@ -1,6 +1,10 @@
 var Job = require('./job/Job');
+var CheckAllJob = require('./job/CheckAllJob');
+var DeleteJob = require('./job/DeleteJob');
+var MakeNewToReferenceImageJob = require('./job/MakeNewToReferenceImageJob');
 var logger = require('winston');
 var configuration = require('./ConfigurationLoader');
+var fs = require('fs-extra');
 
 /**
  * Constructor.
@@ -17,8 +21,7 @@ var JobHandler = function() {
     this.jobHistory = [];
     this.runningJob = null;
 
-    // Add an empty job which can always be returned
-    this.jobHistory.push(new Job());
+    this.__load();
 };
 
 /* ----- Getter ----- */
@@ -85,6 +88,9 @@ JobHandler.prototype.__executeJob = function() {
                 that.jobHistory.push(that.runningJob);
                 that.runningJob = null;
 
+                // Save history
+                that.__save();
+
                 // Execute the next job
                 that.__executeJob();
             });
@@ -94,6 +100,86 @@ JobHandler.prototype.__executeJob = function() {
     } catch (exception) {
         logger.error(exception);
     }
+};
+
+/**
+ * Saves job history to file.
+ * **/
+JobHandler.prototype.__save = function () {
+
+    // Ensure that the folder structure for the data files exists
+    logger.info('Ensuring that the job history path exists:', configuration.getMetaInformationFolderPath());
+    fs.ensureDirSync(configuration.getMetaInformationFolderPath());
+
+    // Write the file
+    fs.writeFile("./data/test.json", JSON.stringify(this.jobHistory), 'utf8', function (err) {
+        if(err != null || typeof err == 'undefined'){
+            logger.error('Failed to write job history.', err);
+        } else {
+            logger.info('Writing job history finished.', configuration.getMetaInformationFilePath());
+        }
+    });
+};
+
+/**
+ * Loads the job history. If it does not exist or is faulty, the job history will begin from a blank slate.
+ * **/
+JobHandler.prototype.__load = function () {
+    var that = this;
+
+    // Check that file exists -> If not, then do nothing because the diff has to be calculated first
+    try{
+        fs.accessSync("./data/test.json");
+    } catch(err) {
+        logger.info('Job history file does not seem to exist. Working from a blank slate.', "./data/test.json");
+        // Add an empty job which can always be returned
+        this.jobHistory.push(new Job());
+        return;
+    }
+
+    logger.info('Loading job history.', "./data/test.json");
+
+    // Load data in object structure, delete file if it is corrupt
+    try {
+        // Blocking file read to ensure that the complete data is loaded before further actions are taken
+        var jobHistory = fs.readFileSync("./data/test.json", 'utf8');
+
+        jobHistory = JSON.parse(jobHistory);
+
+        jobHistory.forEach(function (job) {
+            that.jobHistory.push(that.__loadJob(job));
+        });
+
+    } catch (exception) {
+        logger.error('Failed to load or parse job history file. Working from a blank slate.', exception);
+        // Add an empty job which can always be returned
+        this.jobHistory.push(new Job('EmptyJob', null));
+        return;
+    }
+};
+
+JobHandler.prototype.__loadJob = function (jobData) {
+    var job = {};
+
+    switch(jobData.jobName) {
+        case 'MakeToNewBaselineImage':
+            job = new MakeNewToReferenceImageJob(null, null);
+            break;
+        case 'DeleteSet':
+            job = new DeleteJob(null, null);
+            break;
+        case 'CheckAll':
+            job = new CheckAllJob(null, null, null, null);
+            break;
+        case 'EmptyJob':
+            return new Job('EmptyJob', null);
+        default:
+            throw Error('The job type ' + jobData.jobName + ' is unknown or not yet mapped.');
+    }
+
+    job.load(jobData);
+
+    return job;
 };
 
 module.exports = new JobHandler();

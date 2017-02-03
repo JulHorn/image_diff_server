@@ -9,7 +9,6 @@ var ImageModel = require('./ImageModel');
  * **/
 var ImageMetaInformationModel = function () {
     this.__initMetaInformationModel();
-    this.load();
 };
 
 /* ----- Getter ----- */
@@ -132,31 +131,11 @@ ImageMetaInformationModel.prototype.save = function () {
 /**
  * Loads the imageMetaInformationModel information file. If it does not exist, the program will work without imageMetaInformationModel information until some are created.
  * **/
-ImageMetaInformationModel.prototype.load = function () {
+ImageMetaInformationModel.prototype.load = function (data) {
     var that = this;
 
-    // Check that file exists -> If not, then do nothing because the diff has to be calculated first
-    try{
-        fs.accessSync(config.getMetaInformationFilePath());
-    } catch(err) {
-        logger.info('Meta information file does not seem to exist. Working from a blank slate.', config.getMetaInformationFilePath());
-        return;
-    }
-
-    logger.info('Loading imageMetaInformationModel information.', config.getMetaInformationFilePath());
-
-    // Blocking file readto ensure that the complete data is loaded before further actions are taken
-    var metaFile = fs.readFileSync(config.getMetaInformationFilePath(), 'utf8');
-
-    // Load data in object structure, delete file if it is corrupt
-    try {
-        var data = JSON.parse(metaFile);
-    } catch (exception) {
-        logger.error('Failed to parse imageMetaInformationModel information file. Working from a blank slate.');
-        return;
-    }
-
     this.setTimeStamp(data.timeStamp);
+
     data.imageSets.forEach(function (imageSetData) {
         var imageSet = new ImageSet();
         imageSet.load(imageSetData);
@@ -270,4 +249,4 @@ ImageMetaInformationModel.prototype.__initMetaInformationModel = function () {
     this.imageSets = [];
 };
 
-module.exports = new ImageMetaInformationModel();
+module.exports = ImageMetaInformationModel;

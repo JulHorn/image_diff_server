@@ -1,7 +1,7 @@
 var Job = require('./Job');
 
 var DeleteJob = function (id, callback) {
-    Job.call(this, 'Delete Set', callback);
+    Job.call(this, 'DeleteSet', callback);
     this.id = id;
 };
 
@@ -51,6 +51,12 @@ DeleteJob.prototype.deleteImageSetFromModel = function (id, callback) {
     if(callback){
         callback();
     }
+};
+
+DeleteJob.prototype.load = function (data) {
+    this.__load(data);
+
+    this.id = data.id;
 };
 
 module.exports = DeleteJob;

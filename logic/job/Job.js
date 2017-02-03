@@ -75,4 +75,12 @@ Job.prototype.saveMetaInformation = function () {
     imageMetaInformationModel.save();
 };
 
+Job.prototype.__load = function (data) {
+    this.jobName = data.jobName;
+    this.processedImageCount = data.processedImageCount;
+    this.imagesToBeProcessedCount = data.imagesToBeProcessedCount;
+    this.imageMetaInformationModel = new imageMetaInformationModel();
+    this.imageMetaInformationModel.load(data.imageMetaInformationModel);
+};
+
 module.exports = Job;
