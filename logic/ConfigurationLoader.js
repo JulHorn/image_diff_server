@@ -18,7 +18,7 @@ Configuration.prototype.getBaseConf = function () {
 };
 
 /**
- * Returns the server configuration.
+ * Returns the server config.
  * **/
 Configuration.prototype.getServerConf = function () {
     return this.getBaseConf().get('server');
@@ -53,7 +53,7 @@ Configuration.prototype.getMaxNumberIfStoredJobs = function () {
 };
 
 /**
- * Returns the image configuration.
+ * Returns the image config.
  * **/
 Configuration.prototype.getImagesConfig = function () {
     return this.getBaseConf().get('images');
@@ -95,7 +95,7 @@ Configuration.prototype.getJobHistoryFolderPath = function () {
 };
 
 /**
- * Returns the threshold configuration.
+ * Returns the threshold config.
  * **/
 Configuration.prototype.getThresholdConf = function () {
     return this.getBaseConf().get('thresholds');
@@ -116,7 +116,7 @@ Configuration.prototype.getMaxDistanceDifferenceThreshold = function () {
 };
 
 /**
- * Returns the option configuration.
+ * Returns the option config.
  * **/
 Configuration.prototype.getOptions = function () {
     return this.getBaseConf().get('options');

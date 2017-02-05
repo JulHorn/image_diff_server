@@ -3,6 +3,12 @@ var fs = require('fs-extra');
 var config = require('../ConfigurationLoader');
 var path = require('path');
 
+/**
+ * Job which computes the difference of two images and updates the image meta model accordingly..
+ *
+ * @param id The id of the image set of which the new image should be made a reference image.
+ * @param callback The callback method which is called, when diff process has finished. Has the this job as parameter.
+ * **/
 var MakeNewToReferenceImageJob = function (id, callback) {
     Job.call(this, 'MakeToNewBaselineImage', callback);
     this.id = id;
@@ -13,6 +19,12 @@ MakeNewToReferenceImageJob.prototype = Object.create(Job.prototype);
 
 /* ----- Action ----- */
 
+/**
+ * Executes this job.
+ *
+ * @param imageMetaInformationModel The image meta model in which the results will be saved.
+ * @param callback The callback which will be called after the job execution is finished.
+ * **/
 MakeNewToReferenceImageJob.prototype.execute = function (imageMetaInformationModel, callback) {
     var that = this;
     that.imageMetaInformationModel = imageMetaInformationModel;
@@ -24,8 +36,8 @@ MakeNewToReferenceImageJob.prototype.execute = function (imageMetaInformationMod
         // Update the processed image count
         that.incrementProcessImageCounter();
 
-        // Make the reference of the model to a copy for individual information storage
-        that.__copyImageMetaInformationModel();
+        // Make the reference of the model to a copy to have a snapshot which will not be changed anymore
+        that.copyImageMetaInformationModel();
 
         /// Call callback of the job creator when stuff is done
         if (jobCreatorCallback) {
@@ -35,6 +47,18 @@ MakeNewToReferenceImageJob.prototype.execute = function (imageMetaInformationMod
         // Notify the job handler that this job is finished
         callback();
     });
+};
+
+/**
+ * Loads the data into this job. Used to restore a previous state of this object.
+ *
+ * @param data The object containing the information which this object should habe.
+ * **/
+MakeNewToReferenceImageJob.prototype.load = function (data) {
+    // Load data in the prototype
+    this.loadJobData(data);
+
+    this.id = data.id;
 };
 
 /**
@@ -73,12 +97,6 @@ MakeNewToReferenceImageJob.prototype.__makeToNewReferenceImage = function (id, c
             }
         });
     });
-};
-
-MakeNewToReferenceImageJob.prototype.load = function (data) {
-    this.__load(data);
-
-    this.id = data.id;
 };
 
 module.exports = MakeNewToReferenceImageJob;

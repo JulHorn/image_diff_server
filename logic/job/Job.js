@@ -1,10 +1,11 @@
 var ImageManipulator = require('../ImageManipulator');
-var imageMetaInformationModel = require('../model/ImageMetaInformationModel');
+var ImageMetaInformationModel = require('../model/ImageMetaInformationModel');
+var logger = require('winston');
 
 /**
  * Creates a new general job.
  *
- * @param jobName The name of the jjob. Used for descriptional purposes.
+ * @param jobName The name of the job.
  * @param callback The callback which will be called when the execution of this job has finished.
  * **/
 var Job = function(jobName, callback) {
@@ -13,18 +14,27 @@ var Job = function(jobName, callback) {
     this.processedImageCount = 0;
     this.imagesToBeProcessedCount = 0;
     this.imageManipulator = new ImageManipulator();
-    this.imageMetaInformationModel = new imageMetaInformationModel();
+    this.imageMetaInformationModel = new ImageMetaInformationModel();
 };
 
 /* ----- Action ----- */
 
+/**
+ * Executes this job.
+ *
+ * @param imageMetaInformationModel The image meta model in which the results will be saved.
+ * @param callback The callback which will be called after the job execution is finished.
+ * **/
 Job.prototype.execute = function (imageMetaInformationModel, callback) {
-  // Do nothing -> Log empty execution?
-    // ToDo: Call callback
+   logger.info('Executing empty job. Does nothing.');
+
+    if(callback) {
+        callback();
+    }
 
     that.imageMetaInformationModel = imageMetaInformationModel;
     // Make the reference of the model to a copy for individual information storage
-    this.__copyImageMetaInformationModel();
+    this.copyImageMetaInformationModel();
 };
 
 /* ----- Getter ----- */
@@ -56,25 +66,41 @@ Job.prototype.getImageManipulator = function () {
   return this.imageManipulator;
 };
 
+/**
+ * Returns the image meta model which this job used.
+ *
+ * @return Returns the image meta model which this job used.
+ * **/
 Job.prototype.getImageMetaInformationModel = function () {
   return this.imageMetaInformationModel;
 };
 
 /* ----- Setter/Adder ----- */
 
+/**
+ * Sets the amount of images this job has to process in total. Only used as information and not as a computacional factor.
+ *
+ * @param imagesToBeProcessedCount The amount of images this job has to process in total.
+ * **/
 Job.prototype.setImagesToBeProcessedCount = function(imagesToBeProcessedCount) {
     this.imagesToBeProcessedCount = imagesToBeProcessedCount;
 };
 
+/**
+ * Sets the amount of images this job already has processed. Only used as information and not as a computacional factor.
+ *
+ * @param processedImageCount The amount of images this job already has processed
+ * **/
 Job.prototype.setProcessedImageCount = function(processedImageCount) {
     this.processedImageCount = processedImageCount;
 };
 
+/**
+ * Increments the amount of already procressed images by one.
+ * **/
 Job.prototype.incrementProcessImageCounter = function() {
     this.processedImageCount = this.processedImageCount + 1;
 };
-
-/* ----- Helper ----- */
 
 /**
  * Calculates the the biggest percentual pixel difference/distance and sets the timestamp.
@@ -84,15 +110,24 @@ Job.prototype.calculateMetaInformation = function () {
     this.imageMetaInformationModel.setTimeStamp(new Date().toISOString());
 };
 
-Job.prototype.__load = function (data) {
+/**
+ * Loads the data into this job. Used to restore a previous state of this object.
+ *
+ * @param data The object containing the information which this object should habe.
+ * **/
+Job.prototype.loadJobData = function (data) {
     this.jobName = data.jobName;
     this.processedImageCount = data.processedImageCount;
     this.imagesToBeProcessedCount = data.imagesToBeProcessedCount;
-    this.imageMetaInformationModel = new imageMetaInformationModel();
+    this.imageMetaInformationModel = new ImageMetaInformationModel();
     this.imageMetaInformationModel.load(data.imageMetaInformationModel);
 };
 
-Job.prototype.__copyImageMetaInformationModel = function () {
+/**
+ * Makes a copy of currently image meta model of this job and sets it as its new meta model in order kill the reference.
+ * Use this method if the job execution has finished and the image meta model should not be changed for this job.
+ * **/
+Job.prototype.copyImageMetaInformationModel = function () {
     this.imageMetaInformationModel = this.getImageMetaInformationModel().getCopy();
 };
 

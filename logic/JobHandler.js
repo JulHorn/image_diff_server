@@ -4,7 +4,7 @@ var DeleteJob = require('./job/DeleteJob');
 var MakeNewToReferenceImageJob = require('./job/MakeNewToReferenceImageJob');
 var ImageMetaInformationModel = require('./model/ImageMetaInformationModel');
 var logger = require('winston');
-var configuration = require('./ConfigurationLoader');
+var config = require('./ConfigurationLoader');
 var fs = require('fs-extra');
 
 /**
@@ -17,21 +17,32 @@ var fs = require('fs-extra');
  * **/
 var JobHandler = function() {
     this.isJobRunning = false;
-    this.behaviour = configuration.getWorkingMode();
+    this.behaviour = config.getWorkingMode();
     this.jobQueue = [];
     this.jobHistory = [];
     this.runningJob = null;
     this.currentMetaInformationModel = new ImageMetaInformationModel();
 
-    this.__load();
+    // Loads the job history
+    this.__loadJobHistory();
 };
 
 /* ----- Getter ----- */
 
+/**
+ * Returns true if a job is currently active, else false.
+ *
+ * @return Returns true if a job is currently active, else false.
+ * **/
 JobHandler.prototype.isJobRunning = function () {
     return this.isJobRunning;
 };
 
+/**
+ * Returns the currently active job or if no job was active, the last executed job.
+ *
+ * @return Returns the currently active job or if no job was active, the last executed job.
+ * **/
 JobHandler.prototype.getLastActiveJob = function () {
     if(this.runningJob) {
         return this.runningJob;
@@ -53,7 +64,7 @@ JobHandler.prototype.getLastActiveJob = function () {
 JobHandler.prototype.addJob = function (job) {
     try {
         // If the max. number of elements in the history is higher than specified, remove the oldest one
-        if(configuration.getMaxNumberIfStoredJobs() <= this.jobHistory.length) {
+        if(config.getMaxNumberIfStoredJobs() <= this.jobHistory.length) {
             this.jobHistory.shift();
         }
 
@@ -110,34 +121,15 @@ JobHandler.prototype.__executeJob = function() {
 };
 
 /**
- * Saves job history to file.
- * **/
-JobHandler.prototype.__save = function () {
-
-    // Ensure that the folder structure for the data files exists
-    logger.info('Ensuring that the job history path exists:', configuration.getJobHistoryFolderPath());
-    fs.ensureDirSync(configuration.getJobHistoryFolderPath());
-
-    // Write the file
-    fs.writeFile(configuration.getJobHistoryFilePath(), JSON.stringify(this.jobHistory), 'utf8', function (err) {
-        if(err != null || typeof err == 'undefined'){
-            logger.error('Failed to write job history.', err);
-        } else {
-            logger.info('Writing job history finished.', configuration.getJobHistoryFilePath());
-        }
-    });
-};
-
-/**
  * Loads the job history. If it does not exist or is faulty, the job history will begin from a blank slate.
  * **/
-JobHandler.prototype.__load = function () {
+JobHandler.prototype.__loadJobHistory = function () {
     var that = this;
-    var jobFilePath = configuration.getJobHistoryFilePath();
+    var jobFilePath = config.getJobHistoryFilePath();
 
     logger.info('Loading job history:', jobFilePath);
 
-    // Check that file exists -> If not, then do nothing because the diff has to be calculated first
+    // Check that file exists and work from a blank slate if it is not the case
     try{
         fs.accessSync(jobFilePath);
     } catch(err) {
@@ -164,13 +156,39 @@ JobHandler.prototype.__load = function () {
         this.jobHistory.push(new Job('EmptyJob', new ImageMetaInformationModel(), null));
     }
 
-    // Use the last jobs imagemetainformation model as current model
+    // Use the last jobs image meta model as current model because it should be the last recent
     this.currentMetaInformationModel = this.getLastActiveJob().getImageMetaInformationModel().getCopy();
 };
 
+/**
+ * Saves job history to file.
+ * **/
+JobHandler.prototype.__save = function () {
+
+    // Ensure that the folder structure for the data files exists
+    logger.info('Ensuring that the job history path exists:', config.getJobHistoryFolderPath());
+    fs.ensureDirSync(config.getJobHistoryFolderPath());
+
+    // Write the file
+    fs.writeFile(config.getJobHistoryFilePath(), JSON.stringify(this.jobHistory), 'utf8', function (err) {
+        if(err != null || typeof err == 'undefined'){
+            logger.error('Failed to write job history.', err);
+        } else {
+            logger.info('Writing job history finished.', config.getJobHistoryFilePath());
+        }
+    });
+};
+
+/**
+ * Checks which type of the given object has, creates a corresponding job which is identified by the job name,
+ * loads the data in that job and returns the newly created job.
+ *
+ * @param jobData The object which contains the data of the job.
+ * **/
 JobHandler.prototype.__loadJob = function (jobData) {
     var job = {};
 
+    // Create the correct job type
     switch(jobData.jobName) {
         case 'MakeToNewBaselineImage':
             job = new MakeNewToReferenceImageJob(null, null, null);
@@ -187,6 +205,7 @@ JobHandler.prototype.__loadJob = function (jobData) {
             throw Error('The job type ' + jobData.jobName + ' is unknown or not yet mapped.');
     }
 
+    // Load the data in the created job
     job.load(jobData);
 
     return job;

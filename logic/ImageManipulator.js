@@ -13,7 +13,7 @@ var ImageManipulator = function () {};
 /* ----- Create Methods ----- */
 
 /**
- * Creates a diff image of the reference and new image and saves it to the, in the configuration file configured, folder path.
+ * Creates a diff image of the reference and new image and saves it to the, in the config file configured, folder path.
  * Does not update the imageMetaInformationModel information itself.
  *
  * @param imageName The name of the images that should be compared. The image must have the same name in the reference and new folder. The diff image will have the name, too.

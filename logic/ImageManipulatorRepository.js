@@ -1,13 +1,13 @@
 var ImageMetaInformationModel = require('./model/ImageMetaInformationModel');
-var fs = require('fs-extra');
-var path = require('path');
-var logger = require('winston');
-var ImageManipulator = require('./ImageManipulator');
-var config = require('./ConfigurationLoader');
-var jobHandler = require('./JobHandler');
 var CheckAllJobModel = require('./job/CheckAllJob');
 var DeleteJob = require('./job/DeleteJob');
 var MakeToNewReferenceImageJob = require('./job/MakeNewToReferenceImageJob');
+var ImageManipulator = require('./ImageManipulator');
+var fs = require('fs-extra');
+var path = require('path');
+var logger = require('winston');
+var config = require('./ConfigurationLoader');
+var jobHandler = require('./JobHandler');
 
 /**
  * Constructor.
@@ -98,9 +98,13 @@ ImageManipulatorRepository.prototype.deleteImageSetFromModel = function (id, cal
     ));
 };
 
+/**
+ * Returns the currently active job or if no job was active, the last executed job.
+ *
+ * @param callback The callback which the the currently active job or if no job was active, the last executed job as a parameter.
+ * **/
 ImageManipulatorRepository.prototype.getLastActiveJob = function (callback) {
     callback(jobHandler.getLastActiveJob());
 };
-
 
 module.exports = new ImageManipulatorRepository();

@@ -1,5 +1,11 @@
 var Job = require('./Job');
 
+/**
+ * Deletes all images of an image set and updates the image meta model accordingly.
+ *
+ * @param id The id of the image set.
+ * @param callback The callback method which is called, when diff process has finished. Has the this job as parameter.
+ * **/
 var DeleteJob = function (id, callback) {
     Job.call(this, 'DeleteSet', callback);
     this.id = id;
@@ -10,6 +16,12 @@ DeleteJob.prototype = Object.create(Job.prototype);
 
 /* ----- Action ----- */
 
+/**
+ * Executes this job.
+ *
+ * @param imageMetaInformationModel The image meta model in which the results will be saved.
+ * @param callback The callback which will be called after the job execution is finished.
+ * **/
 DeleteJob.prototype.execute = function (imageMetaInformationModel, callback) {
     this.imageMetaInformationModel = imageMetaInformationModel;
     var imageSet = this.getImageMetaInformationModel().getImageSetById(this.id);
@@ -23,8 +35,8 @@ DeleteJob.prototype.execute = function (imageMetaInformationModel, callback) {
         that.deleteImageSetFromModel(that.id, function () {
             var jobCreatorCallback = that.getCallbackFunction();
 
-            // Make the reference of the model to a copy for individual information storage
-            that.__copyImageMetaInformationModel();
+            // Make the reference of the model to a copy to have a snapshot which will not be changed anymore
+            that.copyImageMetaInformationModel();
 
             if(jobCreatorCallback) {
                 jobCreatorCallback(that);
@@ -57,8 +69,14 @@ DeleteJob.prototype.deleteImageSetFromModel = function (id, callback) {
     }
 };
 
+/**
+ * Loads the data into this job. Used to restore a previous state of this object.
+ *
+ * @param data The object containing the information which this object should habe.
+ * **/
 DeleteJob.prototype.load = function (data) {
-    this.__load(data);
+    // Load data in the prototype
+    this.loadJobData(data);
 
     this.id = data.id;
 };

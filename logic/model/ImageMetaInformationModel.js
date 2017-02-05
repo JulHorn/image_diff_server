@@ -1,6 +1,5 @@
 var fs = require('fs-extra');
 var logger = require('winston');
-var config = require('../ConfigurationLoader');
 var ImageSet = require('./ImageSetModel');
 var ImageModel = require('./ImageModel');
 
@@ -128,15 +127,6 @@ ImageMetaInformationModel.prototype.load = function (data) {
 };
 
 /**
- * Clears the content of the imageMetaInformationModel information model. The file with the imageMetaInformationModel information model will be updated.
- * **/
-ImageMetaInformationModel.prototype.clear = function () {
-    this.__initMetaInformationModel();
-    this.save();
-    logger.info('Cleared content of imageMetaInformationModel information model.');
-};
-
-/**
  * Adds an image set. If an image set with the same (reference/new) image name exists, it will be deleted before adding the new one.
  *
  * @param imageSet The image set to add.
@@ -205,6 +195,11 @@ var that = this;
     });
 };
 
+/**
+ * Returns a new ImageMetaInformationModel object containing the data of this object as a copy.
+ *
+ * @return Returns a new ImageMetaInformationModel object containing the data of this object as a copy.
+ * **/
 ImageMetaInformationModel.prototype.getCopy = function () {
     var copyObject = new ImageMetaInformationModel();
     copyObject.load(this);

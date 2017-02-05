@@ -11,7 +11,7 @@ var fs = require('fs-extra');
  * @param autoCrop Determines if the new/reference images should be autocroped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
  * @param pixDiffThreshold The pixel threshold.
  * @param distThreshold The distance threshold.
- * @param callback The callback method which is called, when diff process as finished. Has the imageMetaInformationModel as job. Optional.
+ * @param callback The callback method which is called, when diff process has finished. Has the this job as parameter.
  * **/
 var CheckAllJob = function (autoCrop, pixDiffThreshold, distThreshold, callback) {
     Job.call(this, 'CheckAll', callback);
@@ -28,20 +28,21 @@ CheckAllJob.prototype = Object.create(Job.prototype);
 /**
  * Executes this job.
  *
+ * @param imageMetaInformationModel The image meta model in which the results will be saved.
  * @param callback The callback which will be called after the job execution is finished.
  * **/
 CheckAllJob.prototype.execute = function (imageMetaInformationModel, callback) {
     var that = this;
-try {
     that.imageMetaInformationModel = imageMetaInformationModel;
+
+    // Compute differences
     this.createDiffImages(this.autoCrop, this.pixDiffThreshold, this.distThreshold, function () {
         var jobCreatorCallback = that.getCallbackFunction();
 
-        // Make the reference of the model to a copy for individual information storage
-        that.__copyImageMetaInformationModel();
+        // Make the reference of the model to a copy to have a snapshot which will not be changed anymore
+        that.copyImageMetaInformationModel();
 
         // Call callback of the job creator when stuff is done
-        // ToDo: Better to let the JobHandler call this? -> Probably better to understand the callback chain
         if (jobCreatorCallback) {
             jobCreatorCallback(that);
         }
@@ -49,7 +50,6 @@ try {
         // Notify the job handler that this job is finished
         callback();
     });
-} catch (exc) {console.log(exc);}
 };
 
 /**
@@ -214,6 +214,20 @@ CheckAllJob.prototype.getMaxDistanceDifferenceThreshold = function () {
     return this.distThreshold;
 };
 
+/**
+ * Loads the data into this job. Used to restore a previous state of this object.
+ *
+ * @param data The object containing the information which this object should habe.
+ * **/
+CheckAllJob.prototype.load = function (data) {
+    // Load data in the prototype
+    this.loadJobData(data);
+
+    this.autoCrop = data.autoCrop;
+    this.pixDiffThreshold = data.pixDiffThreshold;
+    this.distThreshold = data.distThreshold;
+};
+
 /* ----- Helper ----- */
 
 /**
@@ -266,14 +280,6 @@ CheckAllJob.prototype.__arrayIncludes = function (array, value) {
     });
 
     return result;
-};
-
-CheckAllJob.prototype.load = function (data) {
-    this.__load(data);
-
-    this.autoCrop = data.autoCrop;
-    this.pixDiffThreshold = data.pixDiffThreshold;
-    this.distThreshold = data.distThreshold;
 };
 
 module.exports = CheckAllJob;
