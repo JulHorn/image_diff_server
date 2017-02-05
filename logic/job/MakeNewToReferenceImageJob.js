@@ -65,7 +65,7 @@ MakeNewToReferenceImageJob.prototype.__makeToNewReferenceImage = function (id, c
             imageSet.setDiffImage(resultSet.getDiffImage());
 
             // Save imageMetaInformationModel information
-            that.saveMetaInformation();
+            that.calculateMetaInformation();
 
             // Call callback
             if(callback){

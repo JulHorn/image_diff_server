@@ -89,7 +89,8 @@ CheckAllJob.prototype.createDiffImages = function (autoCrop, pixDiffThreshold, d
     // Create diff images
     this.__createSingleImages(refDiffImageNames, newDiffImageNames, function () {
         that.__createDiffImages(imageNames, autoCrop, pixDiffThreshold, distThreshold, function () {
-            that.saveMetaInformation();
+            that.calculateMetaInformation();
+
             if(callback) {
                 callback(that.getImageMetaInformationModel());
             }

@@ -46,7 +46,7 @@ DeleteJob.prototype.execute = function (imageMetaInformationModel, callback) {
 DeleteJob.prototype.deleteImageSetFromModel = function (id, callback) {
     // Delete information about the data set and save the information
     this.getImageMetaInformationModel().deleteImageSetFromModel(id);
-    this.saveMetaInformation();
+    this.calculateMetaInformation();
 
     // One image set was deleted -> Update job process state
     this.incrementProcessImageCounter();

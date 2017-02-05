@@ -110,15 +110,15 @@ JobHandler.prototype.__executeJob = function() {
 JobHandler.prototype.__save = function () {
 
     // Ensure that the folder structure for the data files exists
-    logger.info('Ensuring that the job history path exists:', configuration.getMetaInformationFolderPath());
-    fs.ensureDirSync(configuration.getMetaInformationFolderPath());
+    logger.info('Ensuring that the job history path exists:', configuration.getJobHistoryFolderPath());
+    fs.ensureDirSync(configuration.getJobHistoryFolderPath());
 
     // Write the file
-    fs.writeFile("./data/test.json", JSON.stringify(this.jobHistory), 'utf8', function (err) {
+    fs.writeFile(configuration.getJobHistoryFilePath(), JSON.stringify(this.jobHistory), 'utf8', function (err) {
         if(err != null || typeof err == 'undefined'){
             logger.error('Failed to write job history.', err);
         } else {
-            logger.info('Writing job history finished.', configuration.getMetaInformationFilePath());
+            logger.info('Writing job history finished.', configuration.getJobHistoryFilePath());
         }
     });
 };
@@ -128,23 +128,24 @@ JobHandler.prototype.__save = function () {
  * **/
 JobHandler.prototype.__load = function () {
     var that = this;
+    var jobFilePath = configuration.getJobHistoryFilePath();
+
+    logger.info('Loading job history:', jobFilePath);
 
     // Check that file exists -> If not, then do nothing because the diff has to be calculated first
     try{
-        fs.accessSync("./data/test.json");
+        fs.accessSync(jobFilePath);
     } catch(err) {
-        logger.info('Job history file does not seem to exist. Working from a blank slate.', "./data/test.json");
+        logger.info('Job history file does not seem to exist. Working from a blank slate.', jobFilePath);
         // Add an empty job which can always be returned
         this.jobHistory.push(new Job('EmptyJob', new ImageMetaInformationModel(), null));
         return;
     }
 
-    logger.info('Loading job history.', "./data/test.json");
-
     // Load data in object structure, delete file if it is corrupt
     try {
         // Blocking file read to ensure that the complete data is loaded before further actions are taken
-        var jobHistory = fs.readFileSync("./data/test.json", 'utf8');
+        var jobHistory = fs.readFileSync(jobFilePath, 'utf8');
 
         jobHistory = JSON.parse(jobHistory);
 

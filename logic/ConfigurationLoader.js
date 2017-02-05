@@ -74,17 +74,17 @@ Configuration.prototype.getResultImageFolderPath = function () {
 };
 
 /**
- * Returns the file path in which the imageMetaInformationModel information for the images will be stored.
+ * Returns the file path in which the job history file path.
  * **/
-Configuration.prototype.getMetaInformationFilePath = function () {
-    return path.normalize(this.getImagesConfig().get('metaInformationFile'));
+Configuration.prototype.getJobHistoryFilePath = function () {
+    return path.normalize(this.getImagesConfig().get('jobHistoryFilePath'));
 };
 
 /**
- * Returns the folder path in which the imageMetaInformationModel information file for the images will be stored.
+ * Returns the folder path in which the job history file will be stored.
  * **/
-Configuration.prototype.getMetaInformationFolderPath = function () {
-    return path.dirname(this.getMetaInformationFilePath());
+Configuration.prototype.getJobHistoryFolderPath = function () {
+    return path.dirname(this.getJobHistoryFilePath());
 };
 
 /**

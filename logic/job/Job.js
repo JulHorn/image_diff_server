@@ -77,13 +77,11 @@ Job.prototype.incrementProcessImageCounter = function() {
 /* ----- Helper ----- */
 
 /**
- * Calculates the the biggest percentual pixel difference/distance, sets the timestamp and saves the image imageMetaInformationModel information structure
- * to file.
+ * Calculates the the biggest percentual pixel difference/distance and sets the timestamp.
  * **/
-Job.prototype.saveMetaInformation = function () {
+Job.prototype.calculateMetaInformation = function () {
     this.imageMetaInformationModel.calculateBiggestDifferences();
     this.imageMetaInformationModel.setTimeStamp(new Date().toISOString());
-    this.imageMetaInformationModel.save();
 };
 
 Job.prototype.__load = function (data) {

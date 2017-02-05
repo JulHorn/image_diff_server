@@ -110,25 +110,6 @@ ImageMetaInformationModel.prototype.setTimeStamp = function (timeStamp) {
 /* ----- Action Methods ----- */
 
 /**
- * Saves imageMetaInformationModel information to file.
- * **/
-ImageMetaInformationModel.prototype.save = function () {
-
-    // Ensure that the folder structure for the imageMetaInformationModel information file exists
-    logger.info('Ensuring that the imageMetaInformationModel information folder path exists:', config.getMetaInformationFolderPath());
-    fs.ensureDirSync(config.getMetaInformationFolderPath());
-
-    // Write the file
-    fs.writeFile(config.getMetaInformationFilePath(), JSON.stringify(this), 'utf8', function (err) {
-        if(err != null || typeof err == 'undefined'){
-            logger.error('Failed to write imageMetaInformationModel information.', err);
-        } else {
-            logger.info('Writing imageMetaInformationModel information finished.', config.getMetaInformationFilePath());
-        }
-    });
-};
-
-/**
  * Loads the imageMetaInformationModel information file. If it does not exist, the program will work without imageMetaInformationModel information until some are created.
  * **/
 ImageMetaInformationModel.prototype.load = function (data) {
@@ -144,7 +125,6 @@ ImageMetaInformationModel.prototype.load = function (data) {
 
     // Calculate the biggest image difference of all sets
     this.calculateBiggestDifferences();
-    logger.info('Loading imageMetaInformationModel information finished.', config.getMetaInformationFilePath());
 };
 
 /**
