@@ -21,8 +21,9 @@ Table.prototype.bindEvents = function () {
     // Bind delete action to delete buttons
     this.$container.on('click', 'button[data-action=delete]', function () {
         that.connector.delete($(this).data('id'), function (data) {
+            that.callback(data);
         });
-        $(this).parents('tr').remove();
+        //$(this).parents('tr').remove();
     });
 
     // Bind add new image to reference imageaction to add button
@@ -31,10 +32,11 @@ Table.prototype.bindEvents = function () {
         var button = $(this);
         var id = $(this).data('id');
         that.connector.makteToNewReferenceImage(id, function (data) {
-            var resultImageSet = that.__getImageSetById(id, data.imageMetaInformationModel);
+            //var resultImageSet = that.__getImageSetById(id, data.imageMetaInformationModel);
             informationLabel.text('New reference image');
 
-            that.__updateImageSetMetaInformation(resultImageSet, button.parents('tr'));
+            that.callback(data);
+            //that.__updateImageSetMetaInformation(resultImageSet, button.parents('tr'));
         });
     });
 };
@@ -108,6 +110,9 @@ Table.prototype.__createDefaultCellContent = function (image) {
 };
 
 /**
+ * @ToDo: Check what happens with a lot of images. This method is more may be more performance friendly when the draw all
+ * method.
+ *
  * Updates the image information/imageMetaInformationModel information.
  *
  * @param resultImageSet The image set with the new information.
