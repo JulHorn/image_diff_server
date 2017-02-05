@@ -1,5 +1,7 @@
 /**
- * @param connector
+ * Offers logic to handle the header.
+ *
+ * @param connector The object to send requests to the server.
  * @param callback Called when the UI needs an update.
  * **/
 var Header = function (connector, callback) {
@@ -43,6 +45,8 @@ Header.prototype.bindEvents = function () {
 };
 
 /**
+ * Draws the header information.
+ *
  * @param data Contains all information about the run job.
  * **/
 Header.prototype.draw = function (data) {

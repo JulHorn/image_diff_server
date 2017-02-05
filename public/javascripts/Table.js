@@ -1,5 +1,7 @@
 /**
- * @param connector
+ * Offers logic to handle the table.
+ *
+ * @param connector The object to send requests to the server
  * @param callback Called when the UI needs an update.
  * **/
 var Table = function (connector, callback) {
@@ -36,12 +38,13 @@ Table.prototype.bindEvents = function () {
             informationLabel.text('New reference image');
 
             that.callback(data);
-            //that.__updateImageSetMetaInformation(resultImageSet, button.parents('tr'));
         });
     });
 };
 
 /**
+ * Draws the table and its content.
+ *
 * @param data Contains all information about the run job.
 * **/
 Table.prototype.draw = function (data) {
@@ -90,6 +93,11 @@ Table.prototype.__getImageSetById = function (id, imageMetaModel) {
     })[0];
 };
 
+/**
+ * Creates the default content of a cell (image with link, basic information).
+ *
+ * @return The created cell content.
+ * **/
 Table.prototype.__createDefaultCellContent = function (image) {
     var cellContent = '';
 
@@ -107,37 +115,4 @@ Table.prototype.__createDefaultCellContent = function (image) {
     cellContent += '</div>';
 
     return cellContent;
-};
-
-/**
- * @ToDo: Check what happens with a lot of images. This method is more may be more performance friendly when the draw all
- * method.
- *
- * Updates the image information/imageMetaInformationModel information.
- *
- * @param resultImageSet The image set with the new information.
- * @param parentElement The parent element under which the images etc. are located. Pretty much a row.
- * **/
-Table.prototype.__updateImageSetMetaInformation = function (resultImageSet, parentElement) {
-    var refImg = parentElement.find('td[role="referenceImage"]');
-    // var newImg = parentElement.find('td[role="newImage"]');
-    var diffImg = parentElement.find('td[role="diffImage"]');
-    var imageSuffix = '?timestamp=' + new Date().getTime();
-
-    // Set new images
-    diffImg.find('a[role="imageLink"]').attr('href', resultImageSet.diffImage.path.replace('public', '.') + imageSuffix);
-    diffImg.find('img[role="image"]').attr('src', resultImageSet.diffImage.path.replace('public', '.') + imageSuffix);
-    refImg.find('a[role="imageLink"]').attr('href', resultImageSet.referenceImage.path.replace('public', '.') + imageSuffix);
-    refImg.find('img[role="image"]').attr('src', resultImageSet.referenceImage.path.replace('public', '.') + imageSuffix);
-
-    // Set imageMetaInformationModel information
-    refImg.find('*[role="imageName"]').text(resultImageSet.referenceImage.name);
-    diffImg.find('*[role="imageName"]').text(resultImageSet.diffImage.name);
-    refImg.find('*[role="height"]').text(resultImageSet.referenceImage.height);
-    diffImg.find('*[role="height"]').text(resultImageSet.referenceImage.height);
-    refImg.find('*[role="width"]').text(resultImageSet.referenceImage.width);
-    diffImg.find('*[role="width"]').text(resultImageSet.referenceImage.width);
-    diffImg.find('*[role="error"]').text(resultImageSet.error);
-    diffImg.find('*[role="percPixelDifference"]').text(resultImageSet.difference);
-    diffImg.find('*[role="distanceDifference"]').text(resultImageSet.distance);
 };

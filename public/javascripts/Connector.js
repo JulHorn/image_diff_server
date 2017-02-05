@@ -1,5 +1,5 @@
 /**
- * Constructor.
+ * The prototype offers functionality to send requests to the server.
  * **/
 var Connector = function () {
 };
