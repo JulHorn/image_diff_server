@@ -46,6 +46,13 @@ Configuration.prototype.getWorkingMode = function () {
 };
 
 /**
+ * Returns the the maximum number of jobs the server will track until it will start to discard the oldest ones.
+ * **/
+Configuration.prototype.getMaxNumberIfStoredJobs = function () {
+    return this.getServerConf().get('maxNumberOfStoredJobs');
+};
+
+/**
  * Returns the image configuration.
  * **/
 Configuration.prototype.getImagesConfig = function () {

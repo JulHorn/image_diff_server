@@ -2,7 +2,8 @@
 	"server":{
 		"port":"3000",
 		"timeoutInMs": 600000,
-		"workingMode": 0
+		"workingMode": 0,
+		"maxNumberOfStoredJobs": 10
 	},
 	"images":{
 		"referenceImageFolder":"./public/images/reference",

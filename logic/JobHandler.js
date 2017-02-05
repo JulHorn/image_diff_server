@@ -52,6 +52,11 @@ JobHandler.prototype.getLastActiveJob = function () {
  * **/
 JobHandler.prototype.addJob = function (job) {
     try {
+        // If the max. number of elements in the history is higher than specified, remove the oldest one
+        if(configuration.getMaxNumberIfStoredJobs() <= this.jobHistory.length) {
+            this.jobHistory.shift();
+        }
+
         // Discard job if something is already in the queue
         if (this.behaviour == 0
             && (this.jobQueue.length > 1
