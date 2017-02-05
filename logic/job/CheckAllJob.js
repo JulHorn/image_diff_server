@@ -30,13 +30,18 @@ CheckAllJob.prototype = Object.create(Job.prototype);
  *
  * @param callback The callback which will be called after the job execution is finished.
  * **/
-CheckAllJob.prototype.execute = function (callback) {
+CheckAllJob.prototype.execute = function (imageMetaInformationModel, callback) {
     var that = this;
-
+try {
+    that.imageMetaInformationModel = imageMetaInformationModel;
     this.createDiffImages(this.autoCrop, this.pixDiffThreshold, this.distThreshold, function () {
         var jobCreatorCallback = that.getCallbackFunction();
 
-        /// Call callback of the job creator when stuff is done
+        // Make the reference of the model to a copy for individual information storage
+        that.__copyImageMetaInformationModel();
+
+        // Call callback of the job creator when stuff is done
+        // ToDo: Better to let the JobHandler call this? -> Probably better to understand the callback chain
         if (jobCreatorCallback) {
             jobCreatorCallback(that);
         }
@@ -44,6 +49,7 @@ CheckAllJob.prototype.execute = function (callback) {
         // Notify the job handler that this job is finished
         callback();
     });
+} catch (exc) {console.log(exc);}
 };
 
 /**

@@ -8,7 +8,7 @@
 		"referenceImageFolder":"./public/images/reference",
 		"newImageFolder":"./public/images/new",
 		"resultImageFolder":"./public/images/diff",
-		"metaInformationFile":"./data/metaInformation.json"
+		"metaInformationFile":"./data/jobHistory.json"
 	},
 	"thresholds":{
 		"maxPercentualImagePixelDifference": 0.15,

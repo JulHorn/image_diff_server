@@ -13,7 +13,18 @@ var Job = function(jobName, callback) {
     this.processedImageCount = 0;
     this.imagesToBeProcessedCount = 0;
     this.imageManipulator = new ImageManipulator();
-    this.imageMetaInformationModel = imageMetaInformationModel;
+    this.imageMetaInformationModel = new imageMetaInformationModel();
+};
+
+/* ----- Action ----- */
+
+Job.prototype.execute = function (imageMetaInformationModel, callback) {
+  // Do nothing -> Log empty execution?
+    // ToDo: Call callback
+
+    that.imageMetaInformationModel = imageMetaInformationModel;
+    // Make the reference of the model to a copy for individual information storage
+    this.__copyImageMetaInformationModel();
 };
 
 /* ----- Getter ----- */
@@ -70,9 +81,9 @@ Job.prototype.incrementProcessImageCounter = function() {
  * to file.
  * **/
 Job.prototype.saveMetaInformation = function () {
-    imageMetaInformationModel.calculateBiggestDifferences();
-    imageMetaInformationModel.setTimeStamp(new Date().toISOString());
-    imageMetaInformationModel.save();
+    this.imageMetaInformationModel.calculateBiggestDifferences();
+    this.imageMetaInformationModel.setTimeStamp(new Date().toISOString());
+    this.imageMetaInformationModel.save();
 };
 
 Job.prototype.__load = function (data) {
@@ -81,6 +92,10 @@ Job.prototype.__load = function (data) {
     this.imagesToBeProcessedCount = data.imagesToBeProcessedCount;
     this.imageMetaInformationModel = new imageMetaInformationModel();
     this.imageMetaInformationModel.load(data.imageMetaInformationModel);
+};
+
+Job.prototype.__copyImageMetaInformationModel = function () {
+    this.imageMetaInformationModel = this.getImageMetaInformationModel().getCopy();
 };
 
 module.exports = Job;

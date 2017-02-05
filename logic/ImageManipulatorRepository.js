@@ -38,9 +38,6 @@ ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function
     logger.info("Distance threshold:", distThresholdValue);
     logger.info("----- Options End -----");
 
-    // Clears the old imageMetaInformationModel information model to start from a clean plate and avoid invalite states
-    ImageMetaInformationModel.clear();
-
     // Add create diff images job to the job handler
     jobHandler.addJob(
         new CheckAllJobModel(autoCropValue, pixDiffThresholdValue, distThresholdValue, function (job) {

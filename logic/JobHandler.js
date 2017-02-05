@@ -2,6 +2,7 @@ var Job = require('./job/Job');
 var CheckAllJob = require('./job/CheckAllJob');
 var DeleteJob = require('./job/DeleteJob');
 var MakeNewToReferenceImageJob = require('./job/MakeNewToReferenceImageJob');
+var ImageMetaInformationModel = require('./model/ImageMetaInformationModel');
 var logger = require('winston');
 var configuration = require('./ConfigurationLoader');
 var fs = require('fs-extra');
@@ -20,6 +21,7 @@ var JobHandler = function() {
     this.jobQueue = [];
     this.jobHistory = [];
     this.runningJob = null;
+    this.currentMetaInformationModel = new ImageMetaInformationModel();
 
     this.__load();
 };
@@ -82,7 +84,7 @@ JobHandler.prototype.__executeJob = function() {
 
             // ToDo: Error handling: If something happens, the job locks the execution queue forever
             logger.info('Executing job:', this.runningJob.getJobName());
-            this.runningJob.execute(function () {
+            this.runningJob.execute(that.currentMetaInformationModel, function () {
                 // When finished: Put the job on the history stack
                 that.isJobRunning = false;
                 that.jobHistory.push(that.runningJob);
@@ -133,7 +135,7 @@ JobHandler.prototype.__load = function () {
     } catch(err) {
         logger.info('Job history file does not seem to exist. Working from a blank slate.', "./data/test.json");
         // Add an empty job which can always be returned
-        this.jobHistory.push(new Job());
+        this.jobHistory.push(new Job('EmptyJob', new ImageMetaInformationModel(), null));
         return;
     }
 
@@ -153,9 +155,11 @@ JobHandler.prototype.__load = function () {
     } catch (exception) {
         logger.error('Failed to load or parse job history file. Working from a blank slate.', exception);
         // Add an empty job which can always be returned
-        this.jobHistory.push(new Job('EmptyJob', null));
-        return;
+        this.jobHistory.push(new Job('EmptyJob', new ImageMetaInformationModel(), null));
     }
+
+    // Use the last jobs imagemetainformation model as current model
+    this.currentMetaInformationModel = this.getLastActiveJob().getImageMetaInformationModel().getCopy();
 };
 
 JobHandler.prototype.__loadJob = function (jobData) {
@@ -163,16 +167,16 @@ JobHandler.prototype.__loadJob = function (jobData) {
 
     switch(jobData.jobName) {
         case 'MakeToNewBaselineImage':
-            job = new MakeNewToReferenceImageJob(null, null);
+            job = new MakeNewToReferenceImageJob(null, null, null);
             break;
         case 'DeleteSet':
-            job = new DeleteJob(null, null);
+            job = new DeleteJob(null, null, null);
             break;
         case 'CheckAll':
-            job = new CheckAllJob(null, null, null, null);
+            job = new CheckAllJob(null, null, null, null, null);
             break;
         case 'EmptyJob':
-            return new Job('EmptyJob', null);
+            return new Job('EmptyJob', null, null);
         default:
             throw Error('The job type ' + jobData.jobName + ' is unknown or not yet mapped.');
     }

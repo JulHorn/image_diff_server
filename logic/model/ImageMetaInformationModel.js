@@ -225,6 +225,13 @@ var that = this;
     });
 };
 
+ImageMetaInformationModel.prototype.getCopy = function () {
+    var copyObject = new ImageMetaInformationModel();
+    copyObject.load(this);
+
+    return copyObject;
+};
+
 /* ----- Helper Methods ----- */
 
 /**

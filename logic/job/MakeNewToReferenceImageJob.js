@@ -13,9 +13,9 @@ MakeNewToReferenceImageJob.prototype = Object.create(Job.prototype);
 
 /* ----- Action ----- */
 
-MakeNewToReferenceImageJob.prototype.execute = function (callback) {
+MakeNewToReferenceImageJob.prototype.execute = function (imageMetaInformationModel, callback) {
     var that = this;
-
+    that.imageMetaInformationModel = imageMetaInformationModel;
     // Sinlge option -> Only one image has to be processed
     this.setImagesToBeProcessedCount(1);
 
@@ -23,6 +23,9 @@ MakeNewToReferenceImageJob.prototype.execute = function (callback) {
         var jobCreatorCallback = that.getCallbackFunction();
         // Update the processed image count
         that.incrementProcessImageCounter();
+
+        // Make the reference of the model to a copy for individual information storage
+        that.__copyImageMetaInformationModel();
 
         /// Call callback of the job creator when stuff is done
         if (jobCreatorCallback) {

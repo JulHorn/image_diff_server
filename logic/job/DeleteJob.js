@@ -10,7 +10,8 @@ DeleteJob.prototype = Object.create(Job.prototype);
 
 /* ----- Action ----- */
 
-DeleteJob.prototype.execute = function (callback) {
+DeleteJob.prototype.execute = function (imageMetaInformationModel, callback) {
+    this.imageMetaInformationModel = imageMetaInformationModel;
     var imageSet = this.getImageMetaInformationModel().getImageSetById(this.id);
     var that = this;
 
@@ -21,6 +22,9 @@ DeleteJob.prototype.execute = function (callback) {
     this.getImageManipulator().deleteImageSetImages(imageSet, function () {
         that.deleteImageSetFromModel(that.id, function () {
             var jobCreatorCallback = that.getCallbackFunction();
+
+            // Make the reference of the model to a copy for individual information storage
+            that.__copyImageMetaInformationModel();
 
             if(jobCreatorCallback) {
                 jobCreatorCallback(that);
