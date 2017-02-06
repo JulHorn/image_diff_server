@@ -100,9 +100,11 @@ Table.prototype.__getImageSetById = function (id, imageMetaModel) {
  * **/
 Table.prototype.__createDefaultCellContent = function (image) {
     var cellContent = '';
+    // Ensure that images will be reloaded
+    var imageSuffix = '?timestamp=' + new Date().getTime();
 
-    cellContent += '<a href="' + image.path.replace('public', '.') + '" role="imageLink">';
-    cellContent += '<img src="' + image.path.replace('public', '.') + '" role="image"/>';
+    cellContent += '<a href="' + image.path.replace('public', '.') + imageSuffix + '" role="imageLink">';
+    cellContent += '<img src="' + image.path.replace('public', '.') + imageSuffix + '" role="image"/>';
     cellContent += '</a>';
 
     cellContent += '<div>';
