@@ -49,14 +49,13 @@ ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, call
     this.loadImage(referenceImagePath, function (err, referenceImage) {
         that.loadImage(newImagePath, function (err, newImage) {
 
-            // If the image size is not identical and autocrop is off
+            // If the image size is not identical
             if((referenceImage.bitmap.height !== newImage.bitmap.height
                 || referenceImage.bitmap.width !== newImage.bitmap.width) && !autoCrop){
                 var errorText = 'Image dimensions are not equal: '
-                    + 'reference: ' + referenceImage.bitmap.height + '/' + referenceImage.bitmap.width
-                    + 'reference: ' + referenceImage.bitmap.height + '/' + referenceImage.bitmap.width;
+                    + 'new: ' + newImage.bitmap.height + '/' + newImage.bitmap.width
+                    + '\nreference: ' + referenceImage.bitmap.height + '/' + referenceImage.bitmap.width;
                 logger.error(errorText);
-                throw Error(errorText);
             }
 
             // Autocrop if argument is given to normalalize images
