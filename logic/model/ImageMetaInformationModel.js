@@ -206,15 +206,24 @@ ImageMetaInformationModel.prototype.reset = function () {
 /* ----- Helper Methods ----- */
 
 /**
- * Returns the index of an image set.
+ * Returns the index of the imageSet by the given id.
  *
  * @param id The id of the image set for which its index should be returned.
- * @return Returns the index of an image set. -1 If image set with that id was found.
+ * @return Returns the index of the image set or -1.
  * **/
 ImageMetaInformationModel.prototype.__getIndexOfImageSet = function (id) {
-    return this.getImageSets().findIndex(function (imageSet) {
-        return imageSet.getId() === id;
+    // Use this method instead of the array method for downward compatibility
+    var imageSetIndex = -1;
+
+    this.getImageSets().forEach(function (imageSet, index) {
+        if(imageSet.getId() === id) {
+            imageSetIndex = index;
+
+            return false;
+        }
     });
+
+    return imageSetIndex;
 };
 
 module.exports = ImageMetaInformationModel;
