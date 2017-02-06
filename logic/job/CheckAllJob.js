@@ -33,7 +33,10 @@ CheckAllJob.prototype = Object.create(Job.prototype);
  * **/
 CheckAllJob.prototype.execute = function (imageMetaInformationModel, callback) {
     var that = this;
-    that.imageMetaInformationModel = imageMetaInformationModel;
+    this.imageMetaInformationModel = imageMetaInformationModel;
+
+    // Since the old model is of no use anymore, begin from a blank slate
+    this.imageMetaInformationModel();
 
     // Compute differences
     this.createDiffImages(this.autoCrop, this.pixDiffThreshold, this.distThreshold, function () {

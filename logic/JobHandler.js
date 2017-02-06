@@ -129,16 +129,6 @@ JobHandler.prototype.__loadJobHistory = function () {
 
     logger.info('Loading job history:', jobFilePath);
 
-    // Check that file exists and work from a blank slate if it is not the case
-    try{
-        fs.accessSync(jobFilePath);
-    } catch(err) {
-        logger.info('Job history file does not seem to exist. Working from a blank slate.', jobFilePath);
-        // Add an empty job which can always be returned
-        this.jobHistory.push(new Job('EmptyJob', new ImageMetaInformationModel(), null));
-        return;
-    }
-
     // Load data in object structure, delete file if it is corrupt
     try {
         // Blocking file read to ensure that the complete data is loaded before further actions are taken
@@ -151,7 +141,7 @@ JobHandler.prototype.__loadJobHistory = function () {
         });
 
     } catch (exception) {
-        logger.error('Failed to load or parse job history file. Working from a blank slate.', exception);
+        logger.error('Failed to load or parse job history file ' + jobFilePath + 'Working from a blank slate.', exception);
         // Add an empty job which can always be returned
         this.jobHistory.push(new Job('EmptyJob', new ImageMetaInformationModel(), null));
     }

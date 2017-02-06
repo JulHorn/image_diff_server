@@ -7,7 +7,7 @@ var ImageModel = require('./ImageModel');
  * Constructor. Loads the imageMetaInformationModel information in the imageMetaInformationModel information text file, if it does exist.
  * **/
 var ImageMetaInformationModel = function () {
-    this.__initMetaInformationModel();
+    this.reset();
 };
 
 /* ----- Getter ----- */
@@ -132,20 +132,6 @@ ImageMetaInformationModel.prototype.load = function (data) {
  * @param imageSet The image set to add.
  * **/
 ImageMetaInformationModel.prototype.addImageSet = function (imageSet) {
-    // Remove old/outdated image set before adding the new one with the same image names
-    var oldImageSet = this.getImageSetByName(imageSet.getReferenceImage().getName());
-
-    // Delete old image set
-    if(oldImageSet === null){
-        oldImageSet = this.getImageSetByName(imageSet.getNewImage().getName());
-
-        if(oldImageSet !== null){
-            this.deleteImageSetFromModel(oldImageSet.getId());
-        }
-    } else {
-        this.deleteImageSetFromModel(oldImageSet.getId());
-    }
-
     // Add new image set
     this.getImageSets().push(imageSet);
 };
@@ -207,6 +193,16 @@ ImageMetaInformationModel.prototype.getCopy = function () {
     return copyObject;
 };
 
+/**
+ * Resets the imageMetaInformationModel information model to its initial state.
+ * **/
+ImageMetaInformationModel.prototype.reset = function () {
+    this.biggestPercentualPixelDifference = 0;
+    this.biggestDistanceDifference = 0;
+    this.timeStamp = '';
+    this.imageSets = [];
+};
+
 /* ----- Helper Methods ----- */
 
 /**
@@ -219,16 +215,6 @@ ImageMetaInformationModel.prototype.__getIndexOfImageSet = function (id) {
     return this.getImageSets().findIndex(function (imageSet) {
         return imageSet.getId() === id;
     });
-};
-
-/**
- * Initializes the imageMetaInformationModel information model with empty values.
- * **/
-ImageMetaInformationModel.prototype.__initMetaInformationModel = function () {
-    this.biggestPercentualPixelDifference = 0;
-    this.biggestDistanceDifference = 0;
-    this.timeStamp = '';
-    this.imageSets = [];
 };
 
 module.exports = ImageMetaInformationModel;
