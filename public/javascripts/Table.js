@@ -22,10 +22,13 @@ Table.prototype.bindEvents = function () {
 
     // Bind delete action to delete buttons
     this.$container.on('click', 'button[data-action=delete]', function () {
+        var button = this;
+
         that.connector.delete($(this).data('id'), function (data) {
-            that.callback(data);
+            // Do not draw everything new because the usability suffers if there are a lot of images
+            //that.callback(data);
+            $(button).parents('tr').remove();
         });
-        //$(this).parents('tr').remove();
     });
 
     // Bind add new image to reference imageaction to add button
@@ -34,10 +37,14 @@ Table.prototype.bindEvents = function () {
         var button = $(this);
         var id = $(this).data('id');
         that.connector.makteToNewReferenceImage(id, function (data) {
-            //var resultImageSet = that.__getImageSetById(id, data.imageMetaInformationModel);
-            informationLabel.text('New reference image');
+            // Modify only the row where the action was triggered
+            var resultImageSet = that.__getImageSetById(id, data.imageMetaInformationModel);
 
-            that.callback(data);
+            informationLabel.text('New reference image');
+            that.__updateImageSetMetaInformation(resultImageSet, button.parents('tr'));
+
+            // Do not draw everything new because the usability suffers if there are a lot of images
+            // that.callback(data);
         });
     });
 };
@@ -117,4 +124,34 @@ Table.prototype.__createDefaultCellContent = function (image) {
     cellContent += '</div>';
 
     return cellContent;
+};
+
+/**
+ * Updates the image information/imageMetaInformationModel information.
+ *
+ * @param resultImageSet The image set with the new information.
+ * @param parentElement The parent element under which the images etc. are located. Pretty much a row.
+ * **/
+Table.prototype.__updateImageSetMetaInformation = function (resultImageSet, parentElement) {
+    var refImg = parentElement.find('td[role="referenceImage"]');
+    // var newImg = parentElement.find('td[role="newImage"]');
+    var diffImg = parentElement.find('td[role="diffImage"]');
+    var imageSuffix = '?timestamp=' + new Date().getTime();
+
+    // Set new images
+    diffImg.find('a[role="imageLink"]').attr('href', resultImageSet.diffImage.path.replace('public', '.') + imageSuffix);
+    diffImg.find('img[role="image"]').attr('src', resultImageSet.diffImage.path.replace('public', '.') + imageSuffix);
+    refImg.find('a[role="imageLink"]').attr('href', resultImageSet.referenceImage.path.replace('public', '.') + imageSuffix);
+    refImg.find('img[role="image"]').attr('src', resultImageSet.referenceImage.path.replace('public', '.') + imageSuffix);
+
+    // Set imageMetaInformationModel information
+    refImg.find('*[role="imageName"]').text(resultImageSet.referenceImage.name);
+    diffImg.find('*[role="imageName"]').text(resultImageSet.diffImage.name);
+    refImg.find('*[role="height"]').text(resultImageSet.referenceImage.height);
+    diffImg.find('*[role="height"]').text(resultImageSet.referenceImage.height);
+    refImg.find('*[role="width"]').text(resultImageSet.referenceImage.width);
+    diffImg.find('*[role="width"]').text(resultImageSet.referenceImage.width);
+    diffImg.find('*[role="error"]').text(resultImageSet.error);
+    diffImg.find('*[role="percPixelDifference"]').text(resultImageSet.difference);
+    diffImg.find('*[role="distanceDifference"]').text(resultImageSet.distance);
 };
