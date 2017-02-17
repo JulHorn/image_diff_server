@@ -69,7 +69,7 @@ Connector.prototype.sendRequest = function (url, method, data, callback) {
         if (callback) {
             if (typeof data.data === 'undefined' || data.data === null) {
                 callback(data.message);
-            }else if (typeof data.data == 'object') {
+            }else if (typeof data.data === 'object') {
                 callback(data.data);
             } else {
                 callback(JSON.parse(data.data));
@@ -90,7 +90,7 @@ Connector.prototype.sendRequest = function (url, method, data, callback) {
 Connector.prototype.getServerEndpoint = function () {
     if(!localStorage.imageDiffServerEndpoint){
         localStorage.imageDiffServerEndpoint = location.protocol
-            + '//' + location.hostname + (location.port ? ':' +location.port : '')
+            + '//' + location.hostname + (location.port ? ':' + location.port : '')
     }
 
     return localStorage.imageDiffServerEndpoint;

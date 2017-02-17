@@ -69,7 +69,7 @@ JobHandler.prototype.addJob = function (job) {
         }
 
         // Discard job if something is already in the queue
-        if (this.behaviour == 0
+        if (this.behaviour === 0
             && (this.jobQueue.length > 1
             || this.isJobRunning)) {
             logger.info('There is already a job being executed. Execution behaviour is set to discard. Discarding new job.');
@@ -161,7 +161,7 @@ JobHandler.prototype.__save = function () {
 
     // Write the file
     fs.writeFile(config.getJobHistoryFilePath(), JSON.stringify(this.jobHistory), 'utf8', function (err) {
-        if(err != null || typeof err == 'undefined'){
+        if(err != null || typeof err === 'undefined'){
             logger.error('Failed to write job history.', err);
         } else {
             logger.info('Writing job history finished.', config.getJobHistoryFilePath());

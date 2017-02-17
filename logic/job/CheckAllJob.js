@@ -115,7 +115,7 @@ CheckAllJob.prototype.__createDiffImages = function (imageNames, autoCrop, pixDi
 
     logger.info("Number of images left to compare: ", imageNames.length);
     // If no images are left to process, call the callback method and stop
-    if(imageNames.length == 0) {
+    if(imageNames.length === 0) {
         logger.info('No images left to compare.');
         if(callback){
             callback();
@@ -153,7 +153,7 @@ CheckAllJob.prototype.__createDiffImages = function (imageNames, autoCrop, pixDi
 CheckAllJob.prototype.__createSingleImages = function (refImageNames, newImageNames, callback) {
     var that = this;
 
-    if(refImageNames.length == 0 && newImageNames.length == 0) {
+    if(refImageNames.length === 0 && newImageNames.length === 0) {
         logger.info('No single images left to process.');
         callback();
     } else {

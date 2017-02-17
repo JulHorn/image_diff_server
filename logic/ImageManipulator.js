@@ -205,7 +205,6 @@ ImageManipulator.prototype.__isImageExisting = function (imagePath) {
 
 /**
  * Deletes a file.
- *
  * @param path The file which should be deleted.
  * **/
 ImageManipulator.prototype.__deleteFile = function (path) {

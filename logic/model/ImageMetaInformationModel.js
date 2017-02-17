@@ -82,8 +82,8 @@ ImageMetaInformationModel.prototype.getImageSetByName = function(imageName){
 
     // Get the image set with the name
     var result = this.getImageSets().filter(function (imageSet) {
-        return imageSet.getReferenceImage().getName() == imageName
-            || imageSet.getNewImage().getName() == imageName;
+        return imageSet.getReferenceImage().getName() === imageName
+            || imageSet.getNewImage().getName() === imageName;
     });
 
     // If the image does not already exist in the imageMetaInformationModel informations sturcture, then return null
