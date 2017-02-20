@@ -125,15 +125,19 @@ ImageManipulator.prototype.createSingleImageSet = function (imageName, image, er
 
     // Edit set dependant of the image type
     if(isReferenceImage) {
-        imageSet.getReferenceImage().setHeight(image.bitmap.height);
-        imageSet.getReferenceImage().setWidth(image.bitmap.width);
-        imageSet.getReferenceImage().setName(imageName);
-        imageSet.getReferenceImage().setPath(config.getReferenceImageFolderPath() + path.sep + imageName);
+        var referenceImage = imageSet.getReferenceImage();
+
+        referenceImage.setHeight(image.bitmap.height);
+        referenceImage.setWidth(image.bitmap.width);
+        referenceImage.setName(imageName);
+        referenceImage.setPath(config.getReferenceImageFolderPath() + path.sep + imageName);
     } else {
-        imageSet.getNewImage().setHeight(image.bitmap.height);
-        imageSet.getNewImage().setWidth(image.bitmap.width);
-        imageSet.getNewImage().setName(imageName);
-        imageSet.getNewImage().setPath(config.getNewImageFolderPath() + path.sep + imageName);
+        var newImage = imageSet.getNewImage();
+
+        newImage.setHeight(image.bitmap.height);
+        newImage.setWidth(image.bitmap.width);
+        newImage.setName(imageName);
+        newImage.setPath(config.getNewImageFolderPath() + path.sep + imageName);
     }
 
     return imageSet;
@@ -154,25 +158,28 @@ ImageManipulator.prototype.createSingleImageSet = function (imageName, image, er
  * **/
 ImageManipulator.prototype.createCompleteImageSet = function(imageName, referenceImage, newImage, diffImage, difference, distance, error){
     var imageSet = new ImageSetModel();
+    var referenceImageModel = imageSet.getReferenceImage();
+    var newImageModel = imageSet.getNewImage();
+    var diffImageModel = imageSet.getDiffImage();
 
     imageSet.setDifference(difference);
     imageSet.setDistance(distance);
     imageSet.setError(error);
 
-    imageSet.getReferenceImage().setName(imageName);
-    imageSet.getReferenceImage().setHeight(referenceImage.bitmap.height);
-    imageSet.getReferenceImage().setWidth(referenceImage.bitmap.width);
-    imageSet.getReferenceImage().setPath(config.getReferenceImageFolderPath() + path.sep + imageName);
+    referenceImageModel.setName(imageName);
+    referenceImageModel.setHeight(referenceImage.bitmap.height);
+    referenceImageModel.setWidth(referenceImage.bitmap.width);
+    referenceImageModel.setPath(config.getReferenceImageFolderPath() + path.sep + imageName);
 
-    imageSet.getNewImage().setName(imageName);
-    imageSet.getNewImage().setHeight(referenceImage.bitmap.height);
-    imageSet.getNewImage().setWidth(referenceImage.bitmap.width);
-    imageSet.getNewImage().setPath(config.getNewImageFolderPath() + path.sep + imageName);
+    newImageModel.setName(imageName);
+    newImageModel.setHeight(newImage.bitmap.height);
+    newImageModel.setWidth(newImage.bitmap.width);
+    newImageModel.setPath(config.getNewImageFolderPath() + path.sep + imageName);
 
-    imageSet.getDiffImage().setName(imageName);
-    imageSet.getDiffImage().setHeight(referenceImage.bitmap.height);
-    imageSet.getDiffImage().setWidth(referenceImage.bitmap.width);
-    imageSet.getDiffImage().setPath(config.getResultImageFolderPath() + path.sep + imageName);
+    diffImageModel.setName(imageName);
+    diffImageModel.setHeight(diffImage.bitmap.height);
+    diffImageModel.setWidth(diffImage.bitmap.width);
+    diffImageModel.setPath(config.getResultImageFolderPath() + path.sep + imageName);
 
     return imageSet;
 };

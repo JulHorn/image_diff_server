@@ -27,7 +27,7 @@ Table.prototype.bindEvents = function () {
         that.connector.delete($(this).data('id'), function (data) {
             // Do not draw everything new because the usability suffers if there are a lot of images
             //that.callback(data);
-            $(button).parents('tr').remove();
+            $(button).closest('tr').remove();
         });
     });
 
@@ -75,12 +75,12 @@ Table.prototype.draw = function (data) {
 
         rowContent += '<td role="diffImage">';
         rowContent += that.__createDefaultCellContent(imageSet.diffImage);
-        rowContent += '<label>Percentual difference:</label>';
-        rowContent += '<label role="percPixelDifference">' + imageSet.difference + '</label><br>';
-        rowContent += '<label>Distance:</label>';
-        rowContent += '<label role="distanceDifference">' + imageSet.distance + '</label><br>';
-        rowContent += '<label>Error:</label>';
-        rowContent += '<label role="error">' + imageSet.error + '</label><br>';
+        rowContent += '<span>Percentual difference:</span>';
+        rowContent += '<span role="percPixelDifference">' + imageSet.difference + '</span><br>';
+        rowContent += '<span>Distance:</span>';
+        rowContent += '<span role="distanceDifference">' + imageSet.distance + '</span><br>';
+        rowContent += '<span>Error:</span>';
+        rowContent += '<span role="error">' + imageSet.error + '</span><br>';
         rowContent += '</td>';
 
         $contentTableBody.append($('<tr>' + rowContent + '</tr>>'));
@@ -115,12 +115,12 @@ Table.prototype.__createDefaultCellContent = function (image) {
     cellContent += '</a>';
 
     cellContent += '<div>';
-    cellContent += '<label>Name:</label>';
-    cellContent += '<label role="imageName">' + image.name + '</label><br>';
-    cellContent += '<label>Height:</label>';
-    cellContent += '<label role="height">' + image.height + 'px</label><br>';
-    cellContent += '<label>Width:</label>';
-    cellContent += '<label role="width">' + image.width + 'px</label><br>';
+    cellContent += '<span>Name:</span>';
+    cellContent += '<span role="imageName">' + image.name + '</span><br>';
+    cellContent += '<span>Height:</span>';
+    cellContent += '<span role="height">' + image.height + 'px</span><br>';
+    cellContent += '<span>Width:</span>';
+    cellContent += '<span role="width">' + image.width + 'px</span><br>';
     cellContent += '</div>';
 
     return cellContent;

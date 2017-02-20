@@ -143,7 +143,7 @@ JobHandler.prototype.__loadJobHistory = function () {
     } catch (exception) {
         logger.error('Failed to load or parse job history file ' + jobFilePath + 'Working from a blank slate.', exception);
         // Add an empty job which can always be returned
-        this.jobHistory.push(new Job('EmptyJob', new ImageMetaInformationModel(), null));
+        this.jobHistory.push(new Job('EmptyJob', new ImageMetaInformationModel()));
     }
 
     // Use the last jobs image meta model as current model because it should be the last recent
@@ -181,16 +181,16 @@ JobHandler.prototype.__loadJob = function (jobData) {
     // Create the correct job type
     switch(jobData.jobName) {
         case 'MakeToNewBaselineImage':
-            job = new MakeNewToReferenceImageJob(null, null, null);
+            job = new MakeNewToReferenceImageJob();
             break;
         case 'DeleteSet':
-            job = new DeleteJob(null, null, null);
+            job = new DeleteJob();
             break;
         case 'CheckAll':
-            job = new CheckAllJob(null, null, null, null, null);
+            job = new CheckAllJob();
             break;
         case 'EmptyJob':
-            return new Job('EmptyJob', null, null);
+            return new Job('EmptyJob');
         default:
             throw Error('The job type ' + jobData.jobName + ' is unknown or not yet mapped.');
     }

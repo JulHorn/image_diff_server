@@ -4,28 +4,28 @@ block content
   h1 Image Comparison Server
   div(id='header')
       div
-        label Timestamp:
-        label(id='timeStamp')
+        span Timestamp:
+          span(id='timeStamp')
       div
-        label Number of sets:
-        label(id='numberOfSets')
+        span Number of sets:
+        span(id='numberOfSets')
       div
-        label Max percentage of different pixels:
-        label(id='maxPixelPercentage')
+        span Max percentage of different pixels:
+        span(id='maxPixelPercentage')
       div
-        label Max distance:
-        label(id='maxDistance')
+        span Max distance:
+        span(id='maxDistance')
       div
-        label Progress:
-        label(id='progressIndicator')
+        span Progress:
+        span(id='progressIndicator')
         button(data-action='refresh') Refresh
       div
-          label Server Address:
+          span Server Address:
           input(type='text', id='serverAddress')
           button(data-action='saveServerAddress') Save
         div
             button(data-action='refreshAll') Check All
-            label(id='refreshAllText')
+            span(id='refreshAllText')
     div(id='table')
       table
         thead
