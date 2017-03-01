@@ -1,6 +1,7 @@
 var ImageManipulator = require('../ImageManipulator');
 var ImageMetaInformationModel = require('../model/ImageMetaInformationModel');
 var logger = require('winston');
+var dateformat = require('dateformat');
 
 /**
  * Creates a new general job.
@@ -106,8 +107,10 @@ Job.prototype.incrementProcessImageCounter = function() {
  * Calculates the the biggest percentual pixel difference/distance and sets the timestamp.
  * **/
 Job.prototype.calculateMetaInformation = function () {
+    var currentDate = new Date();
+
     this.imageMetaInformationModel.calculateBiggestDifferences();
-    this.imageMetaInformationModel.setTimeStamp(new Date().toISOString());
+    this.imageMetaInformationModel.setTimeStamp(dateformat(currentDate, 'HH:MM:ss dd.mm.yyyy'));
 };
 
 /**
