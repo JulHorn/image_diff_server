@@ -3,8 +3,17 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
+h1 {
+  margin: auto;
+  text-align: center;
+}
+
 a {
   color: #00B7FF;
+}
+
+span {
+  margin: 0 0 0 5px;
 }
 
 button {
@@ -29,9 +38,20 @@ button {
   text-shadow:0px 1px 0px #1f1f1f;
 
   outline: none;
-
 }
 
+#refreshButton {
+  box-sizing: border-box;
+  height: 20px;
+  width: 20px;
+  padding: 0;
+  margin: 0 0 0 5px;
+}
+
+#refreshButton img {
+  height: 16px;
+  width: 16px;
+}
 button:hover {
   background-color:#1a1a1a;
 }
