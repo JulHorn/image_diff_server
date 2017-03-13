@@ -13,7 +13,7 @@ a {
 }
 
 span {
-  margin: 0 0 0 5px;
+  margin: 0 0 0 3px;
 }
 
 button {
@@ -94,6 +94,7 @@ table tbody tr td {
   border-top: 1px solid #888;
   border-bottom: 1px solid #888;
   vertical-align: top;
+  position: relative;
 }
 
 table tbody tr:last-child td {
@@ -123,4 +124,30 @@ div {
 img{
   height: 100%;
   width: 100%;
+}
+
+.ajaxLoadingIconAdditionalStyles {
+  transform:scale(0.8);
+  margin: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+}
+
+.grayOut {
+  background-color: white;
+  height: 100%;
+  left: 0;
+  opacity: 0.3;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 500;
+}
+
+.hide {
+  display: none;
 }

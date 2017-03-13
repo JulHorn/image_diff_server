@@ -18,11 +18,11 @@ var ChangeNotificator = function () {
 ChangeNotificator.prototype.__registerComponents = function () {
     var that = this;
 
-    this.components.push(new Header(this.connector, function (data) {
-        that.__notify(data);
+    this.components.push(new Header(this.connector, function (data, ignoreComponent) {
+        that.__notify(data, ignoreComponent);
     }));
-    this.components.push(new Table(this.connector, function (data) {
-        that.__notify(data);
+    this.components.push(new Table(this.connector, function (data, ignoreComponent) {
+        that.__notify(data, ignoreComponent);
     }));
 };
 
@@ -30,11 +30,14 @@ ChangeNotificator.prototype.__registerComponents = function () {
  * Distributes change information to all registered ui elements
  * via the elements draw method.
  *
- * @param data The data which will be distritbuted
+ * @param data The data which will be distributed
+ * @param ignoreComponent A component which should not be redrawn. E.g. Header or table.
  * **/
-ChangeNotificator.prototype.__notify = function (data) {
+ChangeNotificator.prototype.__notify = function (data, ignoreComponent) {
     this.components.forEach(function (component) {
-        component.draw(data);
+        if(component !== ignoreComponent) {
+            component.draw(data);
+        }
     });
 };
 

@@ -31,10 +31,16 @@ Header.prototype.bindEvents = function () {
 
     // Bind calculate all diff images to the corresponding button
     this.$container.on('click', 'button[data-action=refreshAll]', function () {
+        // Trigger the compare all images job
         that.connector.refreshAll(function (data) {
             that.callback(data);
+            that.$refreshAllTextField.text('Done!');
         });
-        $('#refreshAllText').text('Started to recalculate all image differences. This might take a while.');
+        // Get current job to update values
+        that.connector.getActiveJob(function (data) {
+            that.callback(data);
+            that.$refreshAllTextField.text('Started to recalculate all image differences. This might take a while.');
+        });
     });
 
     // Refresh data from server
@@ -67,4 +73,5 @@ Header.prototype.__initElements = function () {
     this.$maxDistanceField = this.$container.find('#maxDistance');
     this.$progressIndicatorField = this.$container.find('#progressIndicator');
     this.$currentJobField = this.$container.find('#currentJob');
+    this.$refreshAllTextField = $('#refreshAllText');
 };
