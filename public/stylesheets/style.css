@@ -95,6 +95,7 @@ table tbody tr td {
   border-bottom: 1px solid #888;
   vertical-align: top;
   position: relative;
+  width: 33%;
 }
 
 table tbody tr:last-child td {

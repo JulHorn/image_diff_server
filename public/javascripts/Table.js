@@ -85,12 +85,14 @@ Table.prototype.draw = function (data) {
 
         rowContent += '<td role="diffImage">';
         rowContent += that.__createDefaultCellContent(imageSet.diffImage);
+        rowContent += '<div>';
         rowContent += '<span>Percentual difference:</span>';
         rowContent += '<span role="percPixelDifference">' + imageSet.difference + '</span><br>';
         rowContent += '<span>Distance:</span>';
         rowContent += '<span role="distanceDifference">' + imageSet.distance + '</span><br>';
         rowContent += '<span>Error:</span>';
         rowContent += '<span role="error">' + imageSet.error + '</span><br>';
+        rowContent += '</div>';
         rowContent += '</td>';
 
         $contentTableBody.append($('<tr>' + rowContent + '</tr>'));
