@@ -35,6 +35,7 @@ Header.prototype.bindEvents = function () {
         that.connector.refreshAll(function (data) {
             that.callback(data);
             that.$refreshAllTextField.text('Done!');
+            console.log(data);
         });
         // Get current job to update values
         that.connector.getActiveJob(function (data) {
@@ -60,8 +61,8 @@ Header.prototype.draw = function (data) {
     data.imageMetaInformationModel.timeStamp ? this.$timeStampField.text(data.imageMetaInformationModel.timeStamp) : this.$timeStampField.text('Job is currently running');
 
     this.$numberOfSetsField.text(data.imageMetaInformationModel.imageSets.length);
-    this.$maxPixelPercentageField.text(data.imageMetaInformationModel.biggestPercentualPixelDifference);
-    this.$maxDistanceField.text(data.imageMetaInformationModel.biggestDistanceDifference);
+    this.$maxPixelPercentageField.text(data.imageMetaInformationModel.biggestPercentualPixelDifference + '% of allowed ' + data.imageMetaInformationModel.percentualPixelDifferenceThreshold + '%');
+    this.$maxDistanceField.text(data.imageMetaInformationModel.biggestDistanceDifference + ' of allowed ' + data.imageMetaInformationModel.distanceDifferenceThreshold);
     this.$progressIndicatorField.text(data.processedImageCount + '/' + data.imagesToBeProcessedCount);
     this.$currentJobField.text(data.jobName);
 };

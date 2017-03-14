@@ -2,6 +2,7 @@ var fs = require('fs-extra');
 var logger = require('winston');
 var ImageSet = require('./ImageSetModel');
 var ImageModel = require('./ImageModel');
+var config = require('../ConfigurationLoader');
 
 /**
  * Constructor. Loads the imageMetaInformationModel information in the imageMetaInformationModel information text file, if it does exist.
@@ -124,6 +125,8 @@ ImageMetaInformationModel.prototype.load = function (data) {
 
     // Calculate the biggest image difference of all sets
     this.calculateBiggestDifferences();
+    this.percentualPixelDifferenceThreshold = data.percentualPixelDifferenceThreshold;
+    this.distanceDifferenceThreshold = data.distanceDifferenceThreshold;
 };
 
 /**
@@ -179,6 +182,10 @@ var that = this;
             that.biggestDistanceDifference = set.getDistance();
         }
     });
+
+    // Set thresholds here to have the current values after each refresh of the calculations
+    this.percentualPixelDifferenceThreshold = config.getMaxPixelDifferenceThreshold();
+    this.distanceDifferenceThreshold = config.getMaxDistanceDifferenceThreshold();
 };
 
 /**
@@ -199,6 +206,8 @@ ImageMetaInformationModel.prototype.getCopy = function () {
 ImageMetaInformationModel.prototype.reset = function () {
     this.biggestPercentualPixelDifference = 0;
     this.biggestDistanceDifference = 0;
+    this.percentualPixelDifferenceThreshold = 0;
+    this.distanceDifferenceThreshold = 0;
     this.timeStamp = '';
     this.imageSets = [];
 };
