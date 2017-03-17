@@ -79,7 +79,14 @@ Table.prototype.draw = function (data) {
 
         rowContent += '<td role="newImage">';
         rowContent += that.__createDefaultCellContent(imageSet.newImage);
-        rowContent += '<button data-id="' + imageSet.id + '" data-action="add">New Reference</button>';
+
+        // Disable button if no image exists
+        if(imageSet.newImage.path) {
+            rowContent += '<button data-id="' + imageSet.id + '" data-action="add">New Reference</button>';
+        } else {
+            rowContent += '<button class="disabledButton" disabled data-id="' + imageSet.id + '" data-action="add">New Reference</button>';
+        }
+
         rowContent += that.__createAjaxLoadingIcon();
         rowContent += '</td>';
 
