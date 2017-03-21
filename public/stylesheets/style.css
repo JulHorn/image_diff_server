@@ -8,18 +8,15 @@ body {
 }
 
 h1 {
-  margin: auto;
   text-align: center;
 }
 
-a {
-  color: #00B7FF;
-}
-
+/* Durch Spaces nach den entsprechenden Texten ersetzen */
 span {
   margin: 0 0 0 3px;
 }
 
+/* Margin wenn lieber an Text + Klasse */
 button {
   color:#ffffff;
   border:1px solid #888;
@@ -36,7 +33,6 @@ button {
   vertical-align: middle;
 
   padding:3px 6px;
-  margin: 0 5px 0 0;
 
   text-decoration:none;
   text-shadow:0px 1px 0px #1f1f1f;
@@ -44,18 +40,6 @@ button {
   outline: none;
 }
 
-#refreshButton {
-  box-sizing: border-box;
-  height: 20px;
-  width: 20px;
-  padding: 0;
-  margin: 0 0 0 5px;
-}
-
-#refreshButton img {
-  height: 16px;
-  width: 16px;
-}
 button:hover {
   background-color:#1a1a1a;
 }
@@ -65,25 +49,72 @@ button:active {
   top:1px;
 }
 
+img{
+  height: 100%;
+  width: 100%;
+}
+
+/* Nur da hinsetzen, wo ich das brauche -> Brauche ich das wirklich? -> Header anpassen*/
+div {
+  padding: 3px;
+}
+
+/* Tipfehler korrigieren */
+.noImageAvaiableText {
+  transform: translate(-50%, -50%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+.noImageAvaiableText span{
+  font-size: 14px;
+  font-style: oblique;
+}
+
+#refreshButton img {
+  height: 16px;
+  width: 16px;
+}
+
+#refreshButton {
+  height: 20px;
+  width: 20px;
+  padding: 0;
+  margin: 0 0 0 5px;
+}
+
+/* hidden -> Zustand und nicht Aktion benenen*/
+.hide {
+  display: none;
+}
+
+.disabledButton:disabled {
+  background: #dddddd;
+  color: #333333;
+  text-shadow: none;
+  font-weight: 600;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
   font-size: 12px;
   padding: 5px;
+  empty-cells: show;
 }
 
-table th {
-  max-width: 100px;
-
-  text-overflow:ellipsis;
-  overflow: hidden;
-  white-space:nowrap;
+th {
   text-align: center;
   font-size: 14px;
 }
 
-table {
-  border: 1px solid #888;
+td {
+  padding: 3px 4px;
+  vertical-align: top;
+  /*position: relative;*/
+  width: 33%;
+  /*overflow: hidden;*/
 }
 
 tr.light td {
@@ -94,17 +125,23 @@ tr.dark td {
   background-color: #EEE;
 }
 
-table tbody tr td {
-  padding: 3px 4px;
-  vertical-align: top;
-  position: relative;
-  width: 33%;
-  overflow: hidden;
+tr:first-child {
+  border-top: 1px solid #888888;
 }
 
-tr td:first-child {
-  border: 1px solid #888888;
-}
+/*
+
+
+
+
+
+
+
+
+
+
+
+
 
 .imageRow {
 
@@ -114,38 +151,9 @@ tr td:first-child {
 
 }
 
-table tbody tr td div.noImageAvaiableText {
-  transform: translate(-50%, -50%);
-  position: absolute;
-  top: 50%;
-  left: 50%;
-}
 
-div.noImageAvaiableText span{
-  font-size: 14px;
-  font-style: oblique;
-}
 
-a {
-  display: inline-block;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 5px;
-  transition: 0.3s;
-}
 
-img{
-  height: 100%;
-  width: 100%;
-}
-
-label {
-  padding-right: 5px;
-}
-
-div {
-  padding: 3px;
-}
 
 .ajaxLoadingIconAdditionalStyles {
   transform:scale(0.8);
@@ -169,10 +177,6 @@ div {
   z-index: 500;
 }
 
-.hide {
-  display: none;
-}
 
-.disabledButton:disabled {
-  background: #dddddd;
-}
+
+*/
