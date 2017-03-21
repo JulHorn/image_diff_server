@@ -31,7 +31,8 @@ Table.prototype.bindEvents = function () {
             // Draw all other components but the table because there could be some bad performance with a lot of images
             that.callback(data, that);
             // Remove the row manually for a better user experience
-            $(button).closest('tr').remove();
+            var id = $(button).data('id');
+            $('table').find('tr[id=' + id + ']').remove();
         });
     });
 
@@ -66,43 +67,68 @@ Table.prototype.bindEvents = function () {
 Table.prototype.draw = function (data) {
     var $contentTableBody = this.$container.find('tbody');
     var that = this;
-
+    var rowColor = 'light';
     $contentTableBody.empty();
 
     data.imageMetaInformationModel.imageSets.forEach(function (imageSet) {
         var rowContent = '';
 
         rowContent += '<td role="referenceImage">';
-        rowContent += that.__createDefaultCellContent(imageSet.referenceImage);
-        rowContent += '<button data-id="' + imageSet.id + '" data-action="delete">Delete</button>';
+        rowContent += that.__createImageCellContent(imageSet.referenceImage);
         rowContent += '</td>';
 
         rowContent += '<td role="newImage">';
-        rowContent += that.__createDefaultCellContent(imageSet.newImage);
+        rowContent += that.__createImageCellContent(imageSet.newImage);
 
-        // Disable button if no image exists
-        if(imageSet.newImage.path) {
-            rowContent += '<button data-id="' + imageSet.id + '" data-action="add">New Reference</button>';
-        } else {
-            rowContent += '<button class="disabledButton" disabled data-id="' + imageSet.id + '" data-action="add">New Reference</button>';
-        }
-
-        rowContent += that.__createAjaxLoadingIcon();
         rowContent += '</td>';
 
         rowContent += '<td role="diffImage">';
-        rowContent += that.__createDefaultCellContent(imageSet.diffImage);
-        rowContent += '<div>';
-        rowContent += '<span>Percentual difference:</span>';
-        rowContent += '<span role="percPixelDifference">' + imageSet.difference + '</span><br>';
-        rowContent += '<span>Distance:</span>';
-        rowContent += '<span role="distanceDifference">' + imageSet.distance + '</span><br>';
-        rowContent += '<span>Error:</span>';
-        rowContent += '<span role="error">' + imageSet.error + '</span><br>';
-        rowContent += '</div>';
+        rowContent += that.__createImageCellContent(imageSet.diffImage);
         rowContent += '</td>';
+        $contentTableBody.append($('<tr id="' + imageSet.id + '" class="imageRow ' + rowColor + '">' + rowContent + '</tr>'));
 
-        $contentTableBody.append($('<tr>' + rowContent + '</tr>'));
+
+        /* -------------------------------- */
+
+        var desRowContent = '';
+
+        desRowContent += '<td role="referenceDescription" id="' + imageSet.id + '">';
+        desRowContent += that.__createDescriptionCellContent(imageSet.referenceImage);
+        desRowContent += '<button data-id="' + imageSet.id + '" data-action="delete">Delete</button>';
+        desRowContent += '</td>';
+
+        desRowContent += '<td role="newDescription">';
+        desRowContent += that.__createDescriptionCellContent(imageSet.newImage);
+
+        // Disable button if no image exists
+        if(imageSet.newImage.path) {
+            desRowContent += '<button data-id="' + imageSet.id + '" data-action="add">New Reference</button>';
+        } else {
+            desRowContent += '<button class="disabledButton" disabled data-id="' + imageSet.id + '" data-action="add">New Reference</button>';
+        }
+
+        desRowContent += '</td>';
+
+        desRowContent += '<td role="diffDescription">';
+        desRowContent += that.__createDescriptionCellContent(imageSet.diffImage);
+        desRowContent += '<div>';
+        desRowContent += '<span>Percentual difference:</span>';
+        desRowContent += '<span role="percPixelDifference">' + imageSet.difference + '</span><br>';
+        desRowContent += '<span>Distance:</span>';
+        desRowContent += '<span role="distanceDifference">' + imageSet.distance + '</span><br>';
+        desRowContent += '<span>Error:</span>';
+        desRowContent += '<span role="error">' + imageSet.error + '</span><br>';
+        desRowContent += '</div>';
+        desRowContent += '</td>';
+
+        $contentTableBody.append($('<tr id="' + imageSet.id + '" class="descriptionRow ' + rowColor + '">' + desRowContent + '</tr>'));
+
+        // Modify color class for each row
+        if(rowColor === 'light') {
+            rowColor = 'dark';
+        } else {
+            rowColor = 'light';
+        }
     });
 };
 
@@ -119,19 +145,8 @@ Table.prototype.__getImageSetById = function (id, imageMetaModel) {
     })[0];
 };
 
-/**
- * Creates the default content of a cell (image with link, basic information).
- *
- * @return The created cell content.
- * **/
-Table.prototype.__createDefaultCellContent = function (image) {
+Table.prototype.__createDescriptionCellContent = function (image) {
     var cellContent = '';
-    // Ensure that images will be reloaded
-    var imageSuffix = '?timestamp=' + new Date().getTime();
-
-    cellContent += '<a href="' + image.path.replace('public', '.') + imageSuffix + '" role="imageLink">';
-    cellContent += '<img src="' + image.path.replace('public', '.') + imageSuffix + '" role="image"/>';
-    cellContent += '</a>';
 
     cellContent += '<div>';
     cellContent += '<span>Name:</span>';
@@ -143,6 +158,30 @@ Table.prototype.__createDefaultCellContent = function (image) {
     cellContent += '</div>';
     // Add element to be able to disable editing of the row while a corresponding aax process is still in progress
     cellContent += '<div class="grayOut hide" role="backgroundBlocker"/>';
+
+    return cellContent;
+};
+
+/**
+ * Creates the default content of a cell (image with link, basic information).
+ *
+ * @return The created cell content.
+ * **/
+Table.prototype.__createImageCellContent = function (image) {
+    var cellContent = '';
+    // Ensure that images will be reloaded
+    var imageSuffix = '?timestamp=' + new Date().getTime();
+
+    // Only display image if there is one, else display a notification text
+    if(image.path) {
+        cellContent += '<a href="' + image.path.replace('public', '.') + imageSuffix + '" role="imageLink">';
+        cellContent += '<img src="' + image.path.replace('public', '.') + imageSuffix + '" role="image">';
+        cellContent += '</a>';
+    } else {
+        cellContent += '<div class="noImageAvaiableText">';
+        cellContent += '<span>No image to display yet</span>';
+        cellContent += '</div>';
+    }
 
     return cellContent;
 };

@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
@@ -65,45 +69,61 @@ table {
   width: 100%;
   border-collapse: collapse;
   font-size: 12px;
-
+  padding: 5px;
 }
 
 table th {
   max-width: 100px;
 
   text-overflow:ellipsis;
-  overflow:hidden;
+  overflow: hidden;
   white-space:nowrap;
   text-align: center;
   font-size: 14px;
 }
 
-table tbody {
+table {
   border: 1px solid #888;
 }
-table tbody tr:nth-child(even) td {
+
+tr.light td {
   background-color: #FFF;
 }
 
-table tbody tr:nth-child(odd) td {
+tr.dark td {
   background-color: #EEE;
 }
 
 table tbody tr td {
   padding: 3px 4px;
-  border-top: 1px solid #888;
-  border-bottom: 1px solid #888;
   vertical-align: top;
   position: relative;
   width: 33%;
+  overflow: hidden;
 }
 
-table tbody tr:last-child td {
-  border-bottom: none;
+tr td:first-child {
+  border: 1px solid #888888;
 }
 
-table tbody tr:hover td {
-  background: #CCC;
+.imageRow {
+
+}
+
+.descriptionRow {
+
+}
+
+table tbody tr td div.noImageAvaiableText {
+  transform: translate(-50%, -50%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+div.noImageAvaiableText span{
+  font-size: 14px;
+  font-style: oblique;
 }
 
 a {
@@ -114,17 +134,17 @@ a {
   transition: 0.3s;
 }
 
+img{
+  height: 100%;
+  width: 100%;
+}
+
 label {
   padding-right: 5px;
 }
 
 div {
   padding: 3px;
-}
-
-img{
-  height: 100%;
-  width: 100%;
 }
 
 .ajaxLoadingIconAdditionalStyles {
