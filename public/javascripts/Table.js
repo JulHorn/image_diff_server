@@ -53,7 +53,7 @@ Table.prototype.bindEvents = function () {
             // Draw all other components but the table because there could be some bad performance with a lot of images
             that.callback(data, that);
             // Update the row manually for a better user experience
-            that.__updateImageSetMetaInformation(resultImageSet, button.parents('tr'));
+            that.__updateImageSetMetaInformation(resultImageSet, id);
             that.__disableLoadingIconForRow($rowWhichIsBeingEdited);
         });
     });
@@ -171,17 +171,16 @@ Table.prototype.__createImageCellContent = function (image) {
     var cellContent = '';
     // Ensure that images will be reloaded
     var imageSuffix = '?timestamp=' + new Date().getTime();
+    var imageContainerClass = image.path ? '' : 'hide';
+    var noImageNoticeTextContainerClass = image.path ? 'hide' : '';
 
     // Only display image if there is one, else display a notification text
-    if(image.path) {
-        cellContent += '<a href="' + image.path.replace('public', '.') + imageSuffix + '" role="imageLink">';
-        cellContent += '<img src="' + image.path.replace('public', '.') + imageSuffix + '" role="image">';
-        cellContent += '</a>';
-    } else {
-        cellContent += '<div class="noImageAvaiableText">';
-        cellContent += '<span>No image to display yet</span>';
-        cellContent += '</div>';
-    }
+    cellContent += '<a class="' + imageContainerClass + '" href="' + image.path.replace('public', '.') + imageSuffix + '" role="imageLink">';
+    cellContent += '<img src="' + image.path.replace('public', '.') + imageSuffix + '" role="image">';
+    cellContent += '</a>';
+    cellContent += '<div class="noImageAvaiableText ' + noImageNoticeTextContainerClass + '">';
+    cellContent += '<span>No image to display yet</span>';
+    cellContent += '</div>';
 
     return cellContent;
 };
@@ -192,10 +191,9 @@ Table.prototype.__createImageCellContent = function (image) {
  * @param resultImageSet The image set with the new information.
  * @param parentElement The parent element under which the images etc. are located. Pretty much a row.
  * **/
-Table.prototype.__updateImageSetMetaInformation = function (resultImageSet, parentElement) {
-    var refImg = parentElement.find('td[role="referenceImage"]');
-    // var newImg = parentElement.find('td[role="newImage"]');
-    var diffImg = parentElement.find('td[role="diffImage"]');
+Table.prototype.__updateImageSetMetaInformation = function (resultImageSet, id) {
+    var refImg = $('body').find('tr[id="' + id + '"] td[role="referenceImage"]');
+    var diffImg = $('body').find('tr[id="' + id + '"] td[role="diffImage"]');
     var imageSuffix = '?timestamp=' + new Date().getTime();
 
     // Set new images
@@ -204,16 +202,25 @@ Table.prototype.__updateImageSetMetaInformation = function (resultImageSet, pare
     refImg.find('a[role="imageLink"]').attr('href', resultImageSet.referenceImage.path.replace('public', '.') + imageSuffix);
     refImg.find('img[role="image"]').attr('src', resultImageSet.referenceImage.path.replace('public', '.') + imageSuffix);
 
+    // Display images and hide the no image existing text
+    refImg.find('a[role="imageLink"]').removeClass('hide');
+    diffImg.find('a[role="imageLink"]').removeClass('hide');
+    refImg.find('.noImageAvaiableText').addClass('hide');
+    diffImg.find('.noImageAvaiableText').addClass('hide');
+
     // Set imageMetaInformationModel information
-    refImg.find('*[role="imageName"]').text(resultImageSet.referenceImage.name);
-    diffImg.find('*[role="imageName"]').text(resultImageSet.diffImage.name);
-    refImg.find('*[role="height"]').text(resultImageSet.referenceImage.height);
-    diffImg.find('*[role="height"]').text(resultImageSet.referenceImage.height);
-    refImg.find('*[role="width"]').text(resultImageSet.referenceImage.width);
-    diffImg.find('*[role="width"]').text(resultImageSet.referenceImage.width);
-    diffImg.find('*[role="error"]').text(resultImageSet.error);
-    diffImg.find('*[role="percPixelDifference"]').text(resultImageSet.difference);
-    diffImg.find('*[role="distanceDifference"]').text(resultImageSet.distance);
+    var refDesc = $('body').find('tr[id="' + id + '"] td[role="referenceDescription"]');
+    var diffDesc = $('body').find('tr[id="' + id + '"] td[role="diffDescription"]');
+
+    refDesc.find('*[role="imageName"]').text(resultImageSet.referenceImage.name);
+    diffDesc.find('*[role="imageName"]').text(resultImageSet.diffImage.name);
+    refDesc.find('*[role="height"]').text(resultImageSet.referenceImage.height);
+    diffDesc.find('*[role="height"]').text(resultImageSet.referenceImage.height);
+    refDesc.find('*[role="width"]').text(resultImageSet.referenceImage.width);
+    diffDesc.find('*[role="width"]').text(resultImageSet.referenceImage.width);
+    diffDesc.find('*[role="error"]').text(resultImageSet.error);
+    diffDesc.find('*[role="percPixelDifference"]').text(resultImageSet.difference);
+    diffDesc.find('*[role="distanceDifference"]').text(resultImageSet.distance);
 };
 
 /**
