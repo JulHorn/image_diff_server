@@ -25,7 +25,7 @@ Table.prototype.bindEvents = function () {
         var  $this = $(this);
         var id = $this.data('id');
 
-        that.__enableLoadingIconForRow(id);
+        that.__enableLoaderForRow(id);
 
         that.connector.delete($(this).data('id'), function (data) {
             // Draw all other components but the table because there could be some bad performance with a lot of images
@@ -42,7 +42,7 @@ Table.prototype.bindEvents = function () {
         var informationLabel = $this.next('label');
         var id = $this.data('id');
 
-        that.__enableLoadingIconForRow(id);
+        that.__enableLoaderForRow(id);
 
         that.connector.makteToNewReferenceImage(id, function (data) {
             // Modify only the row where the action was triggered
@@ -51,9 +51,9 @@ Table.prototype.bindEvents = function () {
             informationLabel.text('New reference image');
             // Draw all other components but the table because there could be some bad performance with a lot of images
             that.callback(data, that);
-            // Update the row manually for a better user experience
+            // Update the row manually for a better performance
             that.__updateImageSetMetaInformation(resultImageSet, id);
-            that.__disableLoadingIconForRow(id);
+            that.__disableLoaderForRow(id);
         });
     });
 };
@@ -64,29 +64,25 @@ Table.prototype.bindEvents = function () {
 * @param data Contains all information about the run job.
 * **/
 Table.prototype.draw = function (data) {
-    // var $contentTableBody = this.$container.find('tbody');
     var that = this;
     var rowColor = 'dark';
+    // Create table header
     var content = '<table><thead><th>Reference</th><th>New</th><th>Diff</th></thead></table>';
-    // $contentTableBody.empty();
 
     // Create one image and one description corresponding row for every image set
     data.imageMetaInformationModel.imageSets.forEach(function (imageSet) {
-        content += '<div class="imageSet" id="imageSet_' + imageSet.id + '"><table>';
-
         // Get content for the image and description rows
-        var imageRowContent = that.__drawImageRow(imageSet, rowColor);
-        var descriptionRowContent = that.__createDescriptionRow(imageSet, rowColor);
+        var imageRowContent = that.__drawImageRow(imageSet);
+        var descriptionRowContent = that.__createDescriptionRow(imageSet);
 
         // Add the content as new rows to the table
+        content += '<div class="imageSet" id="imageSet_' + imageSet.id + '">';
+        content += '<table>';
         content += '<tr id="imageRow_' + imageSet.id + '" class="imageRow ' + rowColor + '">' + imageRowContent + '</tr>';
         content += '<tr id="descriptionRow_' + imageSet.id + '" class="descriptionRow ' + rowColor + '">' + descriptionRowContent + '</tr>';
-
-        content += '</table><div class="loader">' + that.__createAjaxLoadingIcon() + '</div></div>';
-
-
-        // $contentTableBody.append($('<tr id="' + imageSet.id + '" class="imageRow ' + rowColor + '">' + imageRowContent + '</tr>'));
-        // $contentTableBody.append($('<tr id="' + imageSet.id + '" class="descriptionRow ' + rowColor + '">' + descriptionRowContent + '</tr>'));
+        content += '</table>';
+        content += '<div class="loader">' + that.__createAjaxLoadingIcon() + '</div>';
+        content += '</div>';
 
         // Modify color class for each row
         if(rowColor === 'light') {
@@ -99,42 +95,13 @@ Table.prototype.draw = function (data) {
     this.$container.html($(content));
 };
 
-Table.prototype.__createDescriptionRow = function (imageSet, backgroundClass) {
-    var desRowContent = '';
-
-    desRowContent += '<td role="referenceDescription" id="' + imageSet.id + '">';
-    desRowContent += this.__createDescriptionCellContent(imageSet.referenceImage);
-    desRowContent += '<button data-id="' + imageSet.id + '" data-action="delete">Delete</button>';
-    desRowContent += '</td>';
-
-    desRowContent += '<td role="newDescription">';
-    desRowContent += this.__createDescriptionCellContent(imageSet.newImage);
-
-    // Disable button if no image exists
-    if(imageSet.newImage.path) {
-        desRowContent += '<button data-id="' + imageSet.id + '" data-action="add">New Reference</button>';
-    } else {
-        desRowContent += '<button class="disabledButton" disabled data-id="' + imageSet.id + '" data-action="add">New Reference</button>';
-    }
-
-    desRowContent += '</td>';
-
-    desRowContent += '<td role="diffDescription">';
-    desRowContent += this.__createDescriptionCellContent(imageSet.diffImage);
-    desRowContent += '<div>';
-    desRowContent += '<span>Percentual difference:</span>';
-    desRowContent += '<span role="percPixelDifference">' + imageSet.difference + '</span><br>';
-    desRowContent += '<span>Distance:</span>';
-    desRowContent += '<span role="distanceDifference">' + imageSet.distance + '</span><br>';
-    desRowContent += '<span>Error:</span>';
-    desRowContent += '<span role="error">' + imageSet.error + '</span><br>';
-    desRowContent += '</div>';
-    desRowContent += '</td>';
-
-    return desRowContent;
-};
-
-Table.prototype.__drawImageRow = function (imageSet, backgroundClass) {
+/**
+* Creates the content for the image row.
+*
+* @param imageSet The imageSet object which contains the information about the images.
+* @return String The image content for a table row.
+* */
+Table.prototype.__drawImageRow = function (imageSet) {
     var rowContent = '';
 
     rowContent += '<td role="referenceImage">';
@@ -154,19 +121,53 @@ Table.prototype.__drawImageRow = function (imageSet, backgroundClass) {
 };
 
 /**
- * Returns an ImageModelSet.
- *
- * @param id The id of the image set which should be retrieved.
- * @param imageMetaModel The image information imageMetaInformationModel in which the sets are located.
- * @return The found image set.
- * **/
-Table.prototype.__getImageSetById = function (id, imageMetaModel) {
-    return imageMetaModel.imageSets.filter(function (imageSet) {
-        return imageSet.id === id;
-    })[0];
+* Creates the content for the description row.
+*
+* @param imageSet The imageSet object which contains the information about the images.
+* @return String The description content for a table row.
+* */
+Table.prototype.__createDescriptionRow = function (imageSet) {
+    var desRowContent = '';
+
+    desRowContent += '<td role="referenceDescription" id="' + imageSet.id + '">';
+    desRowContent += this.__createDefaultDescriptionCellContent(imageSet.referenceImage);
+    desRowContent += '<button data-id="' + imageSet.id + '" data-action="delete">Delete</button>';
+    desRowContent += '</td>';
+
+    desRowContent += '<td role="newDescription">';
+    desRowContent += this.__createDefaultDescriptionCellContent(imageSet.newImage);
+
+    // Disable button if no image exists
+    if(imageSet.newImage.path) {
+        desRowContent += '<button data-id="' + imageSet.id + '" data-action="add">New Reference</button>';
+    } else {
+        desRowContent += '<button class="disabledButton" disabled data-id="' + imageSet.id + '" data-action="add">New Reference</button>';
+    }
+
+    desRowContent += '</td>';
+
+    desRowContent += '<td role="diffDescription">';
+    desRowContent += this.__createDefaultDescriptionCellContent(imageSet.diffImage);
+    desRowContent += '<div>';
+    desRowContent += '<span>Percentual difference:</span>';
+    desRowContent += '<span role="percPixelDifference">' + imageSet.difference + '</span><br>';
+    desRowContent += '<span>Distance:</span>';
+    desRowContent += '<span role="distanceDifference">' + imageSet.distance + '</span><br>';
+    desRowContent += '<span>Error:</span>';
+    desRowContent += '<span role="error">' + imageSet.error + '</span><br>';
+    desRowContent += '</div>';
+    desRowContent += '</td>';
+
+    return desRowContent;
 };
 
-Table.prototype.__createDescriptionCellContent = function (image) {
+/**
+ * Creates the default description cell content.
+ *
+ * @param image The image object containing information about an image.
+ * @return String A div which contains information about the height, width and name of an image.
+ * **/
+Table.prototype.__createDefaultDescriptionCellContent = function (image) {
     var cellContent = '';
 
     cellContent += '<div>';
@@ -177,10 +178,21 @@ Table.prototype.__createDescriptionCellContent = function (image) {
     cellContent += '<span>Width:</span>';
     cellContent += '<span role="width">' + image.width + 'px</span><br>';
     cellContent += '</div>';
-    // Add element to be able to disable editing of the row while a corresponding aax process is still in progress
-    cellContent += '<div class="grayOut hide" role="backgroundBlocker"/>';
 
     return cellContent;
+};
+
+/**
+ * Returns an ImageModelSet.
+ *
+ * @param id The id of the image set which should be retrieved.
+ * @param imageMetaModel The image information imageMetaInformationModel in which the sets are located.
+ * @return The found image set.
+ * **/
+Table.prototype.__getImageSetById = function (id, imageMetaModel) {
+    return imageMetaModel.imageSets.filter(function (imageSet) {
+        return imageSet.id === id;
+    })[0];
 };
 
 /**
@@ -199,7 +211,7 @@ Table.prototype.__createImageCellContent = function (image) {
     cellContent += '<a class="' + imageContainerClass + '" href="' + image.path.replace('public', '.') + imageSuffix + '" role="imageLink">';
     cellContent += '<img src="' + image.path.replace('public', '.') + imageSuffix + '" role="image">';
     cellContent += '</a>';
-    cellContent += '<div class="noImageAvaiableText ' + noImageNoticeTextContainerClass + '">';
+    cellContent += '<div class="noImageAvailableText ' + noImageNoticeTextContainerClass + '">';
     cellContent += '<span>No image to display yet</span>';
     cellContent += '</div>';
 
@@ -210,11 +222,12 @@ Table.prototype.__createImageCellContent = function (image) {
  * Updates the image information/imageMetaInformationModel information.
  *
  * @param resultImageSet The image set with the new information.
- * @param parentElement The parent element under which the images etc. are located. Pretty much a row.
+ * @param id The id of an image set.
  * **/
 Table.prototype.__updateImageSetMetaInformation = function (resultImageSet, id) {
-    var refImg = $('body').find('tr[id="' + id + '"] td[role="referenceImage"]');
-    var diffImg = $('body').find('tr[id="' + id + '"] td[role="diffImage"]');
+    var $body = $('body');
+    var refImg = $body.find('tr[id="imageRow_' + id + '"] td[role="referenceImage"]');
+    var diffImg = $body.find('tr[id="imageRow_' + id + '"] td[role="diffImage"]');
     var imageSuffix = '?timestamp=' + new Date().getTime();
 
     // Set new images
@@ -226,12 +239,12 @@ Table.prototype.__updateImageSetMetaInformation = function (resultImageSet, id) 
     // Display images and hide the no image existing text
     refImg.find('a[role="imageLink"]').removeClass('hide');
     diffImg.find('a[role="imageLink"]').removeClass('hide');
-    refImg.find('.noImageAvaiableText').addClass('hide');
-    diffImg.find('.noImageAvaiableText').addClass('hide');
+    refImg.find('.noImageAvailableText').addClass('hide');
+    diffImg.find('.noImageAvailableText').addClass('hide');
 
-    // Set imageMetaInformationModel information
-    var refDesc = $('body').find('tr[id="' + id + '"] td[role="referenceDescription"]');
-    var diffDesc = $('body').find('tr[id="' + id + '"] td[role="diffDescription"]');
+    // Set meta information
+    var refDesc = $body.find('tr[id="descriptionRow_' + id + '"] td[role="referenceDescription"]');
+    var diffDesc = $body.find('tr[id="descriptionRow_' + id + '"] td[role="diffDescription"]');
 
     refDesc.find('*[role="imageName"]').text(resultImageSet.referenceImage.name);
     diffDesc.find('*[role="imageName"]').text(resultImageSet.diffImage.name);
@@ -269,23 +282,28 @@ Table.prototype.__createAjaxLoadingIcon = function () {
 /**
  * Enables the ajax loading icon for the row. The background for the row will be made unclickable.
  *
- * @param imageSetId ToDo.
+ * @param imageSetId The id of the image set which is displayed in the row.
  * **/
-Table.prototype.__enableLoadingIconForRow = function (imageSetId) {
-    var $imageSet = this.$container.find('#imageSet_' + imageSetId);
-    var $loader = $imageSet.find('.loader');
-
-    $loader.show();
+Table.prototype.__enableLoaderForRow = function (imageSetId) {
+    this.__getLoader(imageSetId).show();
 };
 
 /**
  * Disabled the ajax loading icon for the row.
  *
- * @param imageSetId ToDo.
+ * @param imageSetId The id of the image set which is displayed in the row.
  * **/
-Table.prototype.__disableLoadingIconForRow = function (imageSetId) {
-    var $imageSet = this.$container.find('#imageSet_' + imageSetId);
-    var $loader = $imageSet.find('.loader');
+Table.prototype.__disableLoaderForRow = function (imageSetId) {
+    this.__getLoader(imageSetId).hide();
+};
 
-    $loader.hide();
+/**
+ * Returns the loader element for a row/image set.
+ *
+ * @param imageSetId The id of the image set which is displayed in the row.
+ * */
+Table.prototype.__getLoader = function (imageSetId) {
+    var $imageSet = this.$container.find('#imageSet_' + imageSetId);
+
+    return $imageSet.find('.loader');
 };

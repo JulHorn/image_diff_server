@@ -107,14 +107,9 @@ tr.dark td {
   border-bottom-width: 1px;
 }
 
-/* Tipfehler korrigieren */
-.noImageAvaiableText {
+.noImageAvailableText {
   text-align: center;
   margin: 50px 0;
-  /*transform: translate(-50%, -50%);*/
-  /*position: absolute;*/
-  /*top: 50%;*/
-  /*left: 50%;*/
 }
 
 .noImageAvaiableText span{
