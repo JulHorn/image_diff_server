@@ -7,7 +7,7 @@
 var Table = function (connector, callback) {
     this.callback = callback;
     this.connector = connector;
-    this.$container = $('#table');
+    this.$container = $('#content');
 
     this.bindEvents();
 };
@@ -22,28 +22,27 @@ Table.prototype.bindEvents = function () {
 
     // Bind delete action to delete buttons
     this.$container.on('click', 'button[data-action=delete]', function () {
-        var $rowWhichIsBeingEdited = $(this).closest('tr');
-        var button = this;
+        var  $this = $(this);
+        var id = $this.data('id');
 
-        that.__enableLoadingIconForRow($rowWhichIsBeingEdited);
+        that.__enableLoadingIconForRow(id);
 
         that.connector.delete($(this).data('id'), function (data) {
             // Draw all other components but the table because there could be some bad performance with a lot of images
             that.callback(data, that);
+
             // Remove the row manually for a better user experience
-            var id = $(button).data('id');
-            $('table').find('tr[id=' + id + ']').remove();
+            that.$container.find('#imageSet_' + id).remove();
         });
     });
 
     // Bind add new image to reference imageaction to add button
     this.$container.on('click', 'button[data-action=add]', function () {
-        var $rowWhichIsBeingEdited = $(this).closest('tr');
-        var informationLabel = $(this).next('label');
-        var button = $(this);
-        var id = $(this).data('id');
+        var $this = $(this);
+        var informationLabel = $this.next('label');
+        var id = $this.data('id');
 
-        that.__enableLoadingIconForRow($rowWhichIsBeingEdited);
+        that.__enableLoadingIconForRow(id);
 
         that.connector.makteToNewReferenceImage(id, function (data) {
             // Modify only the row where the action was triggered
@@ -54,7 +53,7 @@ Table.prototype.bindEvents = function () {
             that.callback(data, that);
             // Update the row manually for a better user experience
             that.__updateImageSetMetaInformation(resultImageSet, id);
-            that.__disableLoadingIconForRow($rowWhichIsBeingEdited);
+            that.__disableLoadingIconForRow(id);
         });
     });
 };
@@ -65,63 +64,29 @@ Table.prototype.bindEvents = function () {
 * @param data Contains all information about the run job.
 * **/
 Table.prototype.draw = function (data) {
-    var $contentTableBody = this.$container.find('tbody');
+    // var $contentTableBody = this.$container.find('tbody');
     var that = this;
-    var rowColor = 'light';
-    $contentTableBody.empty();
+    var rowColor = 'dark';
+    var content = '<table><thead><th>Reference</th><th>New</th><th>Diff</th></thead></table>';
+    // $contentTableBody.empty();
 
+    // Create one image and one description corresponding row for every image set
     data.imageMetaInformationModel.imageSets.forEach(function (imageSet) {
-        var rowContent = '';
+        content += '<div class="imageSet" id="imageSet_' + imageSet.id + '"><table>';
 
-        rowContent += '<td role="referenceImage">';
-        rowContent += that.__createImageCellContent(imageSet.referenceImage);
-        rowContent += '</td>';
+        // Get content for the image and description rows
+        var imageRowContent = that.__drawImageRow(imageSet, rowColor);
+        var descriptionRowContent = that.__createDescriptionRow(imageSet, rowColor);
 
-        rowContent += '<td role="newImage">';
-        rowContent += that.__createImageCellContent(imageSet.newImage);
+        // Add the content as new rows to the table
+        content += '<tr id="imageRow_' + imageSet.id + '" class="imageRow ' + rowColor + '">' + imageRowContent + '</tr>';
+        content += '<tr id="descriptionRow_' + imageSet.id + '" class="descriptionRow ' + rowColor + '">' + descriptionRowContent + '</tr>';
 
-        rowContent += '</td>';
-
-        rowContent += '<td role="diffImage">';
-        rowContent += that.__createImageCellContent(imageSet.diffImage);
-        rowContent += '</td>';
-        $contentTableBody.append($('<tr id="' + imageSet.id + '" class="imageRow ' + rowColor + '">' + rowContent + '</tr>'));
+        content += '</table><div class="loader">' + that.__createAjaxLoadingIcon() + '</div></div>';
 
 
-        /* -------------------------------- */
-
-        var desRowContent = '';
-
-        desRowContent += '<td role="referenceDescription" id="' + imageSet.id + '">';
-        desRowContent += that.__createDescriptionCellContent(imageSet.referenceImage);
-        desRowContent += '<button data-id="' + imageSet.id + '" data-action="delete">Delete</button>';
-        desRowContent += '</td>';
-
-        desRowContent += '<td role="newDescription">';
-        desRowContent += that.__createDescriptionCellContent(imageSet.newImage);
-
-        // Disable button if no image exists
-        if(imageSet.newImage.path) {
-            desRowContent += '<button data-id="' + imageSet.id + '" data-action="add">New Reference</button>';
-        } else {
-            desRowContent += '<button class="disabledButton" disabled data-id="' + imageSet.id + '" data-action="add">New Reference</button>';
-        }
-
-        desRowContent += '</td>';
-
-        desRowContent += '<td role="diffDescription">';
-        desRowContent += that.__createDescriptionCellContent(imageSet.diffImage);
-        desRowContent += '<div>';
-        desRowContent += '<span>Percentual difference:</span>';
-        desRowContent += '<span role="percPixelDifference">' + imageSet.difference + '</span><br>';
-        desRowContent += '<span>Distance:</span>';
-        desRowContent += '<span role="distanceDifference">' + imageSet.distance + '</span><br>';
-        desRowContent += '<span>Error:</span>';
-        desRowContent += '<span role="error">' + imageSet.error + '</span><br>';
-        desRowContent += '</div>';
-        desRowContent += '</td>';
-
-        $contentTableBody.append($('<tr id="' + imageSet.id + '" class="descriptionRow ' + rowColor + '">' + desRowContent + '</tr>'));
+        // $contentTableBody.append($('<tr id="' + imageSet.id + '" class="imageRow ' + rowColor + '">' + imageRowContent + '</tr>'));
+        // $contentTableBody.append($('<tr id="' + imageSet.id + '" class="descriptionRow ' + rowColor + '">' + descriptionRowContent + '</tr>'));
 
         // Modify color class for each row
         if(rowColor === 'light') {
@@ -130,6 +95,62 @@ Table.prototype.draw = function (data) {
             rowColor = 'light';
         }
     });
+
+    this.$container.html($(content));
+};
+
+Table.prototype.__createDescriptionRow = function (imageSet, backgroundClass) {
+    var desRowContent = '';
+
+    desRowContent += '<td role="referenceDescription" id="' + imageSet.id + '">';
+    desRowContent += this.__createDescriptionCellContent(imageSet.referenceImage);
+    desRowContent += '<button data-id="' + imageSet.id + '" data-action="delete">Delete</button>';
+    desRowContent += '</td>';
+
+    desRowContent += '<td role="newDescription">';
+    desRowContent += this.__createDescriptionCellContent(imageSet.newImage);
+
+    // Disable button if no image exists
+    if(imageSet.newImage.path) {
+        desRowContent += '<button data-id="' + imageSet.id + '" data-action="add">New Reference</button>';
+    } else {
+        desRowContent += '<button class="disabledButton" disabled data-id="' + imageSet.id + '" data-action="add">New Reference</button>';
+    }
+
+    desRowContent += '</td>';
+
+    desRowContent += '<td role="diffDescription">';
+    desRowContent += this.__createDescriptionCellContent(imageSet.diffImage);
+    desRowContent += '<div>';
+    desRowContent += '<span>Percentual difference:</span>';
+    desRowContent += '<span role="percPixelDifference">' + imageSet.difference + '</span><br>';
+    desRowContent += '<span>Distance:</span>';
+    desRowContent += '<span role="distanceDifference">' + imageSet.distance + '</span><br>';
+    desRowContent += '<span>Error:</span>';
+    desRowContent += '<span role="error">' + imageSet.error + '</span><br>';
+    desRowContent += '</div>';
+    desRowContent += '</td>';
+
+    return desRowContent;
+};
+
+Table.prototype.__drawImageRow = function (imageSet, backgroundClass) {
+    var rowContent = '';
+
+    rowContent += '<td role="referenceImage">';
+    rowContent += this.__createImageCellContent(imageSet.referenceImage);
+    rowContent += '</td>';
+
+    rowContent += '<td role="newImage">';
+    rowContent += this.__createImageCellContent(imageSet.newImage);
+
+    rowContent += '</td>';
+
+    rowContent += '<td role="diffImage">';
+    rowContent += this.__createImageCellContent(imageSet.diffImage);
+    rowContent += '</td>';
+
+    return rowContent;
 };
 
 /**
@@ -165,7 +186,7 @@ Table.prototype.__createDescriptionCellContent = function (image) {
 /**
  * Creates the default content of a cell (image with link, basic information).
  *
- * @return The created cell content.
+ * @return String The created cell content.
  * **/
 Table.prototype.__createImageCellContent = function (image) {
     var cellContent = '';
@@ -229,7 +250,7 @@ Table.prototype.__updateImageSetMetaInformation = function (resultImageSet, id) 
  * @return string A loading icon div element.
  * **/
 Table.prototype.__createAjaxLoadingIcon = function () {
-    return '<div class="sk-circle ajaxLoadingIconAdditionalStyles hide" role ="ajaxLoadingIcon">'
+    return '<div class="sk-circle ajaxLoadingIconAdditionalStyles" role ="ajaxLoadingIcon">'
         + '<div class="sk-circle1 sk-child"></div>'
         + '<div class="sk-circle2 sk-child"></div>'
         + '<div class="sk-circle3 sk-child"></div>'
@@ -248,29 +269,23 @@ Table.prototype.__createAjaxLoadingIcon = function () {
 /**
  * Enables the ajax loading icon for the row. The background for the row will be made unclickable.
  *
- * @param rowElement The jQuery row element.
+ * @param imageSetId ToDo.
  * **/
-Table.prototype.__enableLoadingIconForRow = function (rowElement) {
-    // Enable background blocker
-    rowElement.find('div[role="backgroundBlocker"]').each(function () {
-        $(this).removeClass("hide");
-    });
+Table.prototype.__enableLoadingIconForRow = function (imageSetId) {
+    var $imageSet = this.$container.find('#imageSet_' + imageSetId);
+    var $loader = $imageSet.find('.loader');
 
-    // Display loading icon
-    rowElement.find('div[role="ajaxLoadingIcon"]').removeClass("hide");
+    $loader.show();
 };
 
 /**
  * Disabled the ajax loading icon for the row.
  *
- * @param rowElement The jQuery row element.
+ * @param imageSetId ToDo.
  * **/
-Table.prototype.__disableLoadingIconForRow = function (rowElement) {
-    // Hide background blocker
-    rowElement.find('div[role="backgroundBlocker"]').each(function () {
-        $(this).addClass("hide");
-    });
+Table.prototype.__disableLoadingIconForRow = function (imageSetId) {
+    var $imageSet = this.$container.find('#imageSet_' + imageSetId);
+    var $loader = $imageSet.find('.loader');
 
-    // Hide loading icon
-    rowElement.find('div[role="ajaxLoadingIcon"]').addClass("hide");
+    $loader.hide();
 };

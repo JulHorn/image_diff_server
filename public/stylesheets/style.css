@@ -50,21 +50,71 @@ button:active {
 }
 
 img{
-  height: 100%;
+  height: auto;
   width: 100%;
 }
 
 /* Nur da hinsetzen, wo ich das brauche -> Brauche ich das wirklich? -> Header anpassen*/
 div {
-  padding: 3px;
+  /*padding: 3px;*/
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  padding: 5px;
+  empty-cells: show;
+}
+
+th {
+  text-align: center;
+  font-size: 14px;
+
+}
+
+td, th {
+  padding: 3px 4px;
+  vertical-align: top;
+  /*position: relative;*/
+  width: 33%;
+  /*overflow: hidden;*/
+}
+
+tr.light td {
+  background-color: #FFF;
+}
+
+tr.dark td {
+  background-color: #EEE;
+}
+
+.imageRow td{
+}
+
+.descriptionRow td{
+
+}
+
+.imageSet {
+  border-width: 1px 1px 0;
+  border-style: solid;
+  border-color: #888888;
+  position: relative;
+}
+
+.imageSet:last-child {
+  border-bottom-width: 1px;
 }
 
 /* Tipfehler korrigieren */
 .noImageAvaiableText {
-  transform: translate(-50%, -50%);
-  position: absolute;
-  top: 50%;
-  left: 50%;
+  text-align: center;
+  margin: 50px 0;
+  /*transform: translate(-50%, -50%);*/
+  /*position: absolute;*/
+  /*top: 50%;*/
+  /*left: 50%;*/
 }
 
 .noImageAvaiableText span{
@@ -96,67 +146,19 @@ div {
   font-weight: 600;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12px;
-  padding: 5px;
-  empty-cells: show;
+.loader {
+  background-color: white;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  opacity: 0.5;
+  position: absolute;
+  z-index: 500;
+  display: none;
 }
-
-th {
-  text-align: center;
-  font-size: 14px;
-}
-
-td {
-  padding: 3px 4px;
-  vertical-align: top;
-  /*position: relative;*/
-  width: 33%;
-  /*overflow: hidden;*/
-}
-
-tr.light td {
-  background-color: #FFF;
-}
-
-tr.dark td {
-  background-color: #EEE;
-}
-
-tr:first-child {
-  border-top: 1px solid #888888;
-}
-
-/*
-
-
-
-
-
-
-
-
-
-
-
-
-
-.imageRow {
-
-}
-
-.descriptionRow {
-
-}
-
-
-
-
 
 .ajaxLoadingIconAdditionalStyles {
-  transform:scale(0.8);
   margin: auto;
   position: absolute;
   top: 0;
@@ -165,18 +167,3 @@ tr:first-child {
   bottom: 0;
   z-index: 1000;
 }
-
-.grayOut {
-  background-color: white;
-  height: 100%;
-  left: 0;
-  opacity: 0.3;
-  position: absolute;
-  top: 0;
-  width: 100%;
-  z-index: 500;
-}
-
-
-
-*/
