@@ -11,11 +11,6 @@ h1 {
   text-align: center;
 }
 
-/* Durch Spaces nach den entsprechenden Texten ersetzen */
-span {
-  margin: 0 0 0 3px;
-}
-
 /* Margin wenn lieber an Text + Klasse */
 button {
   color:#ffffff;
@@ -54,11 +49,6 @@ img{
   width: 100%;
 }
 
-/* Nur da hinsetzen, wo ich das brauche -> Brauche ich das wirklich? -> Header anpassen*/
-div {
-  /*padding: 3px;*/
-}
-
 table {
   width: 100%;
   border-collapse: collapse;
@@ -76,9 +66,7 @@ th {
 td, th {
   padding: 3px 4px;
   vertical-align: top;
-  /*position: relative;*/
   width: 33%;
-  /*overflow: hidden;*/
 }
 
 tr.light td {
@@ -94,6 +82,22 @@ tr.dark td {
 
 .descriptionRow td{
 
+}
+
+#header span {
+  margin: 0 0 0 3px;
+}
+
+#header button {
+  margin-top: 2px;
+}
+
+.descriptionRow span {
+  margin-right: 3px;
+}
+
+.descriptionRow button {
+  margin-top: 2px;
 }
 
 .imageSet {
@@ -112,7 +116,7 @@ tr.dark td {
   margin: 50px 0;
 }
 
-.noImageAvaiableText span{
+.noImageAvailableText span{
   font-size: 14px;
   font-style: oblique;
 }
@@ -129,8 +133,7 @@ tr.dark td {
   margin: 0 0 0 5px;
 }
 
-/* hidden -> Zustand und nicht Aktion benenen*/
-.hide {
+.hidden {
   display: none;
 }
 

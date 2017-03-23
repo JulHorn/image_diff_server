@@ -25,6 +25,7 @@ Table.prototype.bindEvents = function () {
         var  $this = $(this);
         var id = $this.data('id');
 
+        // Disables the edited row and displayes a loading icon
         that.__enableLoaderForRow(id);
 
         that.connector.delete($(this).data('id'), function (data) {
@@ -42,6 +43,7 @@ Table.prototype.bindEvents = function () {
         var informationLabel = $this.next('label');
         var id = $this.data('id');
 
+        // Disables the edited row and displayes a loading icon
         that.__enableLoaderForRow(id);
 
         that.connector.makteToNewReferenceImage(id, function (data) {
@@ -72,7 +74,7 @@ Table.prototype.draw = function (data) {
     // Create one image and one description corresponding row for every image set
     data.imageMetaInformationModel.imageSets.forEach(function (imageSet) {
         // Get content for the image and description rows
-        var imageRowContent = that.__drawImageRow(imageSet);
+        var imageRowContent = that.__createImageRow(imageSet);
         var descriptionRowContent = that.__createDescriptionRow(imageSet);
 
         // Add the content as new rows to the table
@@ -101,7 +103,7 @@ Table.prototype.draw = function (data) {
 * @param imageSet The imageSet object which contains the information about the images.
 * @return String The image content for a table row.
 * */
-Table.prototype.__drawImageRow = function (imageSet) {
+Table.prototype.__createImageRow = function (imageSet) {
     var rowContent = '';
 
     rowContent += '<td role="referenceImage">';
@@ -204,8 +206,8 @@ Table.prototype.__createImageCellContent = function (image) {
     var cellContent = '';
     // Ensure that images will be reloaded
     var imageSuffix = '?timestamp=' + new Date().getTime();
-    var imageContainerClass = image.path ? '' : 'hide';
-    var noImageNoticeTextContainerClass = image.path ? 'hide' : '';
+    var imageContainerClass = image.path ? '' : 'hidden';
+    var noImageNoticeTextContainerClass = image.path ? 'hidden' : '';
 
     // Only display image if there is one, else display a notification text
     cellContent += '<a class="' + imageContainerClass + '" href="' + image.path.replace('public', '.') + imageSuffix + '" role="imageLink">';
@@ -237,10 +239,10 @@ Table.prototype.__updateImageSetMetaInformation = function (resultImageSet, id) 
     refImg.find('img[role="image"]').attr('src', resultImageSet.referenceImage.path.replace('public', '.') + imageSuffix);
 
     // Display images and hide the no image existing text
-    refImg.find('a[role="imageLink"]').removeClass('hide');
-    diffImg.find('a[role="imageLink"]').removeClass('hide');
-    refImg.find('.noImageAvailableText').addClass('hide');
-    diffImg.find('.noImageAvailableText').addClass('hide');
+    refImg.find('a[role="imageLink"]').removeClass('hidden');
+    diffImg.find('a[role="imageLink"]').removeClass('hidden');
+    refImg.find('.noImageAvailableText').addClass('hidden');
+    diffImg.find('.noImageAvailableText').addClass('hidden');
 
     // Set meta information
     var refDesc = $body.find('tr[id="descriptionRow_' + id + '"] td[role="referenceDescription"]');
