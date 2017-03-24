@@ -61,11 +61,11 @@ Every response contains a job object, which contains all information about the c
 2. Make a new image to a reference image.
     1. Type: PUT
     2. URL: http://127.0.0.1:xxxx/api/:id/makeToNewReferenceImage
-        1. :id: The id of the image set.
+        1. :id : The id of the image set.
 2. Delete an image set including all images of that set and the meta data about that set.
     1. Type: DELETE
     2. URL: http://127.0.0.1:xxxx/api/:id
-        1. :id: The id of the image set.
+        1. :id : The id of the image set.
 2. Return the currently executed job or if none is running, the last executed job.
     1. Type: GET
     2. URL: http://127.0.0.1:xxxx/api/
