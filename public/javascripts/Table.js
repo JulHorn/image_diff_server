@@ -37,6 +37,16 @@ Table.prototype.bindEvents = function () {
         });
     });
 
+    // Open ignore region pane
+    this.$container.on('click', 'button[data-action=addIgnoreRegions]', function () {
+        var $this = $(this);
+        var $ignoreRegion = $('#ignoreRegion');
+        var id = $this.data('id');
+        var imgPath = $this.data('image').replace('public', '.');
+
+        new AddIgnoreArea($ignoreRegion).show(imgPath, id);
+    });
+
     // Bind add new image to reference imageaction to add button
     this.$container.on('click', 'button[data-action=add]', function () {
         var $this = $(this);
@@ -134,6 +144,7 @@ Table.prototype.__createDescriptionRow = function (imageSet) {
     desRowContent += '<td role="referenceDescription" id="' + imageSet.id + '">';
     desRowContent += this.__createDefaultDescriptionCellContent(imageSet.referenceImage);
     desRowContent += '<button data-id="' + imageSet.id + '" data-action="delete">Delete</button>';
+    desRowContent += '<button data-id="' + imageSet.id + '" data-image="' + imageSet.referenceImage.path + '" data-action="addIgnoreRegions">Add ignore regions</button>';
     desRowContent += '</td>';
 
     desRowContent += '<td role="newDescription">';
