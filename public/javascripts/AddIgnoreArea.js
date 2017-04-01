@@ -48,14 +48,14 @@ AddIgnoreArea.prototype.bindEvents = function () {
     var that = this;
 
     this.$container.on('click', 'button[data-action=addIgnoreCancel]', function () {
+        $('#addIgnoreImage').selectAreas('destroy');
         that.$container.hide();
         that.$container.html('');
     });
 
     this.$container.on('click', 'button[data-action=addIgnoreOk]', function () {
         // returns an array of areas, with their size and coordinates on the original image
-        console.log($('#addIgnoreImage').selectAreas('relativeAreas'));
-
+        $('#addIgnoreImage').selectAreas('destroy');
         that.$container.hide();
         that.$container.html('');
     });

@@ -1,5 +1,6 @@
 var uuid = require('node-uuid');
 var ImageModel = require('./ImageModel');
+var IgnoreArea = require('./IgnoreArea');
 
 /**
  * Constructor. Adds empty ImageModel objects as its reference, new and diff images.
@@ -12,6 +13,7 @@ var ImageSetModel = function () {
     this.referenceImage = new ImageModel();
     this.newImage = new ImageModel();
     this.diffImage = new ImageModel();
+    this.ignoreAreas = [];
 };
 
 /* ----- Getter ----- */
@@ -79,6 +81,10 @@ ImageSetModel.prototype.getDiffImage = function () {
     return this.diffImage;
 };
 
+ImageSetModel.prototype.getIgnoreAreas = function () {
+    return this.ignoreAreas;
+};
+
 /* ----- Setter ----- */
 
 /**
@@ -135,6 +141,10 @@ ImageSetModel.prototype.setDiffImage = function (image) {
     this.diffImage = image;
 };
 
+ImageSetModel.prototype.setIgnoreModels = function (ignoreModels) {
+  this.ignoreAreas = ignoreModels;
+};
+
 /* ----- Other ----- */
 
 /**
@@ -143,6 +153,8 @@ ImageSetModel.prototype.setDiffImage = function (image) {
  * @param data The object containing the image set data. Must have the structure of this image set object.
  * **/
 ImageSetModel.prototype.load = function (data) {
+    var that = this;
+
     this.setDistance(data.distance);
     this.setDifference(data.difference);
     this.setError(data.error);
@@ -151,6 +163,13 @@ ImageSetModel.prototype.load = function (data) {
     this.getReferenceImage().load(data.referenceImage);
     this.getNewImage().load(data.newImage);
     this.getDiffImage().load(data.diffImage);
+
+    data.ignoreAreas.forEach(function (ignoreAreaData) {
+        var newIgnoreArea = new IgnoreArea();
+
+        newIgnoreArea.load(ignoreAreaData);
+        that.ignoreAreas.push(newIgnoreArea);
+    });
 };
 
 module.exports = ImageSetModel;

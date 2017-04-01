@@ -84,14 +84,14 @@ Configuration.prototype.getResultImageFolderPath = function () {
  * Returns the file path in which the job history file path.
  * **/
 Configuration.prototype.getJobHistoryFilePath = function () {
-    return path.normalize(this.getImagesConfig().get('jobHistoryFilePath'));
+    return path.normalize(this.getDataFolderPath() + path.sep + 'jobHistory.json');
 };
 
 /**
- * Returns the folder path in which the job history file will be stored.
+ * Returns the folder path in which the data files will be stored.
  * **/
-Configuration.prototype.getJobHistoryFolderPath = function () {
-    return path.dirname(this.getJobHistoryFilePath());
+Configuration.prototype.getDataFolderPath = function () {
+    return this.getImagesConfig().get('dataFolderPath');
 };
 
 /**

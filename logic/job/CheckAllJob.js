@@ -35,14 +35,12 @@ CheckAllJob.prototype.execute = function (imageMetaInformationModel, callback) {
     var that = this;
     this.imageMetaInformationModel = imageMetaInformationModel;
 
-    // Since the old model is of no use anymore, begin from a blank slate
-    this.imageMetaInformationModel.reset();
-
     // Compute differences
     this.createDiffImages(this.autoCrop, this.pixDiffThreshold, this.distThreshold, function () {
         var jobCreatorCallback = that.getCallbackFunction();
 
-        // Make the reference of the model to a copy to have a snapshot which will not be changed anymore
+        // Clean up and make the reference of the model to a copy to have a snapshot which will not be changed anymore
+        that.imageMetaInformationModel.cleanUp();
         that.copyImageMetaInformationModel();
 
         // Call callback of the job creator when stuff is done

@@ -141,7 +141,7 @@ JobHandler.prototype.__loadJobHistory = function () {
         });
 
     } catch (exception) {
-        logger.error('Failed to load or parse job history file ' + jobFilePath + 'Working from a blank slate.', exception);
+        logger.error('Failed to load or parse job history file ' + jobFilePath + '. Working from a blank slate.', exception);
         // Add an empty job which can always be returned
         this.jobHistory.push(new Job('EmptyJob', new ImageMetaInformationModel()));
     }
@@ -156,12 +156,12 @@ JobHandler.prototype.__loadJobHistory = function () {
 JobHandler.prototype.__save = function () {
 
     // Ensure that the folder structure for the data files exists
-    logger.info('Ensuring that the job history path exists:', config.getJobHistoryFolderPath());
-    fs.ensureDirSync(config.getJobHistoryFolderPath());
+    logger.info('Ensuring that the job history path exists:', config.getDataFolderPath());
+    fs.ensureDirSync(config.getDataFolderPath());
 
     // Write the file
     fs.writeFile(config.getJobHistoryFilePath(), JSON.stringify(this.jobHistory), 'utf8', function (err) {
-        if(err != null || typeof err === 'undefined'){
+        if(err !== null || typeof err === 'undefined'){
             logger.error('Failed to write job history.', err);
         } else {
             logger.info('Writing job history finished.', config.getJobHistoryFilePath());

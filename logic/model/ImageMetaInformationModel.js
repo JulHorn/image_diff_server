@@ -130,13 +130,52 @@ ImageMetaInformationModel.prototype.load = function (data) {
 };
 
 /**
- * Adds an image set. If an image set with the same (reference/new) image name exists, it will be deleted before adding the new one.
+ * Adds an image set. If an image set with the same (reference/new) image name exists, the existing image set will be updated.
  *
- * @param imageSet The image set to add.
+ * @param imageSetToBeAdded The image set to add.
  * **/
-ImageMetaInformationModel.prototype.addImageSet = function (imageSet) {
-    // Add new image set
-    this.getImageSets().push(imageSet);
+ImageMetaInformationModel.prototype.addImageSet = function (imageSetToBeAdded) {
+    var that = this;
+
+    // Get existing image set by image name (is unique), if there exists one
+    // ToDo: Find a way to improve the performance
+    var resultSet = this.getImageSets().filter(function (currentImageSet) {
+        return that.__isImageNameTheSame(currentImageSet.getReferenceImage(), imageSetToBeAdded.getReferenceImage())
+            || that.__isImageNameTheSame(currentImageSet.getNewImage(), imageSetToBeAdded.getNewImage());
+    });
+
+    // Update existing set or add a new one
+    if(resultSet.length > 0) {
+        resultSet[0].setReferenceImage(imageSetToBeAdded.getReferenceImage());
+        resultSet[0].setNewImage(imageSetToBeAdded.getNewImage());
+        resultSet[0].setDiffImage(imageSetToBeAdded.getDiffImage());
+        resultSet[0].setError(imageSetToBeAdded.getError());
+        resultSet[0].setDifference(imageSetToBeAdded.getDifference());
+        resultSet[0].setDistance(imageSetToBeAdded.getDistance());
+    } else {
+        // Add new image set
+        this.getImageSets().push(imageSetToBeAdded);
+    }
+};
+
+ImageMetaInformationModel.prototype.__isImageNameTheSame = function (image1, image2) {
+    return image1.getName() === image2.getName()
+        && image1.getName() !== '';
+};
+
+ImageMetaInformationModel.prototype.cleanUp = function () {
+    var that = this;
+
+    // Get obsolete (image sets in the green range) image set
+    var obsoleteImageSets = this.getImageSets().filter(function (imageSet) {
+        return imageSet.getDistance() <= config.getMaxDistanceDifferenceThreshold()
+            && imageSet.getDifference() <= config.getMaxPixelDifferenceThreshold();
+    });
+
+    // Remove them from the meta information model
+    obsoleteImageSets.forEach(function (imageSet) {
+        that.deleteImageSetFromModel(imageSet.getId());
+    });
 };
 
 /**
@@ -164,7 +203,7 @@ ImageMetaInformationModel.prototype.deleteImageSetFromModel = function (id) {
  * Calculates the biggest percentual pixel and distance difference considering all current image sets.
  * **/
 ImageMetaInformationModel.prototype.calculateBiggestDifferences = function () {
-var that = this;
+    var that = this;
 
     // If no image set exists, the difference is always 0
     if(this.getImageSets().length === 0){
