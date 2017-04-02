@@ -1,5 +1,6 @@
-var AddIgnoreArea = function ($targetDiv) {
+var AddIgnoreArea = function ($targetDiv, connector) {
     this.$container = $targetDiv;
+    this.connector = connector;
     this.__init();
     this.bindEvents();
 };
@@ -11,7 +12,7 @@ AddIgnoreArea.prototype.show = function (imagePath, id) {
     content += '<img id="addIgnoreImage" src="' + imagePath + '"/>';
     content += '<div>';
     content += '<button data-action="addIgnoreCancel">Cancel</button>';
-    content += '<button data-action="addIgnoreOk">Ok</button>';
+    content += '<button data-action="addIgnoreOk" data-id="' + id + '">Ok</button>';
     content += '</div>';
     content += '</div>';
 
@@ -54,9 +55,13 @@ AddIgnoreArea.prototype.bindEvents = function () {
     });
 
     this.$container.on('click', 'button[data-action=addIgnoreOk]', function () {
-        // returns an array of areas, with their size and coordinates on the original image
-        $('#addIgnoreImage').selectAreas('destroy');
-        that.$container.hide();
-        that.$container.html('');
+        var id = $(this).data('id');
+
+        that.connector.modifyIgnoreAreas(id, $('#addIgnoreImage').selectAreas('relativeAreas'), function () {
+            // returns an array of areas, with their size and coordinates on the original image
+            $('#addIgnoreImage').selectAreas('destroy');
+            that.$container.hide();
+            that.$container.html('');
+        });
     });
 };

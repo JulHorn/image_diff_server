@@ -3,6 +3,7 @@ var CheckAllJob = require('./job/CheckAllJob');
 var DeleteJob = require('./job/DeleteJob');
 var MakeNewToReferenceImageJob = require('./job/MakeNewToReferenceImageJob');
 var ImageMetaInformationModel = require('./model/ImageMetaInformationModel');
+var ModifyIgnoreAreasJob = require('./job/ModifyIgnoreAreasJob');
 var logger = require('winston');
 var config = require('./ConfigurationLoader');
 var fs = require('fs-extra');
@@ -188,6 +189,9 @@ JobHandler.prototype.__loadJob = function (jobData) {
             break;
         case 'CheckAll':
             job = new CheckAllJob();
+            break;
+        case 'ModifyIgnoreAreasJob':
+            job = new ModifyIgnoreAreasJob();
             break;
         case 'EmptyJob':
             return new Job('EmptyJob');

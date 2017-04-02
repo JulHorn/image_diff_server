@@ -141,8 +141,8 @@ ImageSetModel.prototype.setDiffImage = function (image) {
     this.diffImage = image;
 };
 
-ImageSetModel.prototype.setIgnoreModels = function (ignoreModels) {
-  this.ignoreAreas = ignoreModels;
+ImageSetModel.prototype.setIgnoreAreas = function (ignoreAreas) {
+  this.ignoreAreas = ignoreAreas;
 };
 
 /* ----- Other ----- */
@@ -164,12 +164,14 @@ ImageSetModel.prototype.load = function (data) {
     this.getNewImage().load(data.newImage);
     this.getDiffImage().load(data.diffImage);
 
-    data.ignoreAreas.forEach(function (ignoreAreaData) {
-        var newIgnoreArea = new IgnoreArea();
+    if(data.ignoreAreas) {
+        data.ignoreAreas.forEach(function (ignoreAreaData) {
+            var newIgnoreArea = new IgnoreArea();
 
-        newIgnoreArea.load(ignoreAreaData);
-        that.ignoreAreas.push(newIgnoreArea);
-    });
+            newIgnoreArea.load(ignoreAreaData);
+            that.ignoreAreas.push(newIgnoreArea);
+        });
+    }
 };
 
 module.exports = ImageSetModel;

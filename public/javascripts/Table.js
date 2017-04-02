@@ -44,7 +44,7 @@ Table.prototype.bindEvents = function () {
         var id = $this.data('id');
         var imgPath = $this.data('image').replace('public', '.');
 
-        new AddIgnoreArea($ignoreRegion).show(imgPath, id);
+        new AddIgnoreArea($ignoreRegion, that.connector).show(imgPath, id);
     });
 
     // Bind add new image to reference imageaction to add button

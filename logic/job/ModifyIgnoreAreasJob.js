@@ -1,0 +1,66 @@
+var Job = require('./Job');
+
+var ModifyIgnoreAreasJob = function (id, ignoreAreas, callback) {
+    Job.call(this, 'ModifyIgnoreAreasJob', callback);
+    this.id = id;
+    this.ignoreAreas = ignoreAreas;
+};
+
+// Do inheritance
+ModifyIgnoreAreasJob.prototype = Object.create(Job.prototype);
+
+/**
+ * Executes this job.
+ *
+ * @param imageMetaInformationModel The image meta model in which the results will be saved.
+ * @param callback The callback which will be called after the job execution is finished.
+ * **/
+ModifyIgnoreAreasJob.prototype.execute = function (imageMetaInformationModel, callback) {
+    var that = this;
+    that.imageMetaInformationModel = imageMetaInformationModel;
+    // Single option -> Only one image has to be processed
+    this.setImagesToBeProcessedCount(1);
+
+    this.__modifyIgnoreAreas(this.id, this.ignoreAreas, function () {
+        var jobCreatorCallback = that.getCallbackFunction();
+        // Update the processed image count
+        that.incrementProcessImageCounter();
+
+        // Make the reference of the model to a copy to have a snapshot which will not be changed anymore
+        that.copyImageMetaInformationModel();
+
+        /// Call callback of the job creator when stuff is done
+        if (jobCreatorCallback) {
+            jobCreatorCallback(that);
+        }
+
+        // Notify the job handler that this job is finished
+        callback();
+    });
+};
+
+ModifyIgnoreAreasJob.prototype.__modifyIgnoreAreas = function (id, ignoreAreas, callback) {
+    var imageSet = this.getImageMetaInformationModel().getImageSetById(id);
+
+    imageSet.setIgnoreAreas(ignoreAreas);
+
+    // Call callback
+    if(callback){
+        callback();
+    }
+};
+
+/**
+ * Loads the data into this job. Used to restore a previous state of this object.
+ *
+ * @param data The object containing the information which this object should habe.
+ * **/
+ModifyIgnoreAreasJob.prototype.load = function (data) {
+    // Load data in the prototype
+    this.loadJobData(data);
+
+    this.id = data.id;
+    this.ignoreAreas = data.ignoreAreas;
+};
+
+module.exports = ModifyIgnoreAreasJob;

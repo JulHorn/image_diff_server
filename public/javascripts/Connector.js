@@ -44,6 +44,11 @@ Connector.prototype.makteToNewReferenceImage = function (id, callback) {
     this.sendRequest('/' + id + '/makeToNewReferenceImage', 'PUT', null, callback);
 };
 
+Connector.prototype.modifyIgnoreAreas = function (id, ignoreAreas, callback) {
+    console.log('Ignore areas:', ignoreAreas);
+    this.sendRequest('/' + id + '/modifyIgnoreAreas', 'PUT', { ignoreAreas: ignoreAreas }, callback);
+};
+
 /* ----- General Methods ----- */
 
 /**
@@ -61,7 +66,7 @@ Connector.prototype.sendRequest = function (url, method, data, callback) {
     $.ajax({
         method: method,
         url: serverEndpoint,
-        data: data
+        data: { data: JSON.stringify(data) }
     })
     .done(function (data) {
         console.log('Request was successfull: ', url, method, data);

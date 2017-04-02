@@ -2,6 +2,7 @@ var ImageMetaInformationModel = require('./model/ImageMetaInformationModel');
 var CheckAllJobModel = require('./job/CheckAllJob');
 var DeleteJob = require('./job/DeleteJob');
 var MakeToNewReferenceImageJob = require('./job/MakeNewToReferenceImageJob');
+var ModifyIgnoreAreasJob = require('./job/ModifyIgnoreAreasJob');
 var ImageManipulator = require('./ImageManipulator');
 var fs = require('fs-extra');
 var path = require('path');
@@ -105,6 +106,19 @@ ImageManipulatorRepository.prototype.deleteImageSetFromModel = function (id, cal
  * **/
 ImageManipulatorRepository.prototype.getLastActiveJob = function (callback) {
     callback(jobHandler.getLastActiveJob());
+};
+
+ImageManipulatorRepository.prototype.modifyIgnoreAreas = function (id, ignoreAreas, callback) {
+    // Add modify ignore areas job to the job handler
+    try {
+        jobHandler.addJob(
+            new ModifyIgnoreAreasJob(id, ignoreAreas, function (job) {
+                    if (callback) {
+                        callback(job);
+                    }
+                }
+            ));
+    } catch (exc) { console.log('Error:', exc); }
 };
 
 module.exports = new ImageManipulatorRepository();

@@ -63,3 +63,5 @@ IgnoreArea.prototype.load = function (ignoreAreaData) {
     this.width = ignoreAreaData.width;
     this.id = ignoreAreaData.id;
 };
+
+module.exports = IgnoreArea;

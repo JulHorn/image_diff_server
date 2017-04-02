@@ -26,6 +26,16 @@ router.put('/:id/makeToNewReferenceImage', function(req, res) {
     });
 });
 
+router.put('/:id/modifyIgnoreAreas', function(req, res) {
+    var setId = req.params.id;
+    var ignoreAreas = JSON.parse(req.body.data).ignoreAreas;
+
+    imageManipulatorRepository.modifyIgnoreAreas(setId, ignoreAreas, function (job) {
+        res.statusCode = 200;
+        res.json({message: 'OK', data: job});
+    });
+});
+
 router.delete('/:id', function (req, res) {
     var setId = req.params.id;
 
