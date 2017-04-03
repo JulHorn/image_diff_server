@@ -44,7 +44,9 @@ Table.prototype.bindEvents = function () {
         var id = $this.data('id');
         var imgPath = $this.data('image').replace('public', '.');
 
-        new AddIgnoreArea($ignoreRegion, that.connector).show(imgPath, id);
+        that.connector.getImageSet(id, function (imageSet) {
+            new AddIgnoreArea($ignoreRegion, that.connector).show(imgPath, imageSet);
+        });
     });
 
     // Bind add new image to reference imageaction to add button
@@ -56,7 +58,7 @@ Table.prototype.bindEvents = function () {
         // Disables the edited row and displayes a loading icon
         that.__enableLoaderForRow(id);
 
-        that.connector.makteToNewReferenceImage(id, function (data) {
+        that.connector.makeToNewReferenceImage(id, function (data) {
             // Modify only the row where the action was triggered
             var resultImageSet = that.__getImageSetById(id, data.imageMetaInformationModel);
 
@@ -144,7 +146,7 @@ Table.prototype.__createDescriptionRow = function (imageSet) {
     desRowContent += '<td role="referenceDescription" id="' + imageSet.id + '">';
     desRowContent += this.__createDefaultDescriptionCellContent(imageSet.referenceImage);
     desRowContent += '<button data-id="' + imageSet.id + '" data-action="delete">Delete</button>';
-    desRowContent += '<button data-id="' + imageSet.id + '" data-image="' + imageSet.referenceImage.path + '" data-action="addIgnoreRegions">Add ignore regions</button>';
+    desRowContent += '<button data-id="' + imageSet.id + '" data-image="' + imageSet.referenceImage.path +  '" data-action="addIgnoreRegions">Add ignore regions</button>';
     desRowContent += '</td>';
 
     desRowContent += '<td role="newDescription">';

@@ -9,7 +9,7 @@
 		"referenceImageFolder":"./public/images/reference",
 		"newImageFolder":"./public/images/new",
 		"resultImageFolder":"./public/images/diff",
-		"jobHistoryFilePath":"./data/jobHistory.json"
+		"dataFolderPath":"./data"
 	},
 	"thresholds":{
 		"maxPercentualImagePixelDifference": 0.15,

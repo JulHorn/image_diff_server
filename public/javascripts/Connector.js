@@ -40,8 +40,12 @@ Connector.prototype.refreshAll = function (callback) {
  * @param id The id of the image set for which the new image should be made the reference image.
  * @param callback Called when the request is done.
  * **/
-Connector.prototype.makteToNewReferenceImage = function (id, callback) {
+Connector.prototype.makeToNewReferenceImage = function (id, callback) {
     this.sendRequest('/' + id + '/makeToNewReferenceImage', 'PUT', null, callback);
+};
+
+Connector.prototype.getImageSet = function (id, callback) {
+    this.sendRequest('/' + id + '/getImageSet', 'GET', null, callback);
 };
 
 Connector.prototype.modifyIgnoreAreas = function (id, ignoreAreas, callback) {

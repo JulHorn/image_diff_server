@@ -121,4 +121,10 @@ ImageManipulatorRepository.prototype.modifyIgnoreAreas = function (id, ignoreAre
     } catch (exc) { console.log('Error:', exc); }
 };
 
+ImageManipulatorRepository.prototype.getImageSet = function (id, callback) {
+   var resultImageSet = jobHandler.getLastActiveJob().getImageMetaInformationModel().getImageSetById(id);
+
+    callback(resultImageSet);
+};
+
 module.exports = new ImageManipulatorRepository();

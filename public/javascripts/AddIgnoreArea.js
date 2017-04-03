@@ -5,14 +5,14 @@ var AddIgnoreArea = function ($targetDiv, connector) {
     this.bindEvents();
 };
 
-AddIgnoreArea.prototype.show = function (imagePath, id) {
+AddIgnoreArea.prototype.show = function (imagePath, imageSet) {
     var content = '';
 
     content += '<div class="ignoreRegion">';
     content += '<img id="addIgnoreImage" src="' + imagePath + '"/>';
     content += '<div>';
     content += '<button data-action="addIgnoreCancel">Cancel</button>';
-    content += '<button data-action="addIgnoreOk" data-id="' + id + '">Ok</button>';
+    content += '<button data-action="addIgnoreOk" data-id="' + imageSet.id + '">Ok</button>';
     content += '</div>';
     content += '</div>';
 
@@ -37,7 +37,8 @@ AddIgnoreArea.prototype.show = function (imagePath, id) {
         // opacity of the moving dotted outline around a selection
         outlineOpacity: 0.5,
         // opacity of the overlay layer over the image
-        overlayOpacity: 0.5
+        overlayOpacity: 0.5,
+        areas: imageSet.ignoreAreas
     });
 };
 
