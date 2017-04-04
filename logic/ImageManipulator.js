@@ -18,9 +18,10 @@ var ImageManipulator = function () {};
  *
  * @param imageName The name of the images that should be compared. The image must have the same name in the reference and new folder. The diff image will have the name, too.
  * @param autoCrop Determines if the new/reference images should be autocroped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
+ * @param ignoreAreas ToDo: Add Text here
  * @param callback The callback function which is called, when the method has finished the comparison. The callback has an imageSet as job.
  * **/
-ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, callback) {
+ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, ignoreAreas, callback) {
 
     // Other vars
     var that = this;
@@ -61,12 +62,27 @@ ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, call
             // Autocrop if argument is given to normalalize images
             that.__autoCrop(referenceImage, newImage, autoCrop);
 
+            // Add ignore areas, which should not be part of the comparison
+            // ToDo: Add some error handling if the images do not have the same size
+            // ToDo: Handle negativ height/width
+            if(ignoreAreas) {
+                ignoreAreas.forEach(function (ignoreArea) {
+                    for(var xPosition = ignoreArea.x; xPosition < ignoreArea.x + ignoreArea.width; xPosition++) {
+                        for(var yPosition = ignoreArea.y; yPosition < ignoreArea.y + ignoreArea.height; yPosition++) {
+                             referenceImage.setPixelColor(0x00FF00FF, xPosition, yPosition);
+                             newImage.setPixelColor(0x00FF00FF, xPosition, yPosition);
+                        }
+                    }
+                });
+            }
+
             // Create diff, ensure that folder structure exists and write file
-            var diff = jimp.diff(referenceImage, newImage);
+            var diff = jimp.diff(referenceImage, newImage, 1);
             fs.ensureDirSync(config.getResultImageFolderPath());
             diff.image.write(diffImagePath, function () {
                 // Create data structure for the gathering of imageMetaInformationModel information (distance and difference are between 0 and 0 -> * 100 for percent)
                 callback(that.createCompleteImageSet(imageName, referenceImage, newImage, diff.image, diff.percent * 100, jimp.distance(referenceImage, newImage) * 100, ''));
+
             });
         });
     });

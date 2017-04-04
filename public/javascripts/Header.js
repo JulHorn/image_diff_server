@@ -35,7 +35,6 @@ Header.prototype.bindEvents = function () {
         that.connector.refreshAll(function (data) {
             that.callback(data);
             that.$refreshAllTextField.text('Done!');
-            console.log(data);
         });
         // Get current job to update values
         that.connector.getActiveJob(function (data) {

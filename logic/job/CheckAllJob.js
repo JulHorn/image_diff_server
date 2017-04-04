@@ -87,9 +87,12 @@ CheckAllJob.prototype.createDiffImages = function (autoCrop, pixDiffThreshold, d
     // Tell the job how many images have to be processed
     this.setImagesToBeProcessedCount(refDiffImageNames.length + newDiffImageNames.length + imageNames.length);
 
+    // Create map with ignore areas
+    var ignoreAreaMap = this.__createIgnoreMap(this.imageMetaInformationModel);
+
     // Create diff images
     this.__createSingleImages(refDiffImageNames, newDiffImageNames, function () {
-        that.__createDiffImages(imageNames, autoCrop, pixDiffThreshold, distThreshold, function () {
+        that.__createDiffImages(imageNames, autoCrop, ignoreAreaMap, pixDiffThreshold, distThreshold, function () {
             that.calculateMetaInformation();
 
             if(callback) {
@@ -97,6 +100,21 @@ CheckAllJob.prototype.createDiffImages = function (autoCrop, pixDiffThreshold, d
             }
         });
     });
+};
+
+CheckAllJob.prototype.__createIgnoreMap = function (imageMetaInformationModel) {
+    var resultIgnoreAreaMap = new Map();
+
+    imageMetaInformationModel.getImageSets().forEach(function (imageSet) {
+        var imageName = imageSet.getReferenceImage().getName();
+
+        if(imageName) {
+            //resultIgnoreAreaMap[imageName] = imageSet.getIgnoreAreas();
+            resultIgnoreAreaMap.set(imageName, imageSet.getIgnoreAreas());
+        }
+    });
+
+    return resultIgnoreAreaMap;
 };
 
 /**
@@ -109,7 +127,7 @@ CheckAllJob.prototype.createDiffImages = function (autoCrop, pixDiffThreshold, d
  * @param distThreshold
  * @param callback Will be called, when the method has finished to compute all images. Has the number of processed images as job.
  * **/
-CheckAllJob.prototype.__createDiffImages = function (imageNames, autoCrop, pixDiffThreshold, distThreshold, callback) {
+CheckAllJob.prototype.__createDiffImages = function (imageNames, autoCrop, ignoreAreasMap, pixDiffThreshold, distThreshold, callback) {
 
     logger.info("Number of images left to compare: ", imageNames.length);
     // If no images are left to process, call the callback method and stop
@@ -124,18 +142,21 @@ CheckAllJob.prototype.__createDiffImages = function (imageNames, autoCrop, pixDi
         // Create diff image
         var imageToProcess = imageNames.shift();
         var that = this;
+        var ignoreAreas = [];
+
+        // Get ignore areas for the given image
+        if(ignoreAreasMap.has(imageToProcess)) {
+            ignoreAreas = ignoreAreasMap.get(imageToProcess);
+        }
+
         //this.incrementProcessImageCounter();
-        that.getImageManipulator().createDiffImage(imageToProcess, autoCrop, function (resultSet) {
-            // Only add images if a a threshold was breached
-            if (resultSet.getDistance() > distThreshold
-                || resultSet.getDifference() > pixDiffThreshold) {
-                that.imageMetaInformationModel.addImageSet(resultSet);
-            }
+        that.getImageManipulator().createDiffImage(imageToProcess, autoCrop, ignoreAreas, function (resultSet) {
+            that.imageMetaInformationModel.addImageSet(resultSet);
 
             // Increase the number of processed images by one
             that.incrementProcessImageCounter();
 
-            that.__createDiffImages(imageNames, autoCrop, pixDiffThreshold, distThreshold, callback);
+            that.__createDiffImages(imageNames, autoCrop, ignoreAreasMap, pixDiffThreshold, distThreshold, callback);
         });
     }
 };
