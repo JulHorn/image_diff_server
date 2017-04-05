@@ -1,20 +1,25 @@
-var AddIgnoreArea = function ($targetDiv, connector) {
+var AddIgnoreArea = function ($targetDiv, connector, callback) {
     this.$container = $targetDiv;
     this.connector = connector;
+    this.callback = callback;
     this.__init();
     this.bindEvents();
 };
 
 AddIgnoreArea.prototype.show = function (imagePath, imageSet) {
-    var content = '';
 
-    content += '<div class="ignoreRegion">';
-    content += '<img id="addIgnoreImage" src="' + imagePath + '"/>';
-    content += '<div>';
-    content += '<button data-action="addIgnoreCancel">Cancel</button>';
-    content += '<button data-action="addIgnoreOk" data-id="' + imageSet.id + '">Ok</button>';
-    content += '</div>';
-    content += '</div>';
+    var content =
+        '<div class="ignoreRegion">'
+            + '<div class="ignoreRegionImageArea">'
+                + '<div class="ignoreRegionImageAreaInner" style="width: ' + imageSet.referenceImage.width + 'px">'
+                    + '<img id="addIgnoreImage" src="' + imagePath + '"/>'
+                + '</div>'
+            + '</div>'
+            + '<div class="ignoreRegionButtonBar">'
+                + '<button data-action="addIgnoreCancel">Cancel</button>'
+                + '<button data-action="addIgnoreOk" data-id="' + imageSet.id + '">Ok</button>'
+            + '</div>'
+        + '</div>';
 
     this.$container.html($(content));
     this.$container.show();
@@ -50,19 +55,24 @@ AddIgnoreArea.prototype.bindEvents = function () {
     var that = this;
 
     this.$container.on('click', 'button[data-action=addIgnoreCancel]', function () {
-        $('#addIgnoreImage').selectAreas('destroy');
         that.$container.hide();
         that.$container.html('');
+
+        if(that.callback) {
+            that.callback();
+        }
     });
 
     this.$container.on('click', 'button[data-action=addIgnoreOk]', function () {
         var id = $(this).data('id');
 
         that.connector.modifyIgnoreAreas(id, $('#addIgnoreImage').selectAreas('relativeAreas'), function () {
-            // returns an array of areas, with their size and coordinates on the original image
-            $('#addIgnoreImage').selectAreas('destroy');
             that.$container.hide();
             that.$container.html('');
+
+            if(that.callback) {
+                that.callback();
+            }
         });
     });
 };

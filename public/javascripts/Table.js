@@ -15,7 +15,7 @@ var Table = function (connector, callback) {
 /* ----- Methods ----- */
 
 /**
- * Binds the eventhandler to the ui elements.
+ * Binds the event handler to the ui elements.
  * **/
 Table.prototype.bindEvents = function () {
     var that = this;
@@ -42,10 +42,16 @@ Table.prototype.bindEvents = function () {
         var $this = $(this);
         var $ignoreRegion = $('#ignoreRegion');
         var id = $this.data('id');
-        var imgPath = $this.data('image').replace('public', '.');
+        var imgPath = that.__sanitizeImagePaths($this.data('image'));
 
         that.connector.getImageSet(id, function (imageSet) {
-            new AddIgnoreArea($ignoreRegion, that.connector).show(imgPath, imageSet);
+            that.__toggleIgnoreRegionDisableState(false);
+
+            new AddIgnoreArea($ignoreRegion, that.connector, function () {
+                $('button[data-action="addIgnoreRegions"]').each(function () {
+                    that.__toggleIgnoreRegionDisableState(true);
+                });
+            }).show(imgPath, imageSet);
         });
     });
 
@@ -146,7 +152,7 @@ Table.prototype.__createDescriptionRow = function (imageSet) {
     desRowContent += '<td role="referenceDescription" id="' + imageSet.id + '">';
     desRowContent += this.__createDefaultDescriptionCellContent(imageSet.referenceImage);
     desRowContent += '<button data-id="' + imageSet.id + '" data-action="delete">Delete</button>';
-    desRowContent += '<button data-id="' + imageSet.id + '" data-image="' + imageSet.referenceImage.path +  '" data-action="addIgnoreRegions">Add ignore regions</button>';
+    desRowContent += '<button data-id="' + imageSet.id + '" data-image="' + imageSet.referenceImage.path +  '" data-action="addIgnoreRegions">Modify Ignore Regions</button>';
     desRowContent += '</td>';
 
     desRowContent += '<td role="newDescription">';
@@ -223,8 +229,8 @@ Table.prototype.__createImageCellContent = function (image) {
     var noImageNoticeTextContainerClass = image.path ? 'hidden' : '';
 
     // Only display image if there is one, else display a notification text
-    cellContent += '<a class="' + imageContainerClass + '" href="' + image.path.replace('public', '.') + imageSuffix + '" role="imageLink">';
-    cellContent += '<img src="' + image.path.replace('public', '.') + imageSuffix + '" role="image">';
+    cellContent += '<a class="' + imageContainerClass + '" href="' + this.__sanitizeImagePaths(image.path) + imageSuffix + '" role="imageLink">';
+    cellContent += '<img src="' + this.__sanitizeImagePaths(image.path) + imageSuffix + '" role="image">';
     cellContent += '</a>';
     cellContent += '<div class="noImageAvailableText ' + noImageNoticeTextContainerClass + '">';
     cellContent += '<span>No image to display yet</span>';
@@ -246,10 +252,10 @@ Table.prototype.__updateImageSetMetaInformation = function (resultImageSet, id) 
     var imageSuffix = '?timestamp=' + new Date().getTime();
 
     // Set new images
-    diffImg.find('a[role="imageLink"]').attr('href', resultImageSet.diffImage.path.replace('public', '.') + imageSuffix);
-    diffImg.find('img[role="image"]').attr('src', resultImageSet.diffImage.path.replace('public', '.') + imageSuffix);
-    refImg.find('a[role="imageLink"]').attr('href', resultImageSet.referenceImage.path.replace('public', '.') + imageSuffix);
-    refImg.find('img[role="image"]').attr('src', resultImageSet.referenceImage.path.replace('public', '.') + imageSuffix);
+    diffImg.find('a[role="imageLink"]').attr('href', this.__sanitizeImagePaths(resultImageSet.diffImage.path) + imageSuffix);
+    diffImg.find('img[role="image"]').attr('src', this.__sanitizeImagePaths(resultImageSet.diffImage.path) + imageSuffix);
+    refImg.find('a[role="imageLink"]').attr('href', this.__sanitizeImagePaths(resultImageSet.referenceImage.path) + imageSuffix);
+    refImg.find('img[role="image"]').attr('src', this.__sanitizeImagePaths(resultImageSet.referenceImage.path.replace) + imageSuffix);
 
     // Display images and hide the no image existing text
     refImg.find('a[role="imageLink"]').removeClass('hidden');
@@ -275,7 +281,7 @@ Table.prototype.__updateImageSetMetaInformation = function (resultImageSet, id) 
 /**
  * Creates an ajax loading icon element.
  *
- * @return string A loading icon div element.
+ * @return {string} A loading icon div element.
  * **/
 Table.prototype.__createAjaxLoadingIcon = function () {
     return '<div class="sk-circle ajaxLoadingIconAdditionalStyles" role ="ajaxLoadingIcon">'
@@ -316,9 +322,43 @@ Table.prototype.__disableLoaderForRow = function (imageSetId) {
  * Returns the loader element for a row/image set.
  *
  * @param imageSetId The id of the image set which is displayed in the row.
+ * @return ToDo
  * */
 Table.prototype.__getLoader = function (imageSetId) {
     var $imageSet = this.$container.find('#imageSet_' + imageSetId);
 
     return $imageSet.find('.loader');
+};
+
+/**
+ * Fixes the file path for images by removing the public part and fixing the slashes.
+ *
+ * @param {string} imagePath The file path to the image.
+ * @return {string} The fixed file path.
+ * **/
+Table.prototype.__sanitizeImagePaths = function (imagePath) {
+    return imagePath.replace('public', '.').replace(/\\/g, '/');
+};
+
+/**
+ * Enables or disables all 'Modify Ignore Region' buttons in the list.
+ *
+ * @param {bool} enable True if the buttons should be enabled, else false.
+ * **/
+Table.prototype.__toggleIgnoreRegionDisableState = function (enable) {
+    var $ignoreAreaButtons = $('button[data-action="addIgnoreRegions"]');
+
+    if(enable) {
+        $ignoreAreaButtons.each(function () {
+            var $this = $(this);
+            $(this).removeClass('disabledButton');
+            $(this).removeAttr('disabled');
+        });
+    } else if (!enable) {
+        $ignoreAreaButtons.each(function () {
+            var $this = $(this);
+            $(this).addClass('disabledButton');
+            $(this).attr('disabled', 'disabled');
+        });
+    }
 };

@@ -80,7 +80,7 @@ MakeNewToReferenceImageJob.prototype.__makeToNewReferenceImage = function (id, c
         }
 
         // Create diff -> Autocrop is set to false because the images should be identical
-        that.getImageManipulator().createDiffImage(imageSet.getNewImage().getName(), false, function (resultSet) {
+        that.getImageManipulator().createDiffImage(imageSet.getNewImage().getName(), false, imageSet.getIgnoreAreas(), function (resultSet) {
             // Set new diff information to existing image set
             imageSet.setDifference(resultSet.getDifference());
             imageSet.setError(resultSet.getError());

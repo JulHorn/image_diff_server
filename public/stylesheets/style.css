@@ -44,7 +44,7 @@ button:active {
   top:1px;
 }
 
-img{
+td img{
   height: auto;
   width: 100%;
 }
@@ -166,14 +166,47 @@ tr.dark td {
   z-index: 1000;
 }
 
+#ignoreRegion {
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: none;
+}
+
+.ignoreRegionImageAreaInner {
+  margin: 0 auto;
+}
+
 .ignoreRegion {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  right: 10px;
-  bottom: 10px;
+  position: fixed;
+  top: 8vh;
+  left: 15vw;
+  right: 15vw;
+  bottom: 8vh;
   z-index: 1000;
   border: solid #1a1a1a thin;
   background-color: white;
-  overflow: scroll;
+  padding-top: 50px;
+}
+
+.ignoreRegionImageArea {
+  width: 100%;
+  overflow: auto;
+  height: calc(100% - 50px)
+}
+
+.addIgnoreImage {
+  margin: auto;
+}
+
+.ignoreRegionButtonBar {
+  text-align: center;
+  line-height: 50px;
+  height: 50px;
 }

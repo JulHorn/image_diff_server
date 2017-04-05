@@ -7,6 +7,8 @@ var logger = require('winston');
 
 /**
  * Constructor.
+ *
+ * @Constructor
  * **/
 var ImageManipulator = function () {};
 
@@ -16,17 +18,16 @@ var ImageManipulator = function () {};
  * Creates a diff image of the reference and new image and saves it to the, in the config file configured, folder path.
  * Does not update the imageMetaInformationModel information itself.
  *
- * @param imageName The name of the images that should be compared. The image must have the same name in the reference and new folder. The diff image will have the name, too.
- * @param autoCrop Determines if the new/reference images should be autocroped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
- * @param ignoreAreas ToDo: Add Text here
- * @param callback The callback function which is called, when the method has finished the comparison. The callback has an imageSet as job.
+ * @param {string} imageName The name of the images that should be compared. The image must have the same name in the reference and new folder. The diff image will have the name, too.
+ * @param {bool} autoCrop Determines if the new/reference images should be autocroped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
+ * @param {IgnoreArea[]} ignoreAreas ToDo: Add Text here
+ * @param {function} callback The callback function which is called, when the method has finished the comparison. The callback has an imageSet as job.
  * **/
 ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, ignoreAreas, callback) {
-
     // Other vars
     var that = this;
 
-    // Assign default value value is falsy
+    // Assign default value, if no value was given
     autoCrop = autoCrop || false;
 
     // Get images
@@ -35,7 +36,7 @@ ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, igno
     var diffImagePath = config.getResultImageFolderPath() + path.sep + imageName;
     logger.info('Creating diff image for:', imageName);
 
-    // If one of the images do not exist, then quit
+    // If one of the images does not exist, then quit
     if(!this.__isImageExisting(referenceImagePath) || !this.__isImageExisting(newImagePath)){
         var errorText = 'Reference or new image does not exist:\n'
             + 'Reference: ' + referenceImagePath
@@ -63,21 +64,10 @@ ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, igno
             that.__autoCrop(referenceImage, newImage, autoCrop);
 
             // Add ignore areas, which should not be part of the comparison
-            // ToDo: Add some error handling if the images do not have the same size
-            // ToDo: Handle negativ height/width
-            if(ignoreAreas) {
-                ignoreAreas.forEach(function (ignoreArea) {
-                    for(var xPosition = ignoreArea.x; xPosition < ignoreArea.x + ignoreArea.width; xPosition++) {
-                        for(var yPosition = ignoreArea.y; yPosition < ignoreArea.y + ignoreArea.height; yPosition++) {
-                             referenceImage.setPixelColor(0x00FF00FF, xPosition, yPosition);
-                             newImage.setPixelColor(0x00FF00FF, xPosition, yPosition);
-                        }
-                    }
-                });
-            }
+            that.__setIgnoreAreas(referenceImage, newImage, ignoreAreas);
 
             // Create diff, ensure that folder structure exists and write file
-            var diff = jimp.diff(referenceImage, newImage, 1);
+            var diff = jimp.diff(referenceImage, newImage);
             fs.ensureDirSync(config.getResultImageFolderPath());
             diff.image.write(diffImagePath, function () {
                 // Create data structure for the gathering of imageMetaInformationModel information (distance and difference are between 0 and 0 -> * 100 for percent)
@@ -205,9 +195,9 @@ ImageManipulator.prototype.createCompleteImageSet = function(imageName, referenc
 /**
  * Autocrops two images.
  *
- * @param image1 The first image to autocrop.
- * @param image2 The second image to autocrop.
- * @param autoCrop Boolean. If true, the images will be autocroped, else not.
+ * @param {Image} image1 The first image to autocrop.
+ * @param {Image} image2 The second image to autocrop.
+ * @param {bool} autoCrop If true, the images will be autocroped, else not.
  * **/
 ImageManipulator.prototype.__autoCrop = function (image1, image2, autoCrop) {
     if(autoCrop){
@@ -219,8 +209,8 @@ ImageManipulator.prototype.__autoCrop = function (image1, image2, autoCrop) {
 /**
  * Checks whether an image exists.
  *
- * @param imagePath The path to the image, which should be checked.
- * @return True if the image does exist, else false.
+ * @param {string} imagePath The path to the image, which should be checked.
+ * @return {bool} True if the image does exist, else false.
  * **/
 ImageManipulator.prototype.__isImageExisting = function (imagePath) {
     return fs.existsSync(imagePath) && fs.statSync(imagePath).isFile();
@@ -228,7 +218,7 @@ ImageManipulator.prototype.__isImageExisting = function (imagePath) {
 
 /**
  * Deletes a file.
- * @param path The file which should be deleted.
+ * @param {string} path The file which should be deleted.
  * **/
 ImageManipulator.prototype.__deleteFile = function (path) {
     if(this.__isImageExisting(path)){
@@ -236,6 +226,28 @@ ImageManipulator.prototype.__deleteFile = function (path) {
             if(err){
                 logger.error('Failed to delete file: ' + path, err);
                 throw Error('Failed to delete file: ' + path, err);
+            }
+        });
+    }
+};
+
+/**
+ * Sets the ignore areas by setting the ignore areas pixel of the new image to the pixels of the reference image.
+ * Because the images are the same in these areas, the resulting diff image will look ok in these areas.
+ *
+ * @param {Image} referenceImage The reference image.
+ * @param {Image} newImage The new image which will be manipulated.
+ * @param {IgnoreArea[]} ignoreAreas The areas which should be ignored.
+ * **/
+ImageManipulator.prototype.__setIgnoreAreas = function (referenceImage, newImage, ignoreAreas) {
+    // ToDo: Add some error handling if the images do not have the same size
+    if(ignoreAreas) {
+        ignoreAreas.forEach(function (ignoreArea) {
+            for(var xPosition = ignoreArea.x; xPosition < ignoreArea.x + ignoreArea.width; xPosition++) {
+                for(var yPosition = ignoreArea.y; yPosition < ignoreArea.y + ignoreArea.height; yPosition++) {
+                    var referencePixelColour = referenceImage.getPixelColor(xPosition, yPosition);
+                    newImage.setPixelColor(referencePixelColour, xPosition, yPosition);
+                }
             }
         });
     }
