@@ -45,12 +45,7 @@ Table.prototype.bindEvents = function () {
         var imgPath = that.__sanitizeImagePaths($this.data('image'));
 
         that.connector.getImageSet(id, function (imageSet) {
-            that.__toggleIgnoreRegionDisableState(false);
-
             new AddIgnoreArea($ignoreRegion, that.connector, function () {
-                $('button[data-action="addIgnoreRegions"]').each(function () {
-                    that.__toggleIgnoreRegionDisableState(true);
-                });
             }).show(imgPath, imageSet);
         });
     });
@@ -338,27 +333,4 @@ Table.prototype.__getLoader = function (imageSetId) {
  * **/
 Table.prototype.__sanitizeImagePaths = function (imagePath) {
     return imagePath.replace('public', '.').replace(/\\/g, '/');
-};
-
-/**
- * Enables or disables all 'Modify Ignore Region' buttons in the list.
- *
- * @param {bool} enable True if the buttons should be enabled, else false.
- * **/
-Table.prototype.__toggleIgnoreRegionDisableState = function (enable) {
-    var $ignoreAreaButtons = $('button[data-action="addIgnoreRegions"]');
-
-    if(enable) {
-        $ignoreAreaButtons.each(function () {
-            var $this = $(this);
-            $(this).removeClass('disabledButton');
-            $(this).removeAttr('disabled');
-        });
-    } else if (!enable) {
-        $ignoreAreaButtons.each(function () {
-            var $this = $(this);
-            $(this).addClass('disabledButton');
-            $(this).attr('disabled', 'disabled');
-        });
-    }
 };
