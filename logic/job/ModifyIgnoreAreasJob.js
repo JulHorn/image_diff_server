@@ -1,5 +1,12 @@
 var Job = require('./Job');
 
+/**
+ * Job to modify the ignore areas of an image set.
+ *
+ * @param {String} id The id of the image set for which the ignore areas should be modified.
+ * @param {IgnoreArea[]} ignoreAreas The new ignore areas.
+ * @param {Function} callback The callback method which is called, when diff process has finished. Has the this job as parameter.
+ * **/
 var ModifyIgnoreAreasJob = function (id, ignoreAreas, callback) {
     Job.call(this, 'ModifyIgnoreAreasJob', callback);
     this.id = id;
@@ -12,8 +19,8 @@ ModifyIgnoreAreasJob.prototype = Object.create(Job.prototype);
 /**
  * Executes this job.
  *
- * @param imageMetaInformationModel The image meta model in which the results will be saved.
- * @param callback The callback which will be called after the job execution is finished.
+ * @param {ImageMetaInformationModel} imageMetaInformationModel The image meta model in which the results will be saved.
+ * @param {Function} callback The callback which will be called after the job execution is finished.
  * **/
 ModifyIgnoreAreasJob.prototype.execute = function (imageMetaInformationModel, callback) {
     var that = this;
@@ -39,6 +46,26 @@ ModifyIgnoreAreasJob.prototype.execute = function (imageMetaInformationModel, ca
     });
 };
 
+/**
+ * Loads the data into this job. Used to restore a previous state of this object.
+ *
+ * @param {Object} data The object containing the information which this object should have.
+ * **/
+ModifyIgnoreAreasJob.prototype.load = function (data) {
+    // Load data in the prototype
+    this.loadJobData(data);
+
+    this.id = data.id;
+    this.ignoreAreas = data.ignoreAreas;
+};
+
+/**
+ * Sets the ignore areas of an image set.
+ *
+ * @param {String} id The id of the image set for which the ignore areas should be modified.
+ * @param {IgnoreArea[]} ignoreAreas The new ignore areas.
+ * @param {Function} callback The callback method which is called, when the method has finished.
+ * **/
 ModifyIgnoreAreasJob.prototype.__modifyIgnoreAreas = function (id, ignoreAreas, callback) {
     var imageSet = this.getImageMetaInformationModel().getImageSetById(id);
 
@@ -48,19 +75,6 @@ ModifyIgnoreAreasJob.prototype.__modifyIgnoreAreas = function (id, ignoreAreas, 
     if(callback){
         callback();
     }
-};
-
-/**
- * Loads the data into this job. Used to restore a previous state of this object.
- *
- * @param data The object containing the information which this object should habe.
- * **/
-ModifyIgnoreAreasJob.prototype.load = function (data) {
-    // Load data in the prototype
-    this.loadJobData(data);
-
-    this.id = data.id;
-    this.ignoreAreas = data.ignoreAreas;
 };
 
 module.exports = ModifyIgnoreAreasJob;

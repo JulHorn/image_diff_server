@@ -81,6 +81,11 @@ ImageSetModel.prototype.getDiffImage = function () {
     return this.diffImage;
 };
 
+/**
+ * Returns the ignore areas.
+ *
+ * @return {IgnoreArea[]} The ignore areas.
+ * **/
 ImageSetModel.prototype.getIgnoreAreas = function () {
     return this.ignoreAreas;
 };

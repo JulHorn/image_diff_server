@@ -6,8 +6,9 @@ var path = require('path');
 /**
  * Job which computes the difference of two images and updates the image meta model accordingly..
  *
- * @param id The id of the image set of which the new image should be made a reference image.
- * @param callback The callback method which is called, when diff process has finished. Has the this job as parameter.
+ * @param {String} id The id of the image set of which the new image should be made a reference image.
+ * @param {Function} callback The callback method which is called, when diff process has finished. Has the this job as parameter.
+ * @constructor
  * **/
 var MakeNewToReferenceImageJob = function (id, callback) {
     Job.call(this, 'MakeToNewBaselineImage', callback);
@@ -22,13 +23,13 @@ MakeNewToReferenceImageJob.prototype = Object.create(Job.prototype);
 /**
  * Executes this job.
  *
- * @param imageMetaInformationModel The image meta model in which the results will be saved.
- * @param callback The callback which will be called after the job execution is finished.
+ * @param {ImageMetaInformationModel} imageMetaInformationModel The image meta model in which the results will be saved.
+ * @param {Function} callback The callback which will be called after the job execution is finished.
  * **/
 MakeNewToReferenceImageJob.prototype.execute = function (imageMetaInformationModel, callback) {
     var that = this;
     that.imageMetaInformationModel = imageMetaInformationModel;
-    // Sinlge option -> Only one image has to be processed
+    // Single option -> Only one image has to be processed
     this.setImagesToBeProcessedCount(1);
 
     this.__makeToNewReferenceImage(this.id, function () {
@@ -52,7 +53,7 @@ MakeNewToReferenceImageJob.prototype.execute = function (imageMetaInformationMod
 /**
  * Loads the data into this job. Used to restore a previous state of this object.
  *
- * @param data The object containing the information which this object should habe.
+ * @param {Object} data The object containing the information which this object should habe.
  * **/
 MakeNewToReferenceImageJob.prototype.load = function (data) {
     // Load data in the prototype
@@ -64,8 +65,8 @@ MakeNewToReferenceImageJob.prototype.load = function (data) {
 /**
  * Makes a new image to a reference image. Updates and save the imageMetaInformationModel information model.
  *
- * @param id Id of the image set for which the new image should be made a reference image.
- * @param callback Called when the complete deletion process is done. Has the updated image imageMetaInformationModel information model object as job.
+ * @param {String} id Id of the image set for which the new image should be made a reference image.
+ * @param {Function} callback Called when the complete deletion process is done. Has the updated image imageMetaInformationModel information model object as job.
  * **/
 MakeNewToReferenceImageJob.prototype.__makeToNewReferenceImage = function (id, callback) {
     var imageSet = this.getImageMetaInformationModel().getImageSetById(id);

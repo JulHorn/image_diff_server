@@ -18,14 +18,16 @@ var ImageManipulator = function () {};
  * Creates a diff image of the reference and new image and saves it to the, in the config file configured, folder path.
  * Does not update the imageMetaInformationModel information itself.
  *
- * @param {string} imageName The name of the images that should be compared. The image must have the same name in the reference and new folder. The diff image will have the name, too.
- * @param {bool} autoCrop Determines if the new/reference images should be autocroped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
- * @param {IgnoreArea[]} ignoreAreas ToDo: Add Text here
- * @param {function} callback The callback function which is called, when the method has finished the comparison. The callback has an imageSet as job.
+ * @param {String} imageName The name of the images that should be compared. The image must have the same name in the reference and new folder. The diff image will have the name, too.
+ * @param {Boolean} autoCrop Determines if the new/reference images should be auto croped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
+ * @param {IgnoreArea[]} ignoreAreas The areas which will not be part of the comparison.
+ * @param {Function} callback The callback function which is called, when the method has finished the comparison. The callback has an imageSet as job.
  * **/
 ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, ignoreAreas, callback) {
     // Other vars
     var that = this;
+    // Stores the error text if an error occurred
+    var error = '';
 
     // Assign default value, if no value was given
     autoCrop = autoCrop || false;
@@ -44,7 +46,7 @@ ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, igno
             +  'New: ' + newImagePath;
 
         logger.error(errorText);
-        throw Error(errorText);
+        error = errorText;
     }
 
     // Compute differences

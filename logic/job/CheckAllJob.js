@@ -12,6 +12,7 @@ var fs = require('fs-extra');
  * @param pixDiffThreshold The pixel threshold.
  * @param distThreshold The distance threshold.
  * @param callback The callback method which is called, when diff process has finished. Has the this job as parameter.
+ * @constructor
  * **/
 var CheckAllJob = function (autoCrop, pixDiffThreshold, distThreshold, callback) {
     Job.call(this, 'CheckAll', callback);
@@ -28,8 +29,8 @@ CheckAllJob.prototype = Object.create(Job.prototype);
 /**
  * Executes this job.
  *
- * @param imageMetaInformationModel The image meta model in which the results will be saved.
- * @param callback The callback which will be called after the job execution is finished.
+ * @param {ImageMetaInformationModel} imageMetaInformationModel The image meta model in which the results will be saved.
+ * @param {Function} callback The callback which will be called after the job execution is finished.
  * **/
 CheckAllJob.prototype.execute = function (imageMetaInformationModel, callback) {
     var that = this;
@@ -57,10 +58,10 @@ CheckAllJob.prototype.execute = function (imageMetaInformationModel, callback) {
  * Computes diff images for all images with the same name in the reference/new folder (configured in the config file). The diff images will
  * written in the diff image folder. Updated the imageMetaInformationModel structure.
  *
- * @param autoCrop Determines if the new/reference images should be autocroped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
- * @param pixDiffThreshold The pixel threshold.
- * @param distThreshold The distance threshold.
- * @param callback The callback method which is called, when diff process as finished. Has the imageMetaInformationModel as job. Optional.
+ * @param {Boolean} autoCrop Determines if the new/reference images should be autocroped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
+ * @param {Number} pixDiffThreshold The pixel threshold.
+ * @param {Number} distThreshold The distance threshold.
+ * @param {Function} callback The callback method which is called, when diff process as finished. Has the imageMetaInformationModel as job. Optional.
  * **/
 CheckAllJob.prototype.createDiffImages = function (autoCrop, pixDiffThreshold, distThreshold, callback) {
     var that = this;
@@ -102,6 +103,13 @@ CheckAllJob.prototype.createDiffImages = function (autoCrop, pixDiffThreshold, d
     });
 };
 
+/**
+ * Goes through the image meta information model and creates a map of ignore areas for better accessibility. Only
+ * image sets with a reference image will be included.
+ *
+ * @param {ImageMetaInformationModel} imageMetaInformationModel The model from which the ignore area set will be created.
+ * @return {map} The map containing the ignore areas. The key is an image name and the value is an ignore area object.
+ * **/
 CheckAllJob.prototype.__createIgnoreMap = function (imageMetaInformationModel) {
     var resultIgnoreAreaMap = new Map();
 
@@ -109,7 +117,6 @@ CheckAllJob.prototype.__createIgnoreMap = function (imageMetaInformationModel) {
         var imageName = imageSet.getReferenceImage().getName();
 
         if(imageName) {
-            //resultIgnoreAreaMap[imageName] = imageSet.getIgnoreAreas();
             resultIgnoreAreaMap.set(imageName, imageSet.getIgnoreAreas());
         }
     });
@@ -121,11 +128,12 @@ CheckAllJob.prototype.__createIgnoreMap = function (imageMetaInformationModel) {
  * Creates diff images of images with the same name in the reference/new folder.
  * Updates the image imageMetaInformationModel information structure, but does not save it.
  *
- * @param imageNames Array of image names which should be compared.
- * @param autoCrop Determines if the new/reference images should be autocroped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
- * @param pixDiffThreshold
- * @param distThreshold
- * @param callback Will be called, when the method has finished to compute all images. Has the number of processed images as job.
+ * @param {String[]} imageNames Array of image names which should be compared.
+ * @param {Boolean} autoCrop Determines if the new/reference images should be autocroped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
+ * @param {map} ignoreAreasMap The map containing the ignore areas. The key is an image name and the value is an ignore area object.
+ * @param {Number} pixDiffThreshold
+ * @param {Number} distThreshold
+ * @param {Function} callback Will be called, when the method has finished to compute all images. Has the number of processed images as job.
  * **/
 CheckAllJob.prototype.__createDiffImages = function (imageNames, autoCrop, ignoreAreasMap, pixDiffThreshold, distThreshold, callback) {
 
@@ -165,9 +173,9 @@ CheckAllJob.prototype.__createDiffImages = function (imageNames, autoCrop, ignor
  * Adds images with new reference/new pedant to the image imageMetaInformationModel information structure.
  * Updates the image imageMetaInformationModel information structure, but does not save it.
  *
- * @param refImageNames Array of image names which exist in the reference image folder, but not in the new image folder.
- * @param newImageNames Array of image names which exist in the new image folder, but not in the new reference folder.
- * @param callback Will be called, when the method has finished to compute all images. Has the number of processed images as job.
+ * @param {String[]} refImageNames Array of image names which exist in the reference image folder, but not in the new image folder.
+ * @param {String[]} newImageNames Array of image names which exist in the new image folder, but not in the new reference folder.
+ * @param {Function} callback Will be called, when the method has finished to compute all images. Has the number of processed images as job.
  * **/
 CheckAllJob.prototype.__createSingleImages = function (refImageNames, newImageNames, callback) {
     var that = this;
@@ -212,7 +220,7 @@ CheckAllJob.prototype.__createSingleImages = function (refImageNames, newImageNa
 /**
  * Returns true if the auto crop function is enabled, else false.
  *
- * @return Returns true if the auto crop function is enabled, else false.
+ * @return {Boolean} Returns true if the auto crop function is enabled, else false.
  * **/
 CheckAllJob.prototype.isAutoCropEnabled = function () {
     return this.autoCrop;
@@ -221,7 +229,7 @@ CheckAllJob.prototype.isAutoCropEnabled = function () {
 /**
  * Returns the maximum allowed pixel threshold. The return value is between 0 and 1.
  *
- * @return Returns the maximum allowed pixel threshold. The return value is between 0 and 1.
+ * @return {Number} Returns the maximum allowed pixel threshold. The return value is between 0 and 1.
  * **/
 CheckAllJob.prototype.getMaxPixelDifferenceThreshold = function () {
   return this.pixDiffThreshold;
@@ -230,7 +238,7 @@ CheckAllJob.prototype.getMaxPixelDifferenceThreshold = function () {
 /**
  * Returns the maximum allowed distance threshold. The return value is between 0 and 1.
  *
- * @return Returns the maximum allowed distance threshold. The return value is between 0 and 1.
+ * @return {Number} Returns the maximum allowed distance threshold. The return value is between 0 and 1.
  * **/
 CheckAllJob.prototype.getMaxDistanceDifferenceThreshold = function () {
     return this.distThreshold;
@@ -239,7 +247,7 @@ CheckAllJob.prototype.getMaxDistanceDifferenceThreshold = function () {
 /**
  * Loads the data into this job. Used to restore a previous state of this object.
  *
- * @param data The object containing the information which this object should habe.
+ * @param {Object} data The object containing the information which this object should habe.
  * **/
 CheckAllJob.prototype.load = function (data) {
     // Load data in the prototype
@@ -255,7 +263,7 @@ CheckAllJob.prototype.load = function (data) {
 /**
  * A simple filter function for arrays to determine wheter a file is one of the supported image types.
  *
- * @param imageName The image name including its type suffix.
+ * @param {String} imageName The image name including its type suffix.
  * **/
 CheckAllJob.prototype.__imageFilter = function (imageName) {
     var suffix = '.png';
@@ -267,9 +275,9 @@ CheckAllJob.prototype.__imageFilter = function (imageName) {
 /**
  * Gets the images which are in one array and not the other or which in both arrays.
  *
- * @param fileNameArray1 The first array.
- * @param fileNameArray2 The second array.
- * @param differentImages If true, returns the the images which are in array 1 and not array 2. If false, returns the images
+ * @param {String[]} fileNameArray1 The first array.
+ * @param {String[]} fileNameArray2 The second array.
+ * @param {Boolean} differentImages If true, returns the the images which are in array 1 and not array 2. If false, returns the images
  * which are in both arrays.
  * **/
 CheckAllJob.prototype.__getImageNames = function(fileNameArray1, fileNameArray2, differentImages){
@@ -290,6 +298,10 @@ CheckAllJob.prototype.__getImageNames = function(fileNameArray1, fileNameArray2,
 
 /**
  * Used instead of array.includes() because of backwards compatibility
+ *
+ * @param {Object[]} array The array of objects, which should be checked for a certain value.
+ * @param {Object} value The value which might be in the array.
+ * @return {Boolean} True if the value is in the array, else false.
  * **/
 CheckAllJob.prototype.__arrayIncludes = function (array, value) {
     var result = false;

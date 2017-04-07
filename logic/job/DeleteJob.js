@@ -3,8 +3,9 @@ var Job = require('./Job');
 /**
  * Deletes all images of an image set and updates the image meta model accordingly.
  *
- * @param id The id of the image set.
- * @param callback The callback method which is called, when diff process has finished. Has the this job as parameter.
+ * @param {String} id The id of the image set.
+ * @param {Function} callback The callback method which is called, when diff process has finished. Has the this job as parameter.
+ * @constructor
  * **/
 var DeleteJob = function (id, callback) {
     Job.call(this, 'DeleteSet', callback);
