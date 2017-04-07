@@ -4,6 +4,8 @@ var IgnoreArea = require('./IgnoreArea');
 
 /**
  * Constructor. Adds empty ImageModel objects as its reference, new and diff images.
+ *
+ * @constructor
  * **/
 var ImageSetModel = function () {
     this.difference = 0;
@@ -21,7 +23,7 @@ var ImageSetModel = function () {
 /**
  * Returns the percentual pixel difference of the reference and new image.
  *
- * @return Returns the percentual pixel difference of the reference and new image.
+ * @return {Number} Returns the percentual pixel difference of the reference and new image.
  * **/
 ImageSetModel.prototype.getDifference = function () {
     return this.difference;
@@ -39,7 +41,7 @@ ImageSetModel.prototype.getDistance = function () {
 /**
  * Returns the error text.
  *
- * @return Returns the error text.
+ * @return {String} Returns the error text.
  * **/
 ImageSetModel.prototype.getError = function () {
     return this.error;
@@ -48,7 +50,7 @@ ImageSetModel.prototype.getError = function () {
 /**
  * Returns the id.
  *
- * @return Returns the id.
+ * @return {String} Returns the id.
  * **/
 ImageSetModel.prototype.getId = function () {
     return this.id;
@@ -57,7 +59,7 @@ ImageSetModel.prototype.getId = function () {
 /**
  * Returns the reference image.
  *
- * @return Returns the reference image.
+ * @return {ImageModel} Returns the reference image.
  * **/
 ImageSetModel.prototype.getReferenceImage = function () {
     return this.referenceImage;
@@ -66,7 +68,7 @@ ImageSetModel.prototype.getReferenceImage = function () {
 /**
  * Returns the new image.
  *
- * @return Returns the new image.
+ * @return {ImageModel} Returns the new image.
  * **/
 ImageSetModel.prototype.getNewImage = function () {
     return this.newImage;
@@ -75,7 +77,7 @@ ImageSetModel.prototype.getNewImage = function () {
 /**
  * Returns the diff image.
  *
- * @return Returns the diff image.
+ * @return {ImageModel} Returns the diff image.
  * **/
 ImageSetModel.prototype.getDiffImage = function () {
     return this.diffImage;
@@ -95,7 +97,7 @@ ImageSetModel.prototype.getIgnoreAreas = function () {
 /**
  * Sets the percentual pixel difference between the reference and new image.
  *
- * @param difference The difference between the reference and new image.
+ * @param {Number} difference The difference between the reference and new image.
  * **/
 ImageSetModel.prototype.setDifference = function (difference) {
     this.difference = difference;
@@ -104,7 +106,7 @@ ImageSetModel.prototype.setDifference = function (difference) {
 /**
  * Sets the distance between the reference and new image.
  *
- * @param distance The distance between the reference and new image.
+ * @param {Number} distance The distance between the reference and new image.
  * **/
 ImageSetModel.prototype.setDistance = function (distance) {
     this.distance = distance;
@@ -113,7 +115,7 @@ ImageSetModel.prototype.setDistance = function (distance) {
 /**
  * Sets the error reason.
  *
- * @param error The error reason.
+ * @param {String} error The error reason.
  * **/
 ImageSetModel.prototype.setError = function (error) {
     this.error = error;
@@ -122,7 +124,7 @@ ImageSetModel.prototype.setError = function (error) {
 /**
  * Sets the reference image.
  *
- * @param image The reference image.
+ * @param {ImageModel} image The reference image.
  * **/
 ImageSetModel.prototype.setReferenceImage = function (image) {
     this.referenceImage = image;
@@ -131,7 +133,7 @@ ImageSetModel.prototype.setReferenceImage = function (image) {
 /**
  * Sets the new image.
  *
- * @param image The new image.
+ * @param {ImageModel} image The new image.
  * **/
 ImageSetModel.prototype.setNewImage = function (image) {
     this.newImage = image;
@@ -140,12 +142,17 @@ ImageSetModel.prototype.setNewImage = function (image) {
 /**
  * Sets the diff image.
  *
- * @param image The diff image.
+ * @param {ImageModel} image The diff image.
  * **/
 ImageSetModel.prototype.setDiffImage = function (image) {
     this.diffImage = image;
 };
 
+/**
+ * Sets the ignore areas.
+ *
+ * @param {IgnoreArea[]} ignoreAreas The ignore areas to be set.
+ * **/
 ImageSetModel.prototype.setIgnoreAreas = function (ignoreAreas) {
   this.ignoreAreas = ignoreAreas;
 };
@@ -155,7 +162,7 @@ ImageSetModel.prototype.setIgnoreAreas = function (ignoreAreas) {
 /**
  * Loads the given data with an image set structure into this image set.
  *
- * @param data The object containing the image set data. Must have the structure of this image set object.
+ * @param {Object} data The object containing the image set data. Must have the structure of this image set object.
  * **/
 ImageSetModel.prototype.load = function (data) {
     var that = this;

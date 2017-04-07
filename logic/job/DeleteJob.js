@@ -20,8 +20,8 @@ DeleteJob.prototype = Object.create(Job.prototype);
 /**
  * Executes this job.
  *
- * @param imageMetaInformationModel The image meta model in which the results will be saved.
- * @param callback The callback which will be called after the job execution is finished.
+ * @param {ImageMetaInformationModel} imageMetaInformationModel The image meta model in which the results will be saved.
+ * @param {Function} callback The callback which will be called after the job execution is finished.
  * **/
 DeleteJob.prototype.execute = function (imageMetaInformationModel, callback) {
     this.imageMetaInformationModel = imageMetaInformationModel;
@@ -53,8 +53,8 @@ DeleteJob.prototype.execute = function (imageMetaInformationModel, callback) {
  * Deletes an image set. It will be removed from the image imageMetaInformationModel information structure, the structure will be saved to file
  * and the images will be deleted.
  *
- * @param id The id of the image set.
- * @param callback Called when the complete deletion process is done. Has the updated image imageMetaInformationModel information model object as parameter.
+ * @param {String} id The id of the image set.
+ * @param {Function} callback Called when the complete deletion process is done. Has the updated image imageMetaInformationModel information model object as parameter.
  * **/
 DeleteJob.prototype.deleteImageSetFromModel = function (id, callback) {
     // Delete information about the data set and save the information
@@ -73,7 +73,7 @@ DeleteJob.prototype.deleteImageSetFromModel = function (id, callback) {
 /**
  * Loads the data into this job. Used to restore a previous state of this object.
  *
- * @param data The object containing the information which this object should habe.
+ * @param {Object} data The object containing the information which this object should habe.
  * **/
 DeleteJob.prototype.load = function (data) {
     // Load data in the prototype

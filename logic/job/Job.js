@@ -1,13 +1,13 @@
 var ImageManipulator = require('../ImageManipulator');
 var ImageMetaInformationModel = require('../model/ImageMetaInformationModel');
 var logger = require('winston');
-var dateformat = require('dateformat');
+var dateFormat = require('dateformat');
 
 /**
  * Creates a new general job.
  *
- * @param jobName The name of the job.
- * @param callback The callback which will be called when the execution of this job has finished.
+ * @param {String} jobName The name of the job.
+ * @param {Function} callback The callback which will be called when the execution of this job has finished.
  * **/
 var Job = function(jobName, callback) {
     this.jobName = jobName;
@@ -23,8 +23,8 @@ var Job = function(jobName, callback) {
 /**
  * Executes this job.
  *
- * @param imageMetaInformationModel The image meta model in which the results will be saved.
- * @param callback The callback which will be called after the job execution is finished.
+ * @param {ImageMetaInformationModel} imageMetaInformationModel The image meta model in which the results will be saved.
+ * @param {Function} callback The callback which will be called after the job execution is finished.
  * **/
 Job.prototype.execute = function (imageMetaInformationModel, callback) {
    logger.info('Executing empty job. Does nothing.');
@@ -43,7 +43,7 @@ Job.prototype.execute = function (imageMetaInformationModel, callback) {
 /**
  * Returns the name of the job.
  *
- * @return Returns the name of the job.
+ * @return {String} Returns the name of the job.
  * **/
 Job.prototype.getJobName = function () {
     return this.jobName;
@@ -52,7 +52,7 @@ Job.prototype.getJobName = function () {
 /**
  * Returns the callback function which will be given as parameter to the executed job execution.
  *
- * @return Returns the callback function which will be given as parameter to the executed job execution.
+ * @return {Function} Returns the callback function which will be given as parameter to the executed job execution.
  * **/
 Job.prototype.getCallbackFunction = function () {
     return this.callback;
@@ -61,7 +61,7 @@ Job.prototype.getCallbackFunction = function () {
 /**
  * Returns the object to manipulate images/create diffs.
  *
- * @return Returns the object to manipulate images/create diffs.
+ * @return {ImageManipulator} Returns the object to manipulate images/create diffs.
  * **/
 Job.prototype.getImageManipulator = function () {
   return this.imageManipulator;
@@ -70,7 +70,7 @@ Job.prototype.getImageManipulator = function () {
 /**
  * Returns the image meta model which this job used.
  *
- * @return Returns the image meta model which this job used.
+ * @return {ImageMetaInformationModel} Returns the image meta model which this job used.
  * **/
 Job.prototype.getImageMetaInformationModel = function () {
   return this.imageMetaInformationModel;
@@ -81,7 +81,7 @@ Job.prototype.getImageMetaInformationModel = function () {
 /**
  * Sets the amount of images this job has to process in total. Only used as information and not as a computacional factor.
  *
- * @param imagesToBeProcessedCount The amount of images this job has to process in total.
+ * @param {Number} imagesToBeProcessedCount The amount of images this job has to process in total.
  * **/
 Job.prototype.setImagesToBeProcessedCount = function(imagesToBeProcessedCount) {
     this.imagesToBeProcessedCount = imagesToBeProcessedCount;
@@ -90,7 +90,7 @@ Job.prototype.setImagesToBeProcessedCount = function(imagesToBeProcessedCount) {
 /**
  * Sets the amount of images this job already has processed. Only used as information and not as a computacional factor.
  *
- * @param processedImageCount The amount of images this job already has processed
+ * @param {Number} processedImageCount The amount of images this job already has processed
  * **/
 Job.prototype.setProcessedImageCount = function(processedImageCount) {
     this.processedImageCount = processedImageCount;
@@ -110,13 +110,13 @@ Job.prototype.calculateMetaInformation = function () {
     var currentDate = new Date();
 
     this.imageMetaInformationModel.calculateBiggestDifferences();
-    this.imageMetaInformationModel.setTimeStamp(dateformat(currentDate, 'HH:MM:ss dd.mm.yyyy'));
+    this.imageMetaInformationModel.setTimeStamp(dateFormat(currentDate, 'HH:MM:ss dd.mm.yyyy'));
 };
 
 /**
  * Loads the data into this job. Used to restore a previous state of this object.
  *
- * @param data The object containing the information which this object should habe.
+ * @param {Object} data The object containing the information which this object should habe.
  * **/
 Job.prototype.loadJobData = function (data) {
     this.jobName = data.jobName;

@@ -6,6 +6,8 @@ var config = require('../ConfigurationLoader');
 
 /**
  * Constructor. Loads the imageMetaInformationModel information in the imageMetaInformationModel information text file, if it does exist.
+ *
+ * @constructor
  * **/
 var ImageMetaInformationModel = function () {
     this.reset();
@@ -16,7 +18,7 @@ var ImageMetaInformationModel = function () {
 /**
  * Returns the timestamp.
  *
- * @return Returns the timestamp.
+ * @return {String} Returns the timestamp.
  * **/
 ImageMetaInformationModel.prototype.getTimeStamp = function () {
     return this.timeStamp;
@@ -25,7 +27,7 @@ ImageMetaInformationModel.prototype.getTimeStamp = function () {
 /**
  * Returns the computed percentual difference between the reference and new image. Does not compute the value itself.
  *
- *  @return Returns the computed percentual difference between the reference and new image. Does not compute the value itself.
+ *  @return {Number} Returns the computed percentual difference between the reference and new image. Does not compute the value itself.
  * **/
 ImageMetaInformationModel.prototype.getBiggestPercentualPixelDifference = function () {
     return this.biggestPercentualPixelDifference;
@@ -34,7 +36,7 @@ ImageMetaInformationModel.prototype.getBiggestPercentualPixelDifference = functi
 /**
  * Returns the computed hamming distance. Does not compute the value itself.
  *
- *  @return Returns the computed hamming distance. Does not compute the value itself.
+ *  @return {Number} Returns the computed hamming distance. Does not compute the value itself.
  * **/
 ImageMetaInformationModel.prototype.getBiggestDistanceDifference = function () {
     return this.biggestDistanceDifference;
@@ -42,7 +44,7 @@ ImageMetaInformationModel.prototype.getBiggestDistanceDifference = function () {
 
 /**
  * Returns the image sets.
- * @return Returns the image sets.
+ * @return {ImageSetModel[]} Returns the image sets.
  * **/
 ImageMetaInformationModel.prototype.getImageSets = function(){
     return this.imageSets;
@@ -51,8 +53,8 @@ ImageMetaInformationModel.prototype.getImageSets = function(){
 /**
  * Returns the image set with a specific id.
  *
- * @param id The id of the image set which should be returned.
- * @return The found image set or null if none was found with the given id.
+ * @param {String} id The id of the image set which should be returned.
+ * @return {ImageSetModel} The found image set or null if none was found with the given id.
  * **/
 ImageMetaInformationModel.prototype.getImageSetById = function(id){
     var result = this.getImageSets().filter(function (imageSet) {
@@ -71,8 +73,8 @@ ImageMetaInformationModel.prototype.getImageSetById = function(id){
 /**
  * Returns the image set which contains a specific image name for its reference/new image.
  *
- * @param imageName The name of the new/reference image for which its image set should be returned.
- * @return The found image set or null if none was found with the given id.
+ * @param {String} imageName The name of the new/reference image for which its image set should be returned.
+ * @return {ImageSetModel|null} The found image set or null if none was found with the given id.
  * **/
 ImageMetaInformationModel.prototype.getImageSetByName = function(imageName){
 
@@ -101,7 +103,7 @@ ImageMetaInformationModel.prototype.getImageSetByName = function(imageName){
 /**
  * Sets the timeStamp.
  *
- * @param timeStamp Sets the timeStamp.
+ * @param {String} timeStamp Sets the timeStamp.
  * **/
 ImageMetaInformationModel.prototype.setTimeStamp = function (timeStamp) {
     this.timeStamp = timeStamp;
@@ -111,6 +113,8 @@ ImageMetaInformationModel.prototype.setTimeStamp = function (timeStamp) {
 
 /**
  * Loads the imageMetaInformationModel information file. If it does not exist, the program will work without imageMetaInformationModel information until some are created.
+ *
+ * @param {Object} data The objects containing the data. The objects structure must be identical to this prototype.
  * **/
 ImageMetaInformationModel.prototype.load = function (data) {
     var that = this;
@@ -132,7 +136,7 @@ ImageMetaInformationModel.prototype.load = function (data) {
 /**
  * Adds an image set. If an image set with the same (reference/new) image name exists, the existing image set will be updated.
  *
- * @param imageSetToBeAdded The image set to add.
+ * @param {ImageSetModel} imageSetToBeAdded The image set to add.
  * **/
 ImageMetaInformationModel.prototype.addImageSet = function (imageSetToBeAdded) {
     var that = this;
@@ -158,11 +162,9 @@ ImageMetaInformationModel.prototype.addImageSet = function (imageSetToBeAdded) {
     }
 };
 
-ImageMetaInformationModel.prototype.__isImageNameTheSame = function (image1, image2) {
-    return image1.getName() === image2.getName()
-        && image1.getName() !== '';
-};
-
+/**
+ * Removes the image sets whose image differences do not breach a threshold.
+ * **/
 ImageMetaInformationModel.prototype.cleanUp = function () {
     var that = this;
 
@@ -181,7 +183,7 @@ ImageMetaInformationModel.prototype.cleanUp = function () {
 /**
  * Deletes an image set.
  *
- * @param id The id of the image set to be deleted.
+ * @param {String} id The id of the image set to be deleted.
  * **/
 ImageMetaInformationModel.prototype.deleteImageSetFromModel = function (id) {
     var index = this.__getIndexOfImageSet(id);
@@ -230,7 +232,7 @@ ImageMetaInformationModel.prototype.calculateBiggestDifferences = function () {
 /**
  * Returns a new ImageMetaInformationModel object containing the data of this object as a copy.
  *
- * @return Returns a new ImageMetaInformationModel object containing the data of this object as a copy.
+ * @return {ImageMetaInformationModel} Returns a new ImageMetaInformationModel object containing the data of this object as a copy.
  * **/
 ImageMetaInformationModel.prototype.getCopy = function () {
     var copyObject = new ImageMetaInformationModel();
@@ -256,8 +258,8 @@ ImageMetaInformationModel.prototype.reset = function () {
 /**
  * Returns the index of the imageSet by the given id.
  *
- * @param id The id of the image set for which its index should be returned.
- * @return Returns the index of the image set or -1.
+ * @param {String} id The id of the image set for which its index should be returned.
+ * @return {Number} Returns the index of the image set or -1.
  * **/
 ImageMetaInformationModel.prototype.__getIndexOfImageSet = function (id) {
     // Use this method instead of the array method for downward compatibility
@@ -272,6 +274,18 @@ ImageMetaInformationModel.prototype.__getIndexOfImageSet = function (id) {
     });
 
     return imageSetIndex;
+};
+
+/**
+ * Checks whether two image names are identical and not empty.
+ *
+ * @param {Image} image1 The first image.
+ * @param {Image} image2 The second image.
+ * @return {Boolean} True if they are the same, else false.
+ * **/
+ImageMetaInformationModel.prototype.__isImageNameTheSame = function (image1, image2) {
+    return image1.getName() === image2.getName()
+        && image1.getName() !== '';
 };
 
 module.exports = ImageMetaInformationModel;

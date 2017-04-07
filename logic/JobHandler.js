@@ -15,6 +15,8 @@ var fs = require('fs-extra');
  * 'Discard': One job will be allowed in the queue and all further jobs will be discarded.
  * 'Queue': The jobs will be executed in FIFO order.
  * The JobHandler allows access to the running job to retrieve some information about the current run status.
+ *
+ * @constructor
  * **/
 var JobHandler = function() {
     this.isJobRunning = false;
@@ -33,7 +35,7 @@ var JobHandler = function() {
 /**
  * Returns true if a job is currently active, else false.
  *
- * @return Returns true if a job is currently active, else false.
+ * @return {Boolean} Returns true if a job is currently active, else false.
  * **/
 JobHandler.prototype.isJobRunning = function () {
     return this.isJobRunning;
@@ -42,7 +44,7 @@ JobHandler.prototype.isJobRunning = function () {
 /**
  * Returns the currently active job or if no job was active, the last executed job.
  *
- * @return Returns the currently active job or if no job was active, the last executed job.
+ * @return {Job} Returns the currently active job or if no job was active, the last executed job.
  * **/
 JobHandler.prototype.getLastActiveJob = function () {
     if(this.runningJob) {
@@ -60,7 +62,7 @@ JobHandler.prototype.getLastActiveJob = function () {
 /**
  * Adds a job to the queue.
  *
- * @param job The job which will be added/discarded to the queue, depending on the execution mode.
+ * @param {Job} job The job which will be added/discarded to the queue, depending on the execution mode.
  * **/
 JobHandler.prototype.addJob = function (job) {
     try {
@@ -174,7 +176,7 @@ JobHandler.prototype.__save = function () {
  * Checks which type of the given object has, creates a corresponding job which is identified by the job name,
  * loads the data in that job and returns the newly created job.
  *
- * @param jobData The object which contains the data of the job.
+ * @param {Object} jobData The object which contains the data of the job.
  * **/
 JobHandler.prototype.__loadJob = function (jobData) {
     var job = {};

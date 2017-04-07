@@ -3,6 +3,8 @@ var path = require('path');
 
 /**
  * Constructor.
+ *
+ * @constructor
  * **/
 var Configuration = function () {
     
@@ -12,6 +14,8 @@ var Configuration = function () {
 
 /**
  * Returns the base config.
+ *
+ * @return {Object} Returns the base conf.
  * **/
 Configuration.prototype.getBaseConf = function () {
     return config;
@@ -19,6 +23,8 @@ Configuration.prototype.getBaseConf = function () {
 
 /**
  * Returns the server config.
+ *
+ * @return {Object} Returns the server config.
  * **/
 Configuration.prototype.getServerConf = function () {
     return this.getBaseConf().get('server');
@@ -26,6 +32,8 @@ Configuration.prototype.getServerConf = function () {
 
 /**
  * Returns the server port (the application will be reachable under this port) of the server config.
+ *
+ * @return {Number} Returns the server port (the application will be reachable under this port) of the server config.
  * **/
 Configuration.prototype.getServerPort = function () {
     return this.getServerConf().get('port');
@@ -33,6 +41,8 @@ Configuration.prototype.getServerPort = function () {
 
 /**
  * Returns the amount of milliseconds after which a request should timeout.
+ *
+ * @return {Number} Returns the amount of milliseconds after which a request should timeout.
  * **/
 Configuration.prototype.getRequestTimeout = function () {
     return this.getServerConf().get('timeoutInMs');
@@ -40,6 +50,8 @@ Configuration.prototype.getRequestTimeout = function () {
 
 /**
  * Returns the working mode. Currently 0 = "discard" or 1 = "queue".
+ *
+ * @return {Number} Returns the working mode. Currently 0 = "discard" or 1 = "queue".
  * **/
 Configuration.prototype.getWorkingMode = function () {
     return this.getServerConf().get('workingMode');
@@ -47,6 +59,8 @@ Configuration.prototype.getWorkingMode = function () {
 
 /**
  * Returns the the maximum number of jobs the server will track until it will start to discard the oldest ones.
+ *
+ * @return {Number} Returns the the maximum number of jobs the server will track until it will start to discard the oldest ones.
  * **/
 Configuration.prototype.getMaxNumberIfStoredJobs = function () {
     return this.getServerConf().get('maxNumberOfStoredJobs');
@@ -54,6 +68,7 @@ Configuration.prototype.getMaxNumberIfStoredJobs = function () {
 
 /**
  * Returns the image config.
+ * @return {Object} Returns the image config.
  * **/
 Configuration.prototype.getImagesConfig = function () {
     return this.getBaseConf().get('images');
@@ -61,6 +76,8 @@ Configuration.prototype.getImagesConfig = function () {
 
 /**
  * Returns the folder path in which the reference images are stored.
+ *
+ * @return {String} Returns the folder path in which the reference images are stored.
  * **/
 Configuration.prototype.getReferenceImageFolderPath = function () {
     return path.normalize(this.getImagesConfig().get('referenceImageFolder'));
@@ -68,6 +85,8 @@ Configuration.prototype.getReferenceImageFolderPath = function () {
 
 /**
  * Returns the folder path in which the new images are stored.
+ *
+ * @return {String} Returns the folder path in which the new images are stored.
  * **/
 Configuration.prototype.getNewImageFolderPath = function () {
     return path.normalize(this.getImagesConfig().get('newImageFolder'));
@@ -75,6 +94,8 @@ Configuration.prototype.getNewImageFolderPath = function () {
 
 /**
  * Returns the folder path in which the diff images will be stored.
+ *
+ * @return {String} Returns the folder path in which the diff images will be stored.
  * **/
 Configuration.prototype.getResultImageFolderPath = function () {
     return path.normalize(this.getImagesConfig().get('resultImageFolder'));
@@ -82,6 +103,8 @@ Configuration.prototype.getResultImageFolderPath = function () {
 
 /**
  * Returns the file path in which the job history file path.
+ *
+ * @return {String} Returns the file path in which the job history file path.
  * **/
 Configuration.prototype.getJobHistoryFilePath = function () {
     return path.normalize(this.getDataFolderPath() + path.sep + 'jobHistory.json');
@@ -89,6 +112,8 @@ Configuration.prototype.getJobHistoryFilePath = function () {
 
 /**
  * Returns the folder path in which the data files will be stored.
+ *
+ * @return {String} Returns the folder path in which the data files will be stored.
  * **/
 Configuration.prototype.getDataFolderPath = function () {
     return this.getImagesConfig().get('dataFolderPath');
@@ -96,6 +121,8 @@ Configuration.prototype.getDataFolderPath = function () {
 
 /**
  * Returns the threshold config.
+ *
+ * @return {Object} Returns the threshold config.
  * **/
 Configuration.prototype.getThresholdConf = function () {
     return this.getBaseConf().get('thresholds');
@@ -103,6 +130,8 @@ Configuration.prototype.getThresholdConf = function () {
 
 /**
  * Returns the maximum allowed percentual pixel difference before the images will be added to the result set.
+ *
+ * @return {Number} Returns the maximum allowed percentual pixel difference before the images will be added to the result set.
  * **/
 Configuration.prototype.getMaxPixelDifferenceThreshold = function () {
     return this.getThresholdConf().get('maxPercentualImagePixelDifference');
@@ -110,6 +139,8 @@ Configuration.prototype.getMaxPixelDifferenceThreshold = function () {
 
 /**
  * Returns the maximum allowed hammond distance before the images will be added to the result set.
+ *
+ * @return {Number} Returns the maximum allowed hammond distance before the images will be added to the result set.
  * **/
 Configuration.prototype.getMaxDistanceDifferenceThreshold = function () {
     return this.getThresholdConf().get('maxImageImageDistanceDifference');
@@ -117,6 +148,8 @@ Configuration.prototype.getMaxDistanceDifferenceThreshold = function () {
 
 /**
  * Returns the option config.
+ *
+ * @return {Object} Returns the option config.
  * **/
 Configuration.prototype.getOptions = function () {
     return this.getBaseConf().get('options');
@@ -124,6 +157,8 @@ Configuration.prototype.getOptions = function () {
 
 /**
  * Returns if the images should be auto cropped before they are compared.
+ *
+ * @return {Boolean} Returns if the images should be auto cropped before they are compared.
  * **/
 Configuration.prototype.getAutoCropOption = function () {
     return this.getOptions().get('autoCrop');

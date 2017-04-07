@@ -12,6 +12,8 @@ var jobHandler = require('./JobHandler');
 
 /**
  * Constructor.
+ *
+ * @constructor
  * **/
 var ImageManipulatorRepository = function () {
     this.imageManipulator = new ImageManipulator();
@@ -22,10 +24,10 @@ var ImageManipulatorRepository = function () {
 /**
  * Creates diff images for all images with the same name in the reference/new folders.
  *
- * @param autoCrop
- * @param pixDiffThreshold
- * @param distThreshold
- * @param callback Called when the complete image comparison process is done. Has the updated image imageMetaInformationModel information model object as job.
+ * @param {Boolean} autoCrop Enables if auto cropping should be used before comparing images.
+ * @param {Number} pixDiffThreshold The allowed pixel percentage threshold. Should be between 0 and 1.
+ * @param {Number} distThreshold The allowed Hamming distance threshold. Should be between 0 and 1.
+ * @param {Function} callback Called when the complete image comparison process is done. Has the updated image imageMetaInformationModel information model object as job.
  * **/
 ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function (autoCrop, pixDiffThreshold, distThreshold, callback) {
     logger.info('---------- Start ----------', new Date().toISOString());
@@ -67,8 +69,8 @@ ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function
 /**
  * Makes a new image to a reference image. Updates and save the imageMetaInformationModel information model.
  *
- * @param id Id of the image set for which the new image should be made a reference image.
- * @param callback Called when the complete deletion process is done. Has the updated image imageMetaInformationModel information model object as job.
+ * @param {String} id Id of the image set for which the new image should be made a reference image.
+ * @param {Function} callback Called when the complete deletion process is done. Has the updated image imageMetaInformationModel information model object as job.
  * **/
 ImageManipulatorRepository.prototype.makeToNewReferenceImage = function (id, callback) {
     // Add create diff images job to the job handler
@@ -102,12 +104,19 @@ ImageManipulatorRepository.prototype.deleteImageSetFromModel = function (id, cal
 /**
  * Returns the currently active job or if no job was active, the last executed job.
  *
- * @param callback The callback which the the currently active job or if no job was active, the last executed job as a parameter.
+ * @param {Function} callback The callback which the the currently active job or if no job was active, the last executed job as a parameter.
  * **/
 ImageManipulatorRepository.prototype.getLastActiveJob = function (callback) {
     callback(jobHandler.getLastActiveJob());
 };
 
+/**
+ * Sets the ignore areas for an image set.
+ *
+ * @param {String} id The id of the image set for which the ignore areas should be set.
+ * @param {Object} ignoreAreas The ignore areas which should be set for the image set.
+ * @param {Function} callback Called when the ignore areas were set. Has the executed job as parameter.
+ * **/
 ImageManipulatorRepository.prototype.modifyIgnoreAreas = function (id, ignoreAreas, callback) {
     // Add modify ignore areas job to the job handler
     try {
@@ -121,6 +130,12 @@ ImageManipulatorRepository.prototype.modifyIgnoreAreas = function (id, ignoreAre
     } catch (exc) { console.log('Error:', exc); }
 };
 
+/**
+ * Returns the image set identified by a given id.
+ *
+ * @param {String} id The id of the image set.
+ * @param {Function} callback Called with the image set as parameter.
+ * **/
 ImageManipulatorRepository.prototype.getImageSet = function (id, callback) {
    var resultImageSet = jobHandler.getLastActiveJob().getImageMetaInformationModel().getImageSetById(id);
 
