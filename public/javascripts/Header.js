@@ -1,8 +1,8 @@
 /**
  * Offers logic to handle the header.
  *
- * @param connector The object to send requests to the server.
- * @param callback Called when the UI needs an update.
+ * @param {Connector} connector The object to send requests to the server.
+ * @param {Function} callback Called when the UI needs an update.
  * **/
 var Header = function (connector, callback) {
     this.callback = callback;
@@ -54,7 +54,7 @@ Header.prototype.bindEvents = function () {
 /**
  * Draws the header information.
  *
- * @param data Contains all information about the run job.
+ * @param {Object} data Contains all information about the run job.
  * **/
 Header.prototype.draw = function (data) {
     data.imageMetaInformationModel.timeStamp ? this.$timeStampField.text(data.imageMetaInformationModel.timeStamp) : this.$timeStampField.text('Job is currently running');
@@ -66,6 +66,9 @@ Header.prototype.draw = function (data) {
     this.$currentJobField.text(data.jobName);
 };
 
+/**
+ * Assigns web elements to prototype variables.
+ * **/
 Header.prototype.__initElements = function () {
     this.$timeStampField = this.$container.find('#timeStamp');
     this.$numberOfSetsField = this.$container.find('#numberOfSets');

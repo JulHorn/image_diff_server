@@ -30,8 +30,8 @@ ChangeNotificator.prototype.__registerComponents = function () {
  * Distributes change information to all registered ui elements
  * via the elements draw method.
  *
- * @param data The data which will be distributed
- * @param ignoreComponent A component which should not be redrawn. E.g. Header or table.
+ * @param {Object} data The data which will be distributed
+ * @param {Object} ignoreComponent A component which should not be redrawn. E.g. Header or table.
  * **/
 ChangeNotificator.prototype.__notify = function (data, ignoreComponent) {
     this.components.forEach(function (component) {

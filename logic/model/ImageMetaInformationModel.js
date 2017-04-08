@@ -54,7 +54,7 @@ ImageMetaInformationModel.prototype.getImageSets = function(){
  * Returns the image set with a specific id.
  *
  * @param {String} id The id of the image set which should be returned.
- * @return {ImageSetModel} The found image set or null if none was found with the given id.
+ * @return {ImageSetModel|null} The found image set or null if none was found with the given id.
  * **/
 ImageMetaInformationModel.prototype.getImageSetById = function(id){
     var result = this.getImageSets().filter(function (imageSet) {

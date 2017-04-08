@@ -1,30 +1,102 @@
-var AddIgnoreArea = function ($targetDiv, connector, callback) {
+/**
+ * Creates the select area for images prototype.
+ *
+ * @param {Object} $targetDiv The jQuery object under which the ignore area select stuff will be added.
+ * @param {Connector} connector The connector to access the servert for the ignore area modifications.
+ * @constructor
+ * **/
+var AddIgnoreArea = function ($targetDiv, connector) {
     this.$container = $targetDiv;
     this.connector = connector;
-    this.callback = callback;
+    this.callback = null;
     this.__init();
     this.bindEvents();
 };
 
-AddIgnoreArea.prototype.show = function (imagePath, imageSet) {
+/**
+ * Displays the ignore area modification window.
+ *
+ * @param {String} imagePath The image path to the image which should be displayed in the ignore image window.
+ * @param {ImageSet} imageSet The image which contains the image information.
+ * @param {Function} callback The callback function which will be called when the ignore area window was closed.
+ * **/
+AddIgnoreArea.prototype.show = function (imagePath, imageSet, callback) {
+    this.callback = callback;
+    this.__createMarkup(imagePath, imageSet);
+    this.__configureSelectAreaPlugin(imageSet);
+};
 
+/**
+ * Binds the event handler to the ui elements.
+ * **/
+AddIgnoreArea.prototype.bindEvents = function () {
+    var that = this;
+
+    //  Cancel window
+    this.$container.on('click', 'button[data-action=addIgnoreCancel]', function () {
+        that.$container.hide();
+        that.$container.html('');
+
+        // Call finish function
+        if(that.callback) {
+            that.callback();
+        }
+    });
+
+    // Submit data to server
+    this.$container.on('click', 'button[data-action=addIgnoreOk]', function () {
+        var id = $(this).data('id');
+
+        that.connector.modifyIgnoreAreas(id, $('#addIgnoreImage').selectAreas('relativeAreas'), function () {
+            that.$container.hide();
+            that.$container.html('');
+
+            // Call finish function
+            if(that.callback) {
+                that.callback();
+            }
+        });
+    });
+};
+
+/**
+ * Init stuff.
+ * **/
+AddIgnoreArea.prototype.__init = function () {
+    this.$container.hide();
+};
+
+/**
+ * Creates the markup for the modify ignore area window and displays it.
+ *
+ * @param {String} imagePath The image path to the image which should be displayed in the ignore image window.
+ * @param {ImageSet} imageSet The image which contains the image information.
+ * **/
+AddIgnoreArea.prototype.__createMarkup = function (imagePath, imageSet) {
     var content =
         '<div class="ignoreRegion">'
-            + '<div class="ignoreRegionImageArea">'
-                + '<div class="ignoreRegionImageAreaInner" style="width: ' + imageSet.referenceImage.width + 'px">'
-                    + '<img id="addIgnoreImage" src="' + imagePath + '"/>'
-                + '</div>'
-            + '</div>'
-            + '<div class="ignoreRegionButtonBar">'
-                + '<button data-action="addIgnoreCancel">Cancel</button>'
-                + '<button data-action="addIgnoreOk" data-id="' + imageSet.id + '">Ok</button>'
-            + '</div>'
+        + '<div class="ignoreRegionImageArea">'
+        + '<div class="ignoreRegionImageAreaInner" style="width: ' + imageSet.referenceImage.width + 'px">'
+        + '<img id="addIgnoreImage" src="' + imagePath + '"/>'
+        + '</div>'
+        + '</div>'
+        + '<div class="ignoreRegionButtonBar">'
+        + '<button data-action="addIgnoreCancel">Cancel</button>'
+        + '<button data-action="addIgnoreOk" data-id="' + imageSet.id + '">Ok</button>'
+        + '</div>'
         + '</div>';
 
     this.$container.html($(content));
     this.$container.show();
+};
 
-    $('#addIgnoreImage').selectAreas({
+/**
+ * Configures the jQuery plugin for the select area stuff.
+ *
+ * @param {ImageSet} imageSet The image which contains the image information.
+ * **/
+AddIgnoreArea.prototype.__configureSelectAreaPlugin = function (imageSet) {
+    this.$container.find('#addIgnoreImage').selectAreas({
         // editable
         allowEdit: true,
         // moveable
@@ -44,35 +116,5 @@ AddIgnoreArea.prototype.show = function (imagePath, imageSet) {
         // opacity of the overlay layer over the image
         overlayOpacity: 0.5,
         areas: imageSet.ignoreAreas
-    });
-};
-
-AddIgnoreArea.prototype.__init = function () {
-    this.$container.hide();
-};
-
-AddIgnoreArea.prototype.bindEvents = function () {
-    var that = this;
-
-    this.$container.on('click', 'button[data-action=addIgnoreCancel]', function () {
-        that.$container.hide();
-        that.$container.html('');
-
-        if(that.callback) {
-            that.callback();
-        }
-    });
-
-    this.$container.on('click', 'button[data-action=addIgnoreOk]', function () {
-        var id = $(this).data('id');
-
-        that.connector.modifyIgnoreAreas(id, $('#addIgnoreImage').selectAreas('relativeAreas'), function () {
-            that.$container.hide();
-            that.$container.html('');
-
-            if(that.callback) {
-                that.callback();
-            }
-        });
     });
 };

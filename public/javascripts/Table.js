@@ -1,8 +1,8 @@
 /**
  * Offers logic to handle the table.
  *
- * @param connector The object to send requests to the server
- * @param callback Called when the UI needs an update.
+ * @param {Connector} connector The object to send requests to the server
+ * @param {Function} callback Called when the UI needs an update.
  * **/
 var Table = function (connector, callback) {
     this.callback = callback;
@@ -45,8 +45,7 @@ Table.prototype.bindEvents = function () {
         var imgPath = that.__sanitizeImagePaths($this.data('image'));
 
         that.connector.getImageSet(id, function (imageSet) {
-            new AddIgnoreArea($ignoreRegion, that.connector, function () {
-            }).show(imgPath, imageSet);
+            new AddIgnoreArea($ignoreRegion, that.connector).show(imgPath, imageSet);
         });
     });
 
@@ -76,7 +75,7 @@ Table.prototype.bindEvents = function () {
 /**
  * Draws the table and its content.
  *
-* @param data Contains all information about the run job.
+* @param {Object} data Contains all information about the run job.
 * **/
 Table.prototype.draw = function (data) {
     var that = this;
@@ -113,8 +112,8 @@ Table.prototype.draw = function (data) {
 /**
 * Creates the content for the image row.
 *
-* @param imageSet The imageSet object which contains the information about the images.
-* @return String The image content for a table row.
+* @param {Object} imageSet The imageSet object which contains the information about the images.
+* @return {String} The image content for a table row.
 * */
 Table.prototype.__createImageRow = function (imageSet) {
     var rowContent = '';
@@ -138,8 +137,8 @@ Table.prototype.__createImageRow = function (imageSet) {
 /**
 * Creates the content for the description row.
 *
-* @param imageSet The imageSet object which contains the information about the images.
-* @return String The description content for a table row.
+* @param {Object} imageSet The imageSet object which contains the information about the images.
+* @return {String} The description content for a table row.
 * */
 Table.prototype.__createDescriptionRow = function (imageSet) {
     var desRowContent = '';
@@ -180,8 +179,8 @@ Table.prototype.__createDescriptionRow = function (imageSet) {
 /**
  * Creates the default description cell content.
  *
- * @param image The image object containing information about an image.
- * @return String A div which contains information about the height, width and name of an image.
+ * @param {Object} image The image object containing information about an image.
+ * @return {String} A div which contains information about the height, width and name of an image.
  * **/
 Table.prototype.__createDefaultDescriptionCellContent = function (image) {
     var cellContent = '';
@@ -201,9 +200,9 @@ Table.prototype.__createDefaultDescriptionCellContent = function (image) {
 /**
  * Returns an ImageModelSet.
  *
- * @param id The id of the image set which should be retrieved.
- * @param imageMetaModel The image information imageMetaInformationModel in which the sets are located.
- * @return The found image set.
+ * @param {String} id The id of the image set which should be retrieved.
+ * @param {Object} imageMetaModel The image information imageMetaInformationModel in which the sets are located.
+ * @return {Object} The found image set.
  * **/
 Table.prototype.__getImageSetById = function (id, imageMetaModel) {
     return imageMetaModel.imageSets.filter(function (imageSet) {
@@ -214,7 +213,7 @@ Table.prototype.__getImageSetById = function (id, imageMetaModel) {
 /**
  * Creates the default content of a cell (image with link, basic information).
  *
- * @return String The created cell content.
+ * @return {String} The created cell content.
  * **/
 Table.prototype.__createImageCellContent = function (image) {
     var cellContent = '';
@@ -237,8 +236,8 @@ Table.prototype.__createImageCellContent = function (image) {
 /**
  * Updates the image information/imageMetaInformationModel information.
  *
- * @param resultImageSet The image set with the new information.
- * @param id The id of an image set.
+ * @param {Object} resultImageSet The image set with the new information.
+ * @param {String} id The id of an image set.
  * **/
 Table.prototype.__updateImageSetMetaInformation = function (resultImageSet, id) {
     var $body = $('body');
@@ -276,7 +275,7 @@ Table.prototype.__updateImageSetMetaInformation = function (resultImageSet, id) 
 /**
  * Creates an ajax loading icon element.
  *
- * @return {string} A loading icon div element.
+ * @return {String} A loading icon div element.
  * **/
 Table.prototype.__createAjaxLoadingIcon = function () {
     return '<div class="sk-circle ajaxLoadingIconAdditionalStyles" role ="ajaxLoadingIcon">'
@@ -298,7 +297,7 @@ Table.prototype.__createAjaxLoadingIcon = function () {
 /**
  * Enables the ajax loading icon for the row. The background for the row will be made unclickable.
  *
- * @param imageSetId The id of the image set which is displayed in the row.
+ * @param {String} imageSetId The id of the image set which is displayed in the row.
  * **/
 Table.prototype.__enableLoaderForRow = function (imageSetId) {
     this.__getLoader(imageSetId).show();
@@ -307,7 +306,7 @@ Table.prototype.__enableLoaderForRow = function (imageSetId) {
 /**
  * Disabled the ajax loading icon for the row.
  *
- * @param imageSetId The id of the image set which is displayed in the row.
+ * @param {String} imageSetId The id of the image set which is displayed in the row.
  * **/
 Table.prototype.__disableLoaderForRow = function (imageSetId) {
     this.__getLoader(imageSetId).hide();
@@ -316,8 +315,8 @@ Table.prototype.__disableLoaderForRow = function (imageSetId) {
 /**
  * Returns the loader element for a row/image set.
  *
- * @param imageSetId The id of the image set which is displayed in the row.
- * @return ToDo
+ * @param {String} imageSetId The id of the image set which is displayed in the row.
+ * @return {Object} The loader element for that row.
  * */
 Table.prototype.__getLoader = function (imageSetId) {
     var $imageSet = this.$container.find('#imageSet_' + imageSetId);
@@ -328,8 +327,8 @@ Table.prototype.__getLoader = function (imageSetId) {
 /**
  * Fixes the file path for images by removing the public part and fixing the slashes.
  *
- * @param {string} imagePath The file path to the image.
- * @return {string} The fixed file path.
+ * @param {String} imagePath The file path to the image.
+ * @return {String} The fixed file path.
  * **/
 Table.prototype.__sanitizeImagePaths = function (imagePath) {
     return imagePath.replace('public', '.').replace(/\\/g, '/');
