@@ -22,7 +22,7 @@ It consists of the following:
 1. Meta information concerning all image diff sets, e.g. the creation timestamp or the biggest percentage pixel difference of all image sets.
 2. A button to trigger the image comparison of all images which are in the reference and new image folder. The path to those folders can be configured in the configuration file. Images in the reference and the new folder with the same file name will be compared. Depending on the size and number of images, the time to finish that comparison can take a couple of minutes.
 3. An overview table with these 3 columns: reference, new and diff. All images can be enlarged by clicking on them.
-    1. The reference image column displays the reference image and some meta information about it. That is what the new image should look like. If the "Delete" button is clicked, the reference, new and diff images will be deleted.
+    1. The reference image column displays the reference image and some meta information about it. That is what the new image should look like. If the "Delete" button is clicked, the reference, new and diff images will be deleted. If the "Modify Ignore Areas" button is clicked, it is possible to define areas in which the images will not compared by clicking on the image and keeping the mouse button pressed until you are satisfied with the area.
     2. The new image column displays the new image and some meta information about it. That is what the new image looks like. This image can be made to the new reference image by clicking on the "Add" button.
     3. The diff image column displays the diff image, which visualizes the differences between the reference and the new image and some meta information (percentual pixel difference, ...) about it.
 
