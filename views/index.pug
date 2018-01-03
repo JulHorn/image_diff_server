@@ -1,0 +1,33 @@
+extends layout
+block content
+    div(id='ignoreRegion')
+    h1 Image Comparison Server
+    div(id='header')
+        div
+            span Current job:
+            span(id='currentJob')
+        div
+            span Progress:
+            span(id='progressIndicator')
+            button(id='refreshButton' data-action='refresh')
+                img(src='icons/reload.png')
+        div
+            span Job finished:
+                span(id='timeStamp')
+        div
+            span Result sets:
+            span(id='numberOfSets')
+        div
+            span Max. percentage of different pixels:
+            span(id='maxPixelPercentage')
+        div
+            span Max. Hamming distance:
+            span(id='maxDistance')
+        div(class='hidden')
+            span Server Address:
+            input(type='text', id='serverAddress')
+            button(data-action='saveServerAddress') Save
+        div
+            button(data-action='refreshAll') Check all images
+            span(id='refreshAllText')
+    div(id='content')
