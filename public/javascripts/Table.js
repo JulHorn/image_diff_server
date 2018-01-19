@@ -249,7 +249,7 @@ Table.prototype.__updateImageSetMetaInformation = function (resultImageSet, id) 
     diffImg.find('a[role="imageLink"]').attr('href', this.__sanitizeImagePaths(resultImageSet.diffImage.path) + imageSuffix);
     diffImg.find('img[role="image"]').attr('src', this.__sanitizeImagePaths(resultImageSet.diffImage.path) + imageSuffix);
     refImg.find('a[role="imageLink"]').attr('href', this.__sanitizeImagePaths(resultImageSet.referenceImage.path) + imageSuffix);
-    refImg.find('img[role="image"]').attr('src', this.__sanitizeImagePaths(resultImageSet.referenceImage.path.replace) + imageSuffix);
+    refImg.find('img[role="image"]').attr('src', this.__sanitizeImagePaths(resultImageSet.referenceImage.path) + imageSuffix);
 
     // Display images and hide the no image existing text
     refImg.find('a[role="imageLink"]').removeClass('hidden');
@@ -331,5 +331,6 @@ Table.prototype.__getLoader = function (imageSetId) {
  * @return {String} The fixed file path.
  * **/
 Table.prototype.__sanitizeImagePaths = function (imagePath) {
+    console.log('da '+imagePath);
     return imagePath.replace('public', '.').replace(/\\/g, '/');
 };
