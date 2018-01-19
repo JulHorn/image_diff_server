@@ -169,9 +169,11 @@ ImageMetaInformationModel.prototype.cleanUp = function () {
     var that = this;
 
     // Get obsolete (image sets in the green range) image set
+    // and images which do not have a ignore area so the image sets with ignore areas will not be deleted
     var obsoleteImageSets = this.getImageSets().filter(function (imageSet) {
         return imageSet.getDistance() <= config.getMaxDistanceDifferenceThreshold()
-            && imageSet.getDifference() <= config.getMaxPixelDifferenceThreshold();
+            && imageSet.getDifference() <= config.getMaxPixelDifferenceThreshold()
+            && imageSet.getIgnoreAreas().length === 0;
     });
 
     // Remove them from the meta information model
