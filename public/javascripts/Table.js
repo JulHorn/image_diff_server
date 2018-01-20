@@ -85,25 +85,31 @@ Table.prototype.draw = function (data) {
 
     // Create one image and one description corresponding row for every image set
     data.imageMetaInformationModel.imageSets.forEach(function (imageSet) {
-        // Get content for the image and description rows
-        var imageRowContent = that.__createImageRow(imageSet);
-        var descriptionRowContent = that.__createDescriptionRow(imageSet);
 
-        // Add the content as new rows to the table
-        content += '<div class="imageSet" id="imageSet_' + imageSet.id + '">';
-        content += '<table>';
-        content += '<tr id="imageRow_' + imageSet.id + '" class="imageRow ' + rowColor + '">' + imageRowContent + '</tr>';
-        content += '<tr id="descriptionRow_' + imageSet.id + '" class="descriptionRow ' + rowColor + '">' + descriptionRowContent + '</tr>';
-        content += '</table>';
-        content += '<div class="loader">' + that.__createAjaxLoadingIcon() + '</div>';
-        content += '</div>';
+        // Only display sets with a breached threshold
+        // E.g. images with no breached threshold and ignore zones will be correctly displayed or not
+        if(imageSet.isThresholdBreached) {
+            // Get content for the image and description rows
+            var imageRowContent = that.__createImageRow(imageSet);
+            var descriptionRowContent = that.__createDescriptionRow(imageSet);
 
-        // Modify color class for each row
-        if(rowColor === 'light') {
-            rowColor = 'dark';
-        } else {
-            rowColor = 'light';
+            // Add the content as new rows to the table
+            content += '<div class="imageSet" id="imageSet_' + imageSet.id + '">';
+            content += '<table>';
+            content += '<tr id="imageRow_' + imageSet.id + '" class="imageRow ' + rowColor + '">' + imageRowContent + '</tr>';
+            content += '<tr id="descriptionRow_' + imageSet.id + '" class="descriptionRow ' + rowColor + '">' + descriptionRowContent + '</tr>';
+            content += '</table>';
+            content += '<div class="loader">' + that.__createAjaxLoadingIcon() + '</div>';
+            content += '</div>';
+
+            // Modify color class for each row
+            if(rowColor === 'light') {
+                rowColor = 'dark';
+            } else {
+                rowColor = 'light';
+            }
         }
+
     });
 
     this.$container.html($(content));

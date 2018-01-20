@@ -149,6 +149,7 @@ ImageMetaInformationModel.prototype.addImageSet = function (imageSetToBeAdded) {
     });
 
     // Update existing set or add a new one
+    // Use a better way than mapping values like that
     if(resultSet.length > 0) {
         resultSet[0].setReferenceImage(imageSetToBeAdded.getReferenceImage());
         resultSet[0].setNewImage(imageSetToBeAdded.getNewImage());
@@ -156,6 +157,8 @@ ImageMetaInformationModel.prototype.addImageSet = function (imageSetToBeAdded) {
         resultSet[0].setError(imageSetToBeAdded.getError());
         resultSet[0].setDifference(imageSetToBeAdded.getDifference());
         resultSet[0].setDistance(imageSetToBeAdded.getDistance());
+        // No clue why the getter/setter functions are not available here, grml
+        resultSet[0].isThresholdBreached = imageSetToBeAdded.isThresholdBreached;
     } else {
         // Add new image set
         this.getImageSets().push(imageSetToBeAdded);

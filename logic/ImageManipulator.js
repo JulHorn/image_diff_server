@@ -137,6 +137,7 @@ ImageManipulator.prototype.createSingleImageSet = function (imageName, image, er
     imageSet.setError(error);
     imageSet.setDifference(100);
     imageSet.setDistance(100);
+    imageSet.setThresholdBreachedState(true);
 
     // Edit set dependant of the image type
     if(isReferenceImage) {
@@ -176,10 +177,13 @@ ImageManipulator.prototype.createCompleteImageSet = function(imageName, referenc
     var referenceImageModel = imageSet.getReferenceImage();
     var newImageModel = imageSet.getNewImage();
     var diffImageModel = imageSet.getDiffImage();
+    var isThresholdBreached = distance > config.getMaxDistanceDifferenceThreshold() || difference > config.getMaxPixelDifferenceThreshold();
 
     imageSet.setDifference(difference);
     imageSet.setDistance(distance);
     imageSet.setError(error);
+
+    imageSet.setThresholdBreachedState(isThresholdBreached);
 
     referenceImageModel.setName(imageName);
     referenceImageModel.setPath(config.getReferenceImageFolderPath() + path.sep + imageName);
