@@ -45,6 +45,15 @@ router.put('/:id/modifyIgnoreAreas', function(req, res) {
     });
 });
 
+router.put('/compareImage', function(req, res) {
+    var imageBase64 = req.body.imageBase64;
+    var imageName = req.body.imageName;
+
+	imageManipulatorRepository.compareImage(imageName, imageBase64, function() {
+
+	});
+});
+
 router.delete('/:id', function (req, res) {
     var setId = req.params.id;
 

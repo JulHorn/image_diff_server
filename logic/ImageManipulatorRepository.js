@@ -1,11 +1,8 @@
-var ImageMetaInformationModel = require('./model/ImageMetaInformationModel');
 var CheckAllJobModel = require('./job/CheckAllJob');
 var DeleteJob = require('./job/DeleteJob');
 var MakeToNewReferenceImageJob = require('./job/MakeNewToReferenceImageJob');
 var ModifyIgnoreAreasJob = require('./job/ModifyIgnoreAreasJob');
 var ImageManipulator = require('./ImageManipulator');
-var fs = require('fs-extra');
-var path = require('path');
 var logger = require('winston');
 var config = require('./ConfigurationLoader');
 var jobHandler = require('./JobHandler');
@@ -140,6 +137,18 @@ ImageManipulatorRepository.prototype.getImageSet = function (id, callback) {
    var resultImageSet = jobHandler.getLastActiveJob().getImageMetaInformationModel().getImageSetById(id);
 
     callback(resultImageSet);
+};
+
+/**
+ *
+ *
+ * @param imageName The name of the image.
+ * @param imageBase64 The base 64 encoded image.
+ * @param callback
+ */
+ImageManipulatorRepository.prototype.compareImage = function (imageName, imageBase64, callback) {
+
+	callback();
 };
 
 module.exports = new ImageManipulatorRepository();
