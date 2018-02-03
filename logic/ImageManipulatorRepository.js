@@ -2,6 +2,7 @@ var CheckAllJobModel = require('./job/CheckAllJob');
 var DeleteJob = require('./job/DeleteJob');
 var MakeToNewReferenceImageJob = require('./job/MakeNewToReferenceImageJob');
 var ModifyIgnoreAreasJob = require('./job/ModifyIgnoreAreasJob');
+var CompareImageByNameJob = require('./job/CompareImageByNameJob');
 var ImageManipulator = require('./ImageManipulator');
 var logger = require('winston');
 var config = require('./ConfigurationLoader');
@@ -142,13 +143,20 @@ ImageManipulatorRepository.prototype.getImageSet = function (id, callback) {
 /**
  *
  *
- * @param imageName The name of the image.
- * @param imageBase64 The base 64 encoded image.
- * @param callback
+ * @param {String} imageName The name of the image.
+ * @param {String} imageType
+ * @param {String} imageBase64 The base 64 encoded image.
+ * @param {Function} callback
  */
-ImageManipulatorRepository.prototype.compareImage = function (imageName, imageBase64, callback) {
-
-	callback();
+ImageManipulatorRepository.prototype.compareImageByName = function (imageName, imageType, imageBase64, callback) {
+    // ToDO doku -> Readme too!
+    jobHandler.addJob(
+        new CompareImageByNameJob(imageName, imageType, imageBase64, function (job) {
+            if (callback) {
+                callback(job);
+            }
+        }
+    ));
 };
 
 module.exports = new ImageManipulatorRepository();

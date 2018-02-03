@@ -45,12 +45,15 @@ router.put('/:id/modifyIgnoreAreas', function(req, res) {
     });
 });
 
-router.put('/compareImage', function(req, res) {
+router.put('/compareImageByName', function(req, res) {
     var imageBase64 = req.body.imageBase64;
     var imageName = req.body.imageName;
+    var imageType = req.body.imageType;
 
-	imageManipulatorRepository.compareImage(imageName, imageBase64, function() {
-
+    // ToDo Proper autocrop
+	imageManipulatorRepository.compareImageByName(imageName, imageType, imageBase64, function(job) {
+        res.statusCode = 200;
+        res.json({ message: 'OK', data: job});
 	});
 });
 

@@ -32,7 +32,7 @@ MakeNewToReferenceImageJob.prototype.execute = function (imageMetaInformationMod
     // Single option -> Only one image has to be processed
     this.setImagesToBeProcessedCount(1);
 
-    this.__makeToNewReferenceImage(this.id, function () {
+    this.__saveAndCompareImage(this.id, function () {
         var jobCreatorCallback = that.getCallbackFunction();
         // Update the processed image count
         that.incrementProcessImageCounter();
@@ -68,7 +68,7 @@ MakeNewToReferenceImageJob.prototype.load = function (data) {
  * @param {String} id Id of the image set for which the new image should be made a reference image.
  * @param {Function} callback Called when the complete deletion process is done. Has the updated image imageMetaInformationModel information model object as job.
  * **/
-MakeNewToReferenceImageJob.prototype.__makeToNewReferenceImage = function (id, callback) {
+MakeNewToReferenceImageJob.prototype.__saveAndCompareImage = function (id, callback) {
     var imageSet = this.getImageMetaInformationModel().getImageSetById(id);
     var that = this;
 
@@ -82,12 +82,7 @@ MakeNewToReferenceImageJob.prototype.__makeToNewReferenceImage = function (id, c
 
         // Create diff -> Autocrop is set to false because the images should be identical
         that.getImageManipulator().createDiffImage(imageSet.getNewImage().getName(), false, imageSet.getIgnoreAreas(), function (resultSet) {
-            // Set new diff information to existing image set
-            imageSet.setDifference(resultSet.getDifference());
-            imageSet.setError(resultSet.getError());
-            imageSet.setDistance(resultSet.getDistance());
-            imageSet.setReferenceImage(resultSet.getReferenceImage());
-            imageSet.setDiffImage(resultSet.getDiffImage());
+            that.imageMetaInformationModel.addImageSet(resultSet);
 
             // Save imageMetaInformationModel information
             that.calculateMetaInformation();

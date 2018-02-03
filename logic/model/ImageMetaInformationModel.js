@@ -1,7 +1,5 @@
-var fs = require('fs-extra');
 var logger = require('winston');
 var ImageSet = require('./ImageSetModel');
-var ImageModel = require('./ImageModel');
 var config = require('../ConfigurationLoader');
 
 /**
@@ -61,7 +59,7 @@ ImageMetaInformationModel.prototype.getImageSetById = function(id){
         return imageSet.getId() === id;
     });
 
-    // If the image does not already exist in the imageMetaInformationModel informations sturcture, then return null
+    // If the image does not already exist in the imageMetaInformationModel information sturcture, then return null
     if(result.length === 0){
         return null;
     }

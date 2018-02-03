@@ -39,7 +39,7 @@ ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, igno
     logger.info('Creating diff image for:', imageName);
 
     // If one of the images does not exist, then quit
-    if(!this.__isImageExisting(referenceImagePath) || !this.__isImageExisting(newImagePath)){
+    if(!this.isImageExisting(referenceImagePath) || !this.isImageExisting(newImagePath)){
         var errorText = 'Reference or new image does not exist but should exist:\n'
             + 'Reference: ' + referenceImagePath
             + "\n"
@@ -234,7 +234,7 @@ ImageManipulator.prototype.__autoCrop = function (image1, image2, autoCrop) {
  * @param {string} imagePath The path to the image, which should be checked.
  * @return {bool} True if the image does exist, else false.
  * **/
-ImageManipulator.prototype.__isImageExisting = function (imagePath) {
+ImageManipulator.prototype.isImageExisting = function (imagePath) {
     return fs.existsSync(imagePath) && fs.statSync(imagePath).isFile();
 };
 
@@ -243,7 +243,7 @@ ImageManipulator.prototype.__isImageExisting = function (imagePath) {
  * @param {string} path The file which should be deleted.
  * **/
 ImageManipulator.prototype.__deleteFile = function (path) {
-    if(this.__isImageExisting(path)){
+    if(this.isImageExisting(path)){
         fs.unlink(path, function (err) {
             if(err){
                 logger.error('Failed to delete file: ' + path, err);
