@@ -4,11 +4,11 @@ var config = require('../ConfigurationLoader');
 var path = require('path');
 
 /**
+ * Job which computes the difference of two images by image names and updates the ImageMetaInformationModel accordingly.
  *
- *
- * @param {String} imageName
- * @param {String} imageType
- * @param {String} imageBase64
+ * @param {String} imageName The name of the image.
+ * @param {String} imageType The type of the image (png, ...)
+ * @param {String} imageBase64 The base 64 encoded image.
  * @param {Function} callback The callback method which is called, when diff process has finished. Has the this job as parameter.
  * @constructor
  * **/
@@ -36,6 +36,7 @@ CompareImageByNameJob.prototype.execute = function (imageMetaInformationModel, c
     // Single option -> Only one image has to be processed
     this.setImagesToBeProcessedCount(1);
 
+    // Save the image to disc and compare it
     this.__saveAndCompareImage(this.imageName, this.imageType, this.imageBase64, function () {
         var jobCreatorCallback = that.getCallbackFunction();
         // Update the processed image count
@@ -66,12 +67,13 @@ CompareImageByNameJob.prototype.load = function (data) {
     this.id = data.id;
 };
 
+// ToDo: Refactor this method to do only one thing at once
 /**
+ * Saves the given image to disc and compares it to the reference image after that.
  *
- *
- * @param {String} imageName
- * @param {String} imageType
- * @param {String} imageBase64
+ * @param {String} imageName The name of the image.
+ * @param {String} imageType The type of the image (png, ...)
+ * @param {String} imageBase64 The base 64 encoded image.
  * @param {Function} callback Called when the complete deletion process is done. Has the updated image imageMetaInformationModel information model object as job.
  * **/
 CompareImageByNameJob.prototype.__saveAndCompareImage = function (imageName, imageType, imageBase64, callback) {
@@ -80,13 +82,17 @@ CompareImageByNameJob.prototype.__saveAndCompareImage = function (imageName, ima
     var that = this;
     var filePath = '';
 
+    // Get full image path
     if(imageSet) {
         filePath = imageSet.getNewImage().getPath();
     } else {
         filePath = config.getNewImageFolderPath() + path.sep + fullImageName;
     }
+
+    // Remove base64 header so that the image can be written to disc properly
     imageBase64 = imageBase64.split(';base64,').pop();
-    // Copy new image to reference image
+
+    // Write the base64 image as a real image to disc
     fs.writeFile(filePath, imageBase64, { encoding: 'base64' }, function (err) {
 
         // Error handling
@@ -94,16 +100,16 @@ CompareImageByNameJob.prototype.__saveAndCompareImage = function (imageName, ima
             throw Error('Failed to image ' + imageName + '.' + imageType + ' to ' + filePath, err);
         }
 
+        // Compare if image set exists, else simply create a new image set
         if (imageSet) {
-            // Keep values intact instead of the more basic error message of the comparison method if reference image does not exist
+            // Keep values intact and do nothing to keep a better error message instead of the more basic error message
+            // of the comparison method if reference image does not exist
             // New image should always exist because it was just given
             var isReferenceImageExisting = that.getImageManipulator().isImageExisting(config.getReferenceImageFolderPath() + path.sep + fullImageName);
             if(isReferenceImageExisting) {
-                that.getImageManipulator().createDiffImage(fullImageName, false, [], function (resultSet) {
-
+                that.getImageManipulator().createDiffImage(fullImageName, false, imageSet.getIgnoreAreas(), function (resultSet) {
+                    // Compare
                     that.getImageMetaInformationModel().addImageSet(resultSet);
-
-                    // Save imageMetaInformationModel information
                     that.calculateMetaInformation();
 
                     // Call callback

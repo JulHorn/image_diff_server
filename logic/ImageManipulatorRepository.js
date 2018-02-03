@@ -29,7 +29,7 @@ var ImageManipulatorRepository = function () {
  * **/
 ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function (autoCrop, pixDiffThreshold, distThreshold, callback) {
     logger.info('---------- Start ----------', new Date().toISOString());
-    var autoCropValue = autoCrop ? autoCrop :config.getAutoCropOption();
+    var autoCropValue = autoCrop ? autoCrop : config.getAutoCropOption();
     var pixDiffThresholdValue = pixDiffThreshold ? pixDiffThreshold : config.getMaxPixelDifferenceThreshold();
     var distThresholdValue = distThreshold ? distThreshold : config.getMaxDistanceDifferenceThreshold();
 
@@ -92,6 +92,7 @@ ImageManipulatorRepository.prototype.deleteImageSetFromModel = function (id, cal
     // Add delete job to the job handler
     jobHandler.addJob(
        new DeleteJob(id, function (job) {
+           logger.info("Deleted image set with id: ", id);
            if (callback) {
                callback(job);
            }
@@ -120,12 +121,13 @@ ImageManipulatorRepository.prototype.modifyIgnoreAreas = function (id, ignoreAre
     try {
         jobHandler.addJob(
             new ModifyIgnoreAreasJob(id, ignoreAreas, function (job) {
-                    if (callback) {
+                logger.info("Modified ignore areas for image set with id: " + id);
+                if (callback) {
                         callback(job);
                     }
                 }
             ));
-    } catch (exc) { console.log('Error:', exc); }
+    } catch (exc) { logger.error('Error:', exc); }
 };
 
 /**
@@ -141,19 +143,26 @@ ImageManipulatorRepository.prototype.getImageSet = function (id, callback) {
 };
 
 /**
- *
+ * Compares a new given image in Base64 encoding with a reference image with the same name.
+ * If the reference image does not exist, the difference value will automatically be set to 100.
  *
  * @param {String} imageName The name of the image.
- * @param {String} imageType
+ * @param {String} imageType The type of the image (png, ...)
  * @param {String} imageBase64 The base 64 encoded image.
- * @param {Function} callback
+ * @param {Function} callback Called when the complete image comparison process is done. Has the updated image imageMetaInformationModel information model object as job.
  */
 ImageManipulatorRepository.prototype.compareImageByName = function (imageName, imageType, imageBase64, callback) {
-    // ToDO doku -> Readme too!
+
     jobHandler.addJob(
         new CompareImageByNameJob(imageName, imageType, imageBase64, function (job) {
+            var isBiggestDistanceDiffThresholdBreached = job.getImageMetaInformationModel().getBiggestDistanceDifference() > config.getMaxDistanceDifferenceThreshold();
+            var isBiggestPixelDiffThresholdBreached = job.getImageMetaInformationModel().getBiggestPercentualPixelDifference() > config.getMaxPixelDifferenceThreshold();
+            var isThresholdBreached = isBiggestDistanceDiffThresholdBreached || isBiggestPixelDiffThresholdBreached;
+
+            logger.info("Compared image " + imageName + "." + imageType + " with the threshold breached result: " + isThresholdBreached);
+
             if (callback) {
-                callback(job);
+                callback(job, isThresholdBreached);
             }
         }
     ));

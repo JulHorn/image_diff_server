@@ -50,10 +50,9 @@ router.put('/compareImageByName', function(req, res) {
     var imageName = req.body.imageName;
     var imageType = req.body.imageType;
 
-    // ToDo Proper autocrop
-	imageManipulatorRepository.compareImageByName(imageName, imageType, imageBase64, function(job) {
+	imageManipulatorRepository.compareImageByName(imageName, imageType, imageBase64, function(job, isThresholdBreached) {
         res.statusCode = 200;
-        res.json({ message: 'OK', data: job});
+        res.json({ message: 'OK', data: job, isThresholdBreached: isThresholdBreached});
 	});
 });
 
