@@ -78,16 +78,9 @@ CompareImageByNameJob.prototype.load = function (data) {
  * **/
 CompareImageByNameJob.prototype.__saveAndCompareImage = function (imageName, imageType, imageBase64, callback) {
     var fullImageName = imageName + '.' + imageType;
-    var imageSet = this.getImageMetaInformationModel().getImageSetByName(fullImageName);
     var that = this;
-    var filePath = '';
+    var filePath = config.getNewImageFolderPath() + path.sep + fullImageName;
 
-    // Get full image path
-    if(imageSet) {
-        filePath = imageSet.getNewImage().getPath();
-    } else {
-        filePath = config.getNewImageFolderPath() + path.sep + fullImageName;
-    }
 
     // Remove base64 header so that the image can be written to disc properly
     imageBase64 = imageBase64.split(';base64,').pop();
@@ -101,29 +94,23 @@ CompareImageByNameJob.prototype.__saveAndCompareImage = function (imageName, ima
         }
 
         // Compare if image set exists, else simply create a new image set
-        if (imageSet) {
-            // Keep values intact and do nothing to keep a better error message instead of the more basic error message
-            // of the comparison method if reference image does not exist
-            // New image should always exist because it was just given
-            var isReferenceImageExisting = that.getImageManipulator().isImageExisting(config.getReferenceImageFolderPath() + path.sep + fullImageName);
-            if(isReferenceImageExisting) {
-                that.getImageManipulator().createDiffImage(fullImageName, false, imageSet.getIgnoreAreas(), function (resultSet) {
-                    // Compare
-                    that.getImageMetaInformationModel().addImageSet(resultSet);
-                    that.calculateMetaInformation();
+        // New image should always exist because it was just given
+        var isReferenceImageExisting = that.getImageManipulator().isImageExisting(config.getReferenceImageFolderPath() + path.sep + fullImageName);
+        if(isReferenceImageExisting) {
+            var imageSet = that.getImageMetaInformationModel().getImageSetByName(fullImageName);
+            var ignoreAreas = imageSet ? imageSet.getIgnoreAreas() : [];
 
-                    // Call callback
-                    if(callback){
-                        callback();
-                    }
-                });
+            that.getImageManipulator().createDiffImage(fullImageName, false, ignoreAreas, function (resultSet) {
+                // Compare
+                that.getImageMetaInformationModel().addImageSet(resultSet);
+                that.calculateMetaInformation();
 
-            } else {
                 // Call callback
                 if(callback){
                     callback();
                 }
-            }
+            });
+
         } else {
             that.getImageManipulator().loadImage(filePath, function (err, newImage) {
                 var resultImageSet = that.getImageManipulator().createSingleImageSet(fullImageName, newImage, 'There is no reference image existing yet.', false);
