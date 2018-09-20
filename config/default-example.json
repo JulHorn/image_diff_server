@@ -3,7 +3,8 @@
 		"port":"3000",
 		"timeoutInMs": 600000,
 		"workingMode": 0,
-		"maxNumberOfStoredJobs": 10
+		"maxNumberOfStoredJobs": 10,
+		"maxImageSize": 5
 	},
 	"images":{
 		"referenceImageFolder":"./public/images/reference",

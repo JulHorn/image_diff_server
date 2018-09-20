@@ -35,6 +35,7 @@ In order to configure this project, rename the file "default-example.json" in th
     2. "timeoutInMs": The timeout in milliseconds for the requests/responses, which need a lot of computation time (e.g. the "calculateDifferencesForAllImages" request). This is used to avoid connection timeouts. The default value is 600000. 
     3. "workingMode": Determines the working mode. If the value is set to 0 and the server is already processing a request, incoming requests will be discarded. If the value is 1 and the server is already processing a request, incoming requests will be stored in a queue and will be processed via the FIFO principle. The default value is 0.
     4. "maxNumberOfStoredJob": The maximum number of jobs which will be stored in the job history. The history will be saved to disc, when a requests was processed successfully and loaded when the server starts. The default value is 10.
+    5. "maxImageSize": The maximum allowed size in MB which is allowed for an imaged send via API.
 2. "images"
     1. "referenceImageFolder": The folder in which the application will search for the reference images. Default value is "./public/images/reference". It is encouraged to not change this value, because the images must be in the public folder for the UI.
     2. "newImageFolder": The folder in which the application will search for the new images. Default value is "./public/images/new". It is encouraged to not change this value, because the images must be in the public folder for the UI.

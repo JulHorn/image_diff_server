@@ -67,6 +67,15 @@ Configuration.prototype.getMaxNumberIfStoredJobs = function () {
 };
 
 /**
+ * Returns the the maximum allowed size in MB which is allowed for an imaged send via API.
+ *
+ * @return {Number} Returns the the maximum allowed size in MB which is allowed for an imaged send via API.
+ * **/
+Configuration.prototype.getMaxAllowedImageSizeForAPI = function () {
+	return this.getServerConf().get('maxImageSize').trim();
+};
+
+/**
  * Returns the image config.
  * @return {Object} Returns the image config.
  * **/
