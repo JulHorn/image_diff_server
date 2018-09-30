@@ -92,10 +92,12 @@ Table.prototype.draw = function (data) {
             // Get content for the image and description rows
             var imageRowContent = that.__createImageRow(imageSet);
             var descriptionRowContent = that.__createDescriptionRow(imageSet);
+            var headerRowContent = that.__createHeaderRow(imageSet);
 
             // Add the content as new rows to the table
             content += '<div class="imageSet" id="imageSet_' + imageSet.id + '">';
             content += '<table>';
+            content += '<tr id="headerRow_' + imageSet.id + '" class="headerRow ' + rowColor + '">' + headerRowContent + '</tr>';
             content += '<tr id="imageRow_' + imageSet.id + '" class="imageRow ' + rowColor + '">' + imageRowContent + '</tr>';
             content += '<tr id="descriptionRow_' + imageSet.id + '" class="descriptionRow ' + rowColor + '">' + descriptionRowContent + '</tr>';
             content += '</table>';
@@ -141,6 +143,29 @@ Table.prototype.__createImageRow = function (imageSet) {
 };
 
 /**
+ * Returns the content of for the header row.
+ *
+ * @param {Object} imageSet The imageSet object which contains the information about the images.
+ * @return {String} The header content for a table row.
+ * */
+Table.prototype.__createHeaderRow = function (imageSet) {
+    var rowContent = '';
+    var name = '';
+
+    if(imageSet.referenceImage.name) { name = imageSet.referenceImage.name; }
+    else if(imageSet.newImage.name) { name = imageSet.newImage.name; }
+    else if(imageSet.diff.name) { name = imageSet.diff.name; }
+    else { name = 'No name found.'; }
+
+    rowContent += '<td colspan="3">';
+    rowContent += '<h2>' + name + '</h2>'
+    rowContent += '</td>';
+
+
+    return rowContent;
+};
+
+/**
 * Creates the content for the description row.
 *
 * @param {Object} imageSet The imageSet object which contains the information about the images.
@@ -152,7 +177,13 @@ Table.prototype.__createDescriptionRow = function (imageSet) {
     desRowContent += '<td role="referenceDescription" id="' + imageSet.id + '">';
     desRowContent += this.__createDefaultDescriptionCellContent(imageSet.referenceImage);
     desRowContent += '<button data-id="' + imageSet.id + '" data-action="delete">Delete</button>';
-    desRowContent += '<button data-id="' + imageSet.id + '" data-image="' + imageSet.referenceImage.path +  '" data-action="addIgnoreRegions">Modify Ignore Regions</button>';
+
+    // Disable button if no image exists
+    if(imageSet.referenceImage.path) {
+        desRowContent += '<button data-id="' + imageSet.id + '" data-image="' + imageSet.referenceImage.path +  '" data-action="addIgnoreRegions">Modify Ignore Regions</button>';
+    } else {
+        desRowContent += '<button class="disabledButton" disabled data-id="' + imageSet.id + '" data-image="' + imageSet.referenceImage.path +  '" data-action="addIgnoreRegions">Modify Ignore Regions</button>';
+    }
     desRowContent += '</td>';
 
     desRowContent += '<td role="newDescription">';
@@ -174,8 +205,13 @@ Table.prototype.__createDescriptionRow = function (imageSet) {
     desRowContent += '<span role="percPixelDifference">' + imageSet.difference + '</span><br>';
     desRowContent += '<span>Distance:</span>';
     desRowContent += '<span role="distanceDifference">' + imageSet.distance + '</span><br>';
-    desRowContent += '<span>Error:</span>';
-    desRowContent += '<span role="error">' + imageSet.error + '</span><br>';
+
+    // Display error only if there is really one
+    if (imageSet.error) {
+        desRowContent += '<span>Error:</span>';
+        desRowContent += '<span role="error">' + imageSet.error + '</span><br>';
+    }
+
     desRowContent += '</div>';
     desRowContent += '</td>';
 
@@ -192,8 +228,6 @@ Table.prototype.__createDefaultDescriptionCellContent = function (image) {
     var cellContent = '';
 
     cellContent += '<div>';
-    cellContent += '<span>Name:</span>';
-    cellContent += '<span role="imageName">' + image.name + '</span><br>';
     cellContent += '<span>Height:</span>';
     cellContent += '<span role="height">' + image.height + 'px</span><br>';
     cellContent += '<span>Width:</span>';

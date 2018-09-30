@@ -92,6 +92,10 @@ tr.dark td {
   margin-top: 2px;
 }
 
+.headerRow h2 {
+  text-align: center;
+}
+
 .descriptionRow span {
   margin-right: 3px;
 }
