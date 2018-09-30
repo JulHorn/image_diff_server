@@ -16,7 +16,7 @@
     "fs-extra": "^7.0.0",
     "jimp": "^0.5.0",
     "morgan": "~1.9.1",
-    "node-uuid": "^1.4.8",
+    "uuid": "^3.3.2",
     "pug": "^2.0.3",
     "serve-favicon": "~2.5.0",
     "winston": "^2.4.4"

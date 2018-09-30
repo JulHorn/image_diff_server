@@ -1,4 +1,4 @@
-var uuid = require('node-uuid');
+var uuid = require('uuid/v4');
 var ImageModel = require('./ImageModel');
 var IgnoreArea = require('./IgnoreArea');
 
@@ -12,7 +12,7 @@ var ImageSetModel = function () {
     this.distance = 0;
     this.error = '';
     this.isThresholdBreached = false;
-    this.id = uuid.v1();
+    this.id = uuid();
     this.referenceImage = new ImageModel();
     this.newImage = new ImageModel();
     this.diffImage = new ImageModel();
