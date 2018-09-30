@@ -34,12 +34,10 @@ Header.prototype.bindEvents = function () {
         // Trigger the compare all images job
         that.connector.refreshAll(function (data) {
             that.callback(data);
-            that.$refreshAllTextField.text('Done!');
         });
         // Get current job to update values
         that.connector.getActiveJob(function (data) {
             that.callback(data);
-            that.$refreshAllTextField.text('Started to recalculate all image differences. This might take a while.');
         });
     });
 
@@ -62,7 +60,8 @@ Header.prototype.draw = function (data) {
     this.$numberOfSetsField.text(data.imageMetaInformationModel.imageSets.length);
     this.$maxPixelPercentageField.text(data.imageMetaInformationModel.biggestPercentualPixelDifference + '% of allowed ' + data.imageMetaInformationModel.percentualPixelDifferenceThreshold + '%');
     this.$maxDistanceField.text(data.imageMetaInformationModel.biggestDistanceDifference + ' of allowed ' + data.imageMetaInformationModel.distanceDifferenceThreshold);
-    this.$progressIndicatorField.text(data.processedImageCount + '/' + data.imagesToBeProcessedCount);
+    this.$progressIndicator.attr('max',data.imagesToBeProcessedCount);
+    this.$progressIndicator.val(data.processedImageCount);
     this.$currentJobField.text(data.jobName);
 };
 
@@ -74,7 +73,6 @@ Header.prototype.__initElements = function () {
     this.$numberOfSetsField = this.$container.find('#numberOfSets');
     this.$maxPixelPercentageField = this.$container.find('#maxPixelPercentage');
     this.$maxDistanceField = this.$container.find('#maxDistance');
-    this.$progressIndicatorField = this.$container.find('#progressIndicator');
+    this.$progressIndicator = this.$container.find('#progressIndicator');
     this.$currentJobField = this.$container.find('#currentJob');
-    this.$refreshAllTextField = $('#refreshAllText');
 };

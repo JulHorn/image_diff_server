@@ -81,7 +81,7 @@ Table.prototype.draw = function (data) {
     var that = this;
     var rowColor = 'dark';
     // Create table header
-    var content = '<table><thead><th>Reference</th><th>New</th><th>Diff</th></thead></table>';
+    var content = '<table class="tableImageSets"><thead><th class="tableimageSetsHeadlineCell">Reference</th><th>New</th><th>Diff</th></thead></table>';
 
     // Create one image and one description corresponding row for every image set
     data.imageMetaInformationModel.imageSets.forEach(function (imageSet) {
@@ -96,7 +96,7 @@ Table.prototype.draw = function (data) {
 
             // Add the content as new rows to the table
             content += '<div class="imageSet" id="imageSet_' + imageSet.id + '">';
-            content += '<table>';
+            content += '<table class="tableImageSets">';
             content += '<tr id="headerRow_' + imageSet.id + '" class="headerRow ' + rowColor + '">' + headerRowContent + '</tr>';
             content += '<tr id="imageRow_' + imageSet.id + '" class="imageRow ' + rowColor + '">' + imageRowContent + '</tr>';
             content += '<tr id="descriptionRow_' + imageSet.id + '" class="descriptionRow ' + rowColor + '">' + descriptionRowContent + '</tr>';
@@ -158,7 +158,7 @@ Table.prototype.__createHeaderRow = function (imageSet) {
     else { name = 'No name found.'; }
 
     rowContent += '<td colspan="3">';
-    rowContent += '<h2>' + name + '</h2>'
+    rowContent += '<h2>' + name + '</h2>';
     rowContent += '</td>';
 
 
@@ -371,6 +371,5 @@ Table.prototype.__getLoader = function (imageSetId) {
  * @return {String} The fixed file path.
  * **/
 Table.prototype.__sanitizeImagePaths = function (imagePath) {
-    console.log('da '+imagePath);
     return imagePath.replace('public', '.').replace(/\\/g, '/');
 };
