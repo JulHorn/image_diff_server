@@ -83,6 +83,7 @@ Table.prototype.bindEvents = function () {
 Table.prototype.draw = function (data, displayOptions) {
     var that = this;
     var rowColor = 'dark';
+    var tableHasContent = false;
     // Create table header
     var content = '<table class="tableImageSets"><thead><th class="tableimageSetsHeadlineCell">Reference</th><th>New</th><th>Diff</th></thead></table>';
 
@@ -114,11 +115,20 @@ Table.prototype.draw = function (data, displayOptions) {
             } else {
                 rowColor = 'light';
             }
+            // Used to determine whether a placeholder should be dispayed
+            tableHasContent = true;
         }
 
     });
 
-    this.$container.html($(content));
+    // Display info text if table has no data to prevent a faulty looking table
+    if (tableHasContent) {
+        this.$container.html($(content));
+    } else {
+        content = '<div class="noDataAvailable"><span>No data available</span></div>';
+        this.$container.html($(content));
+    }
+
 };
 
 /**
