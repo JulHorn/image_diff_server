@@ -34,7 +34,7 @@ TabManager.prototype.bindEvents = function () {
         $this.addClass('active');
 
         // Draw the fancy table
-        that.$table.draw(that.data, {showFailures: showFailed, showPassed: showPassed});
+        that.$table.draw(that.data, {showFailed: showFailed, showPassed: showPassed});
     });
 };
 
@@ -57,5 +57,5 @@ TabManager.prototype.draw = function (data) {
     this.$tabContent = $('#tabContent');
     this.$table = new Table(this.connector, this.$tabContent, this.callback);
 
-    this.$table.draw(data, {showFailures: false, showPassed: true});
+    this.$table.draw(data, {showFailed: true, showPassed: false});
 };

@@ -77,7 +77,7 @@ Table.prototype.bindEvents = function () {
  * Draws the table and its content.
  *
  * @param {Object} data Contains all information about the run job.
- * @param {Object} displayOptions It is possible to set the properties showFailures/showPassed with boolean values to determine
+ * @param {Object} displayOptions It is possible to set the properties showFailed/showPassed with boolean values to determine
  *  what should be displayed in the table. If no object was given, only the failure image sets will be displayed.
 * **/
 Table.prototype.draw = function (data, displayOptions) {
@@ -124,7 +124,7 @@ Table.prototype.draw = function (data, displayOptions) {
 /**
  * Determines whether an image set should be displayed in the table.
  *
- * @param displayOptions It is possible to set the properties showFailures/showPassed with boolean values to determine
+ * @param displayOptions It is possible to set the properties showFailed/showPassed with boolean values to determine
  *  what should be displayed in the table. If no object was given, only the failure image sets will be displayed.
  * @param isThresholdBreached True or false. Was the image set threshold breached?
  * @return {boolean}
@@ -135,7 +135,7 @@ Table.prototype.__shouldImageSetBeDisplayed = function(displayOptions, isThresho
 
     // Discern if image set should be displayed
     if (displayOptions) {
-        display = displayOptions.showFailures && isThresholdBreached;
+        display = displayOptions.showFailed && isThresholdBreached;
         display = display || displayOptions.showPassed && !isThresholdBreached;
     } else {
         // If no parameter were given, display failures as default value
