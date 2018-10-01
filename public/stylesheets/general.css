@@ -1,0 +1,56 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+h1 {
+  text-align: center;
+}
+
+/* Margin wenn lieber an Text + Klasse */
+button {
+  color:#ffffff;
+  border:1px solid #888;
+
+  box-shadow: inset 0px 19px 0px -24px #888;
+  background-color: #333333;
+
+  display:inline-block;
+  cursor:pointer;
+
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  font-size: 12px;
+  white-space: nowrap;
+  vertical-align: middle;
+
+  padding:3px 6px;
+
+  text-decoration:none;
+  text-shadow:0px 1px 0px #1f1f1f;
+
+  outline: none;
+}
+
+button:hover {
+  background-color:#1a1a1a;
+}
+
+button:active {
+  position:relative;
+  top:1px;
+}
+
+.hidden {
+  display: none;
+}
+
+.disabledButton:disabled {
+  background: #dddddd;
+  color: #333333;
+  text-shadow: none;
+  font-weight: 600;
+}

@@ -21,7 +21,8 @@ ChangeNotificator.prototype.__registerComponents = function () {
     this.components.push(new Header(this.connector, function (data, ignoreComponent) {
         that.__notify(data, ignoreComponent);
     }));
-    this.components.push(new Table(this.connector, function (data, ignoreComponent) {
+
+    this.components.push(new TabManager(this.connector, function (data, ignoreComponent) {
         that.__notify(data, ignoreComponent);
     }));
 };

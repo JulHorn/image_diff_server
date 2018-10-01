@@ -40,8 +40,7 @@ CheckAllJob.prototype.execute = function (imageMetaInformationModel, callback) {
     this.createDiffImages(this.autoCrop, this.pixDiffThreshold, this.distThreshold, function () {
         var jobCreatorCallback = that.getCallbackFunction();
 
-        // Clean up and make the reference of the model to a copy to have a snapshot which will not be changed anymore
-        that.imageMetaInformationModel.cleanUp();
+        // Make the reference of the model to a copy to have a snapshot which will not be changed anymore
         that.copyImageMetaInformationModel();
 
         // Call callback of the job creator when stuff is done
@@ -157,7 +156,6 @@ CheckAllJob.prototype.__createDiffImages = function (imageNames, autoCrop, ignor
             ignoreAreas = ignoreAreasMap.get(imageToProcess);
         }
 
-        //this.incrementProcessImageCounter();
         that.getImageManipulator().createDiffImage(imageToProcess, autoCrop, ignoreAreas, function (resultSet) {
             that.imageMetaInformationModel.addImageSet(resultSet);
 

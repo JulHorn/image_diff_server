@@ -2,12 +2,13 @@
  * Offers logic to handle the table.
  *
  * @param {Connector} connector The object to send requests to the server
+ * @param container The container (e.g. a div) in which the table will be drawn in
  * @param {Function} callback Called when the UI needs an update.
  * **/
-var Table = function (connector, callback) {
+var Table = function (connector, container, callback) {
     this.callback = callback;
     this.connector = connector;
-    this.$container = $('#content');
+    this.$container = container;
 
     this.bindEvents();
 };
@@ -22,7 +23,7 @@ Table.prototype.bindEvents = function () {
 
     // Bind delete action to delete buttons
     this.$container.on('click', 'button[data-action=delete]', function () {
-        var  $this = $(this);
+        var $this = $(this);
         var id = $this.data('id');
 
         // Disables the edited row and displayes a loading icon
@@ -75,9 +76,11 @@ Table.prototype.bindEvents = function () {
 /**
  * Draws the table and its content.
  *
-* @param {Object} data Contains all information about the run job.
+ * @param {Object} data Contains all information about the run job.
+ * @param {Object} displayOptions It is possible to set the properties showFailures/showPassed with boolean values to determine
+ *  what should be displayed in the table. If no object was given, only the failure image sets will be displayed.
 * **/
-Table.prototype.draw = function (data) {
+Table.prototype.draw = function (data, displayOptions) {
     var that = this;
     var rowColor = 'dark';
     // Create table header
@@ -85,10 +88,11 @@ Table.prototype.draw = function (data) {
 
     // Create one image and one description corresponding row for every image set
     data.imageMetaInformationModel.imageSets.forEach(function (imageSet) {
+        var display = that.__shouldImageSetBeDisplayed(displayOptions, imageSet.isThresholdBreached);
 
         // Only display sets with a breached threshold
         // E.g. images with no breached threshold and ignore zones will be correctly displayed or not
-        if(imageSet.isThresholdBreached) {
+        if(display) {
             // Get content for the image and description rows
             var imageRowContent = that.__createImageRow(imageSet);
             var descriptionRowContent = that.__createDescriptionRow(imageSet);
@@ -115,6 +119,30 @@ Table.prototype.draw = function (data) {
     });
 
     this.$container.html($(content));
+};
+
+/**
+ * Determines whether an image set should be displayed in the table.
+ *
+ * @param displayOptions It is possible to set the properties showFailures/showPassed with boolean values to determine
+ *  what should be displayed in the table. If no object was given, only the failure image sets will be displayed.
+ * @param isThresholdBreached True or false. Was the image set threshold breached?
+ * @return {boolean}
+ * @private
+ */
+Table.prototype.__shouldImageSetBeDisplayed = function(displayOptions, isThresholdBreached) {
+    var display = false;
+
+    // Discern if image set should be displayed
+    if (displayOptions) {
+        display = displayOptions.showFailures && isThresholdBreached;
+        display = display || displayOptions.showPassed && !isThresholdBreached;
+    } else {
+        // If no parameter were given, display failures as default value
+        display = isThresholdBreached;
+    }
+
+    return display;
 };
 
 /**
@@ -201,9 +229,9 @@ Table.prototype.__createDescriptionRow = function (imageSet) {
     desRowContent += '<td role="diffDescription">';
     desRowContent += this.__createDefaultDescriptionCellContent(imageSet.diffImage);
     desRowContent += '<div>';
-    desRowContent += '<span>Percentual difference:</span>';
-    desRowContent += '<span role="percPixelDifference">' + imageSet.difference + '</span><br>';
-    desRowContent += '<span>Distance:</span>';
+    desRowContent += '<span>Pixel difference:</span>';
+    desRowContent += '<span role="percPixelDifference">' + imageSet.difference + '%</span><br>';
+    desRowContent += '<span>Hamming distance:</span>';
     desRowContent += '<span role="distanceDifference">' + imageSet.distance + '</span><br>';
 
     // Display error only if there is really one

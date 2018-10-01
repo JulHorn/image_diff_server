@@ -1,54 +1,3 @@
-* {
-  box-sizing: border-box;
-}
-
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-}
-
-h1 {
-  text-align: center;
-}
-
-/* Margin wenn lieber an Text + Klasse */
-button {
-  color:#ffffff;
-  border:1px solid #888;
-
-  box-shadow: inset 0px 19px 0px -24px #888;
-  background-color: #333333;
-
-  display:inline-block;
-  cursor:pointer;
-
-  font-family:"Segoe UI", Tahoma, sans-serif;
-  font-size:12px;
-  white-space: nowrap;
-  vertical-align: middle;
-
-  padding:3px 6px;
-
-  text-decoration:none;
-  text-shadow:0px 1px 0px #1f1f1f;
-
-  outline: none;
-}
-
-button:hover {
-  background-color:#1a1a1a;
-}
-
-button:active {
-  position:relative;
-  top:1px;
-}
-
-td img{
-  height: auto;
-  width: 100%;
-}
-
 .tableImageSets {
   width: 100%;
   border-collapse: collapse;
@@ -60,7 +9,6 @@ td img{
 .tableImageSets th {
   text-align: center;
   font-size: 14px;
-
 }
 
 .tableImageSets td, th {
@@ -77,39 +25,16 @@ td img{
   background-color: #EEE;
 }
 
+.tableImageSets td img{
+  height: auto;
+  width: 100%;
+}
+
 .tableImageSets.imageRow td{
 }
 
 .tableImageSets .descriptionRow td{
 
-}
-
-.header table{
-  width: 50%;
-  border-collapse: collapse;
-  font-size: 14px;
-  margin: 0 auto 10px;
-}
-
-#header span {
-  margin: 0 0 0 3px;
-}
-
-#header progress {
-  margin: 0 0 0 3px;
-}
-
-#header button {
-  margin-top: 2px;
-}
-
-#header .refreshAll {
-  margin: 5px auto;
-  display: block;
-}
-
-.headerRow h2 {
-  text-align: center;
 }
 
 .descriptionRow span {
@@ -139,29 +64,6 @@ td img{
 .noImageAvailableText span{
   font-size: 14px;
   font-style: oblique;
-}
-
-#refreshButton img {
-  height: 12px;
-  width: 12px;
-}
-
-#refreshButton {
-  height: 16px;
-  width: 16px;
-  padding: 0;
-  margin: 0 0 0 5px;
-}
-
-.hidden {
-  display: none;
-}
-
-.disabledButton:disabled {
-  background: #dddddd;
-  color: #333333;
-  text-shadow: none;
-  font-weight: 600;
 }
 
 .loader {

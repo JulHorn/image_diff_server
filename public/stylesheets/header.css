@@ -1,0 +1,39 @@
+.header table{
+    width: 50%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 0 auto 10px;
+}
+
+#header span {
+    margin: 0 0 0 3px;
+}
+
+#header progress {
+    margin: 0 0 0 3px;
+}
+
+#header button {
+    margin-top: 2px;
+}
+
+#header .refreshAll {
+    margin: 5px auto;
+    display: block;
+}
+
+.headerRow h2 {
+    text-align: center;
+}
+
+#refreshButton img {
+    height: 12px;
+    width: 12px;
+}
+
+#refreshButton {
+    height: 16px;
+    width: 16px;
+    padding: 0;
+    margin: 0 0 0 5px;
+}
