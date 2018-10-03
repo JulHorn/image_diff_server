@@ -114,7 +114,7 @@ ImageManipulatorRepository.prototype.getLastActiveJob = function (callback) {
  *
  * @param {String} id The id of the image set for which the ignore areas should be set.
  * @param {Object} ignoreAreas The ignore areas which should be set for the image set.
- * @param {Function} callback Called when the ignore areas were set. Has the executed job as parameter.
+ * @param {Function} callback Called when the ignore areas were set. Has the updated image set as parameter.
  * **/
 ImageManipulatorRepository.prototype.modifyIgnoreAreas = function (id, ignoreAreas, callback) {
     // Add modify ignore areas job to the job handler
@@ -123,7 +123,8 @@ ImageManipulatorRepository.prototype.modifyIgnoreAreas = function (id, ignoreAre
             new ModifyIgnoreAreasJob(id, ignoreAreas, function (job) {
                 logger.info("Modified ignore areas for image set with id: " + id);
                 if (callback) {
-                        callback(job);
+                        var resultImageSet = jobHandler.getLastActiveJob().getImageMetaInformationModel().getImageSetById(id);
+                        callback(resultImageSet);
                     }
                 }
             ));

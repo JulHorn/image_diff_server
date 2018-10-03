@@ -46,7 +46,9 @@ Table.prototype.bindEvents = function () {
         var imgPath = that.__sanitizeImagePaths($this.data('image'));
 
         that.connector.getImageSet(id, function (imageSet) {
-            new AddIgnoreArea($ignoreRegion, that.connector).show(imgPath, imageSet);
+            new AddIgnoreArea($ignoreRegion, that.connector).show(imgPath, imageSet, function (resultImageSet) {
+                $this.siblings('#ignoreAreaField').text(resultImageSet.ignoreAreas.length);
+            });
         });
     });
 
@@ -214,6 +216,8 @@ Table.prototype.__createDescriptionRow = function (imageSet) {
 
     desRowContent += '<td role="referenceDescription" id="' + imageSet.id + '">';
     desRowContent += this.__createDefaultDescriptionCellContent(imageSet.referenceImage);
+    desRowContent += '<span>Ignored Areas:</span>';
+    desRowContent += '<span id="ignoreAreaField">' + imageSet.ignoreAreas.length + '</span><br>';
     desRowContent += '<button data-id="' + imageSet.id + '" data-action="delete">Delete</button>';
 
     // Disable button if no image exists

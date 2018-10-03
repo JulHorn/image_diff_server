@@ -39,9 +39,9 @@ router.put('/:id/modifyIgnoreAreas', function(req, res) {
     var setId = req.params.id;
     var ignoreAreas = JSON.parse(req.body.data).ignoreAreas;
 
-    imageManipulatorRepository.modifyIgnoreAreas(setId, ignoreAreas, function (job) {
+    imageManipulatorRepository.modifyIgnoreAreas(setId, ignoreAreas, function (imageSet) {
         res.statusCode = 200;
-        res.json({message: 'OK', data: job});
+        res.json({message: 'OK', data: imageSet});
     });
 });
 
