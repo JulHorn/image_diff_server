@@ -155,15 +155,12 @@ ImageManipulatorRepository.prototype.getImageSet = function (id, callback) {
 ImageManipulatorRepository.prototype.compareImageByName = function (imageName, imageType, imageBase64, callback) {
 
     jobHandler.addJob(
-        new CompareImageByNameJob(imageName, imageType, imageBase64, function (job) {
-            var isBiggestDistanceDiffThresholdBreached = job.getImageMetaInformationModel().getBiggestDistanceDifference() > config.getMaxDistanceDifferenceThreshold();
-            var isBiggestPixelDiffThresholdBreached = job.getImageMetaInformationModel().getBiggestPercentualPixelDifference() > config.getMaxPixelDifferenceThreshold();
-            var isThresholdBreached = isBiggestDistanceDiffThresholdBreached || isBiggestPixelDiffThresholdBreached;
+        new CompareImageByNameJob(imageName, imageType, imageBase64, function (job, resultImageSet) {
 
-            logger.info("Compared image " + imageName + "." + imageType + " with the threshold breached result: " + isThresholdBreached);
+            logger.info("Compared image " + imageName + "." + imageType + " with the threshold breached result: " + resultImageSet.isThresholdBreached);
 
             if (callback) {
-                callback(job, isThresholdBreached);
+                callback(job, resultImageSet.isThresholdBreached);
             }
         }
     ));

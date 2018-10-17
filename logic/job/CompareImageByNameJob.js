@@ -37,7 +37,7 @@ CompareImageByNameJob.prototype.execute = function (imageMetaInformationModel, c
     this.setImagesToBeProcessedCount(1);
 
     // Save the image to disc and compare it
-    this.__saveAndCompareImage(this.imageName, this.imageType, this.imageBase64, function () {
+    this.__saveAndCompareImage(this.imageName, this.imageType, this.imageBase64, function (resultImageSet) {
         var jobCreatorCallback = that.getCallbackFunction();
         // Update the processed image count
         that.incrementProcessImageCounter();
@@ -47,7 +47,7 @@ CompareImageByNameJob.prototype.execute = function (imageMetaInformationModel, c
 
         /// Call callback of the job creator when stuff is done
         if (jobCreatorCallback) {
-            jobCreatorCallback(that);
+            jobCreatorCallback(that, resultImageSet);
         }
 
         // Notify the job handler that this job is finished
@@ -107,7 +107,7 @@ CompareImageByNameJob.prototype.__saveAndCompareImage = function (imageName, ima
 
                 // Call callback
                 if(callback){
-                    callback();
+                    callback(resultSet);
                 }
             });
 
@@ -118,7 +118,7 @@ CompareImageByNameJob.prototype.__saveAndCompareImage = function (imageName, ima
 
                 // Call callback
                 if(callback){
-                    callback();
+                    callback(resultImageSet);
                 }
             });
         }
