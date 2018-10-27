@@ -3,6 +3,8 @@ var router = express.Router();
 var imageManipulatorRepository = require('../logic/ImageManipulatorRepository');
 var config = require('../logic/ConfigurationLoader');
 
+// ToDo: Add projectId params
+
 router.post('/checkAll', function(req, res) {
     // This request might take a while to finish the computations -> Needs a longer timeout,
     // so that the client will not run into a timeout

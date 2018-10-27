@@ -55,14 +55,18 @@ Header.prototype.bindEvents = function () {
  * @param {Object} data Contains all information about the run job.
  * **/
 Header.prototype.draw = function (data) {
-    data.imageMetaInformationModel.timeStamp ? this.$timeStampField.text(data.imageMetaInformationModel.timeStamp) : this.$timeStampField.text('Job is currently running');
+    console.log(data, 'data');
+    var imageModel = data.imageMetaInformationModel;
+    imageModel.timeStamp ? this.$timeStampField.text(imageModel.timeStamp) : this.$timeStampField.text('Job is currently running');
 
-    this.$numberOfSetsField.text(data.imageMetaInformationModel.imageSets.length);
-    this.$maxPixelPercentageField.text(data.imageMetaInformationModel.biggestPercentualPixelDifference + '% of allowed ' + data.imageMetaInformationModel.percentualPixelDifferenceThreshold + '%');
-    this.$maxDistanceField.text(data.imageMetaInformationModel.biggestDistanceDifference + ' of allowed ' + data.imageMetaInformationModel.distanceDifferenceThreshold);
+    this.$maxPixelPercentageField.text(imageModel.biggestPercentualPixelDifference + '% of allowed ' + data.imageMetaInformationModel.percentualPixelDifferenceThreshold + '%');
+    this.$maxDistanceField.text(imageModel.biggestDistanceDifference + ' of allowed ' + data.imageMetaInformationModel.distanceDifferenceThreshold);
     this.$progressIndicator.attr('max',data.imagesToBeProcessedCount);
     this.$progressIndicator.val(data.processedImageCount);
     this.$currentJobField.text(data.jobName);
+
+    // ToDo: Move this to TabManager
+    this.$numberOfSetsField.text(imageModel.projects[0].imageSets.length);
 };
 
 /**

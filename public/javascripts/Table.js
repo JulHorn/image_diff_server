@@ -3,11 +3,13 @@
  *
  * @param {Connector} connector The object to send requests to the server
  * @param container The container (e.g. a div) in which the table will be drawn in
+ * @param projectId ToDo
  * @param {Function} callback Called when the UI needs an update.
  * **/
-var Table = function (connector, container, callback) {
+var Table = function (connector, container, projectId, callback) {
     this.callback = callback;
     this.connector = connector;
+    this.projectId = projectId;
     this.$container = container;
 
     this.bindEvents();
@@ -77,12 +79,12 @@ Table.prototype.bindEvents = function () {
 
 /**
  * Draws the table and its content.
- *
- * @param {Object} data Contains all information about the run job.
+ * ToDo: Update doc
+ * @param imageSets
  * @param {Object} displayOptions It is possible to set the properties showFailed/showPassed with boolean values to determine
  *  what should be displayed in the table. If no object was given, only the failure image sets will be displayed.
 * **/
-Table.prototype.draw = function (data, displayOptions) {
+Table.prototype.draw = function (imageSets, displayOptions) {
     var that = this;
     var rowColor = 'dark';
     var tableHasContent = false;
@@ -90,7 +92,7 @@ Table.prototype.draw = function (data, displayOptions) {
     var content = '<table class="tableImageSets"><thead><th class="tableimageSetsHeadlineCell">Reference</th><th>New</th><th>Diff</th></thead></table>';
 
     // Create one image and one description corresponding row for every image set
-    data.imageMetaInformationModel.imageSets.forEach(function (imageSet) {
+    imageSets.forEach(function (imageSet) {
         var display = that.__shouldImageSetBeDisplayed(displayOptions, imageSet.isThresholdBreached);
 
         // Only display sets with a breached threshold
@@ -287,7 +289,9 @@ Table.prototype.__createDefaultDescriptionCellContent = function (image) {
  * @return {Object} The found image set.
  * **/
 Table.prototype.__getImageSetById = function (id, imageMetaModel) {
-    return imageMetaModel.imageSets.filter(function (imageSet) {
+    var project = this.__getProject(this.projectId, imageMetaModel.projects);
+
+    return project.imageSets.filter(function (imageSet) {
         return imageSet.id === id;
     })[0];
 };
@@ -414,4 +418,16 @@ Table.prototype.__getLoader = function (imageSetId) {
  * **/
 Table.prototype.__sanitizeImagePaths = function (imagePath) {
     return imagePath.replace('public', '.').replace(/\\/g, '/');
+};
+
+/**
+ * ToDo: Comments, foreach to each?
+ * @param projectId
+ * @param projects
+ * @private
+ */
+Table.prototype.__getProject = function(projectId, projects) {
+    return projects.find(function (project) {
+        return projectId === project.id;
+    });
 };

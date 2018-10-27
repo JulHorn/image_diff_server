@@ -9,8 +9,8 @@ var ImageSet = require('./ImageSetModel');
  * @constructor
  * **/
 var ProjectModel = function (projectName, projectId) {
-    this.projectName = projectName ? projectName : 'Name me';
-    this.projectId = projectId ? projectId : uuid();
+    this.name = projectName ? projectName : 'Name me';
+    this.id = projectId ? projectId : uuid();
     this.imageSets = [];
 };
 
@@ -22,7 +22,7 @@ var ProjectModel = function (projectName, projectId) {
  * @return {String} Returns the project name.
  * **/
 ProjectModel.prototype.getProjectName = function () {
-    return this.projectName;
+    return this.name;
 };
 
 /**
@@ -31,7 +31,7 @@ ProjectModel.prototype.getProjectName = function () {
  * @return {String} Returns the project id.
  * **/
 ProjectModel.prototype.getProjectId = function () {
-    return this.projectId;
+    return this.id;
 };
 
 /**
@@ -50,7 +50,7 @@ ProjectModel.prototype.getImageSets = function(){
  * @param {String} projectName Sets the project name.
  * **/
 ProjectModel.prototype.setProjectName = function (projectName) {
-    this.projectName = projectName;
+    this.name = projectName;
 };
 
 /**
@@ -59,7 +59,7 @@ ProjectModel.prototype.setProjectName = function (projectName) {
  * @param {String} projectId Sets the image project id.
  * **/
 ProjectModel.prototype.setProjectId = function (projectId) {
-    this.projectId = projectId;
+    this.id = projectId;
 };
 
 
@@ -73,8 +73,8 @@ ProjectModel.prototype.setProjectId = function (projectId) {
 ProjectModel.prototype.load = function (data) {
     var that = this;
 
-    this.projectId = data.projectId;
-    this.projectName = data.projectName;
+    this.id = data.id;
+    this.name = data.name;
 
     data.imageSets.forEach(function (imageSetData) {
         var imageSet = new ImageSet();

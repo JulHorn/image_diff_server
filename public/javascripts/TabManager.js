@@ -8,6 +8,7 @@ var TabManager = function (connector, callback) {
     this.callback = callback;
     this.connector = connector;
     this.$container = $('#content');
+
     this.bindEvents();
 };
 
@@ -34,7 +35,7 @@ TabManager.prototype.bindEvents = function () {
         $this.addClass('active');
 
         // Draw the fancy table
-        that.$table.draw(that.data, {showFailed: showFailed, showPassed: showPassed});
+        that.$table.draw(that.project.imageSets, {showFailed: showFailed, showPassed: showPassed});
     });
 };
 
@@ -44,18 +45,51 @@ TabManager.prototype.bindEvents = function () {
  * @param {Object} data Contains all information about the run job.
  * **/
 TabManager.prototype.draw = function (data) {
+    var imageModel = data.imageMetaInformationModel;
     var content = '<div class="tab">';
-    content += '<button class="tabButton active" data-passed=false data-failed=true data-action="changeTableContentMode">Failed</button>'
+    content += '<button class="tabButton active" data-passed=false data-failed=true data-action="changeTableContentMode">Failed</button>';
     content += '<button class="tabButton" data-passed=true data-failed=false data-action="changeTableContentMode">Passed</button>';
     content += '<button class="tabButton" data-passed=true data-failed=true data-action="changeTableContentMode">All</button>';
+    // ToDo: Add class
+    content += '<select id="projectSelect" class="projectSelect" data-action="changeProject">';
+
+    imageModel.projects.forEach(function (project) {
+        content += '<option id="' + project.id + '">' + project.name + '</option>';
+    });
+
+    content += '</select>';
+
     content += '<div id="tabContent" class="tabcontent"/>';
+
+    // var projectSelectContent = '<option id="">All</option>';
+
+    // var selectedProjectId = this.$projectSelector.find(':selected').attr('id');
+    // this.$numberOfSetsField.text(this.__getProject(selectedProjectId, imageModel.projects).imageSets.length);
+
+
+
+
 
     this.$container.html($(content));
 
     // Set data and draw initial table
-    this.data = data;
+    this.project = this.__getProject(imageModel.projects);
     this.$tabContent = $('#tabContent');
-    this.$table = new Table(this.connector, this.$tabContent, this.callback);
 
-    this.$table.draw(data, {showFailed: true, showPassed: false});
+    this.$table = new Table(this.connector, this.$tabContent, this.project.id, this.callback);
+
+    this.$table.draw(this.project.imageSets, {showFailed: true, showPassed: false});
+};
+
+/**
+ * ToDo: Comments, foreach to each?
+ * @param projects
+ * @private
+ */
+TabManager.prototype.__getProject = function(projects) {
+    var projectId = $('#projectSelect :selected').attr('id');
+
+    return projects.find(function (project) {
+        return projectId === project.id;
+    });
 };

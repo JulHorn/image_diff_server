@@ -2,7 +2,7 @@ var logger = require('winston');
 var Project = require('./ProjectModel');
 var config = require('../ConfigurationLoader');
 
-// ToDo: Add comments and use getter and make default project somewhat more global
+// ToDo: Add comments and use getter and make default project somewhat more global, check UUID type
 
 /**
  * Constructor. Loads the imageMetaInformationModel information in the imageMetaInformationModel information text file, if it does exist.
@@ -10,7 +10,7 @@ var config = require('../ConfigurationLoader');
  * @constructor
  * **/
 var ImageMetaInformationModel = function () {
-    this.reset();
+    this.__init();
 };
 
 /* ----- Getter ----- */
@@ -54,8 +54,8 @@ ImageMetaInformationModel.prototype.getImageSets = function(projectId){
     if (project) {
         resultImageSets = project.getImageSets();
     } else {
-        this.projects.forEach(function (project) {
-            resultImageSets.concat(project.getImageSets());
+        this.projects.forEach(function (currentProject) {
+            resultImageSets = resultImageSets.concat(currentProject.getImageSets());
         });
     }
 
@@ -76,6 +76,7 @@ ImageMetaInformationModel.prototype.getProject = function(projectId) {
  * Returns the image set with a specific id.
  *
  * @param {String} id The id of the image set which should be returned.
+ * @param projectId ToDo
  * @return {ImageSetModel|null} The found image set or null if none was found with the given id.
  * **/
 ImageMetaInformationModel.prototype.getImageSetById = function(id, projectId){
@@ -96,6 +97,7 @@ ImageMetaInformationModel.prototype.getImageSetById = function(id, projectId){
  * Returns the image set which contains a specific image name for its reference/new image.
  *
  * @param {String} imageName The name of the new/reference image for which its image set should be returned.
+ * @param projectId ToDo
  * @return {ImageSetModel|null} The found image set or null if none was found with the given id.
  * **/
 ImageMetaInformationModel.prototype.getImageSetByName = function(imageName, projectId){
@@ -164,6 +166,7 @@ ImageMetaInformationModel.prototype.load = function (data) {
  * Adds an image set. If an image set with the same (reference/new) image name exists, the existing image set will be updated.
  *
  * @param {ImageSetModel} imageSetToBeAdded The image set to add.
+ * @param projectId ToDo
  * **/
 ImageMetaInformationModel.prototype.addImageSet = function (imageSetToBeAdded, projectId) {
     var project = this.getProject(projectId);
@@ -178,19 +181,20 @@ ImageMetaInformationModel.prototype.addImageSet = function (imageSetToBeAdded, p
  * Deletes an image set.
  *
  * @param {String} id The id of the image set to be deleted.
+ * @param projectId ToDo
  * **/
 ImageMetaInformationModel.prototype.deleteImageSetFromModel = function (id, projectId) {
     var project = this.getProject(projectId);
 
     if (!project) {
-        this.projects.forEach(function (currentProject) {
-            if (currentProject.getProjectId() === projectId) {
-                project = currentProject;
-            }
+        project = this.projects.find(function (currentProject) {
+            return currentProject.getImageSets().find(function (currentImageSet) {
+                return currentImageSet.getId() === id
+            });
         });
     }
 
-    var index = this.__getIndexOfImageSetInProject(id, projectId);
+    var index = this.__getIndexOfImageSetInProject(id, project);
 
     // Error handling
     if(index < 0){
@@ -202,7 +206,7 @@ ImageMetaInformationModel.prototype.deleteImageSetFromModel = function (id, proj
         throw Error(error);
     }
 
-    this.project.getImageSets().splice(index, 1);
+    project.getImageSets().splice(index, 1);
 };
 
 /**
@@ -249,7 +253,7 @@ ImageMetaInformationModel.prototype.getCopy = function () {
 /**
  * Resets the imageMetaInformationModel information model to its initial state.
  * **/
-ImageMetaInformationModel.prototype.reset = function () {
+ImageMetaInformationModel.prototype.__init = function () {
     this.biggestPercentualPixelDifference = 0;
     this.biggestDistanceDifference = 0;
     this.percentualPixelDifferenceThreshold = 0;
@@ -282,15 +286,16 @@ ImageMetaInformationModel.prototype.deleteProject = function(projectId) {
  * Returns the index of the imageSet by the given id.
  *
  * @param {String} id The id of the image set for which its index should be returned.
+ * @param project
  * @return {Number} Returns the index of the image set or -1.
  * **/
-ImageMetaInformationModel.prototype.__getIndexOfImageSetInProject = function (id, projectId) {
+ImageMetaInformationModel.prototype.__getIndexOfImageSetInProject = function (id, project) {
     // Use this method instead of the array method for downward compatibility
     var imageSetIndex = -1;
 
-    if (!projectId) { return -1; }
+    if (!project) { return -1; }
 
-    this.getImageSets(projectId).forEach(function (imageSet, index) {
+    project.getImageSets().forEach(function (imageSet, index) {
         if(imageSet.getId() === id) {
             imageSetIndex = index;
 
