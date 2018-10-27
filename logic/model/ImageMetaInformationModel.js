@@ -259,12 +259,14 @@ ImageMetaInformationModel.prototype.__init = function () {
     this.percentualPixelDifferenceThreshold = 0;
     this.distanceDifferenceThreshold = 0;
     this.timeStamp = '';
+    // ToDo This wont work -> JS has no associative arrays -> Problems with sending data to the FE
     this.projects = [];
+    // ToDo This should happen in the load method and not everytime
     this.addProject('Default', '0');
 };
 
 ImageMetaInformationModel.prototype.addProject = function(projectName, projectId) {
-    var project = new Project('Default', projectId);
+    var project = new Project(projectName, projectId);
 
     this.projects[project.getProjectId()] = project;
 };
@@ -276,6 +278,7 @@ ImageMetaInformationModel.prototype.deleteProject = function(projectId) {
     }
 
     this.projects[projectId] = null;
+    // ToDo:   delete obj[k];
 
     return true;
 };

@@ -9,10 +9,14 @@ router.post('/checkAll', function(req, res) {
     // This request might take a while to finish the computations -> Needs a longer timeout,
     // so that the client will not run into a timeout
     res.setTimeout(config.getRequestTimeout());
+    var bodyData = JSON.parse(req.body.data);
 
-    imageManipulatorRepository.calculateDifferencesForAllImages(req.body.autoCrop
-        , req.body.pixDiffThreshold
-        , req.body.distThreshold
+    // ToDo
+    bodyData = bodyData ? bodyData : {};
+
+    imageManipulatorRepository.calculateDifferencesForAllImages(bodyData.autoCrop
+        , bodyData.pixDiffThreshold
+        , bodyData.distThreshold
         , function (job, isThresholdBreached) {
             res.statusCode = 200;
             res.json({message: 'OK', data: job, isThresholdBreached: isThresholdBreached});
@@ -34,6 +38,34 @@ router.get('/:id/getImageSet', function(req, res) {
     imageManipulatorRepository.getImageSet(setId, function (imageSet) {
         res.statusCode = 200;
         res.json({message: 'OK', data: imageSet});
+    });
+});
+
+router.post('/addProject', function(req, res) {
+    var projectName = JSON.parse(req.body.data).name;
+
+    imageManipulatorRepository.addProject(projectName, function (job) {
+        res.statusCode = 200;
+        res.json({message: 'OK', data: job});
+    });
+});
+
+router.put('/:id/editProject', function(req, res) {
+    var projectId = req.params.name;
+    var projectName = JSON.parse(req.body.data).name;
+
+    imageManipulatorRepository.editProject(projectId, projectName, function (job) {
+        res.statusCode = 200;
+        res.json({message: 'OK', data: job});
+    });
+});
+
+router.delete('/:id/removeProject', function(req, res) {
+    var projectId = req.params.name;
+
+    imageManipulatorRepository.removeProject(projectId, function (job) {
+        res.statusCode = 200;
+        res.json({message: 'OK', data: job});
     });
 });
 

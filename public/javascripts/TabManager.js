@@ -1,3 +1,5 @@
+// ToDo Add all switch for projects, save last selected project in local storage
+
 /**
  * Offers for a small pseudo tab implementation based on https://www.w3schools.com/howto/howto_js_tabs.asp.
  *
@@ -37,6 +39,38 @@ TabManager.prototype.bindEvents = function () {
         // Draw the fancy table
         that.$table.draw(that.project.imageSets, {showFailed: showFailed, showPassed: showPassed});
     });
+
+    // ToDo
+    this.$container.on('click', 'button[data-action=addProject]', function () {
+        var $this = $(this);
+        var newProjectName = prompt('Please enter the project name.','');
+
+        if (newProjectName) {
+            that.connector.addProject(newProjectName, function (job) {
+                console.log(job, 'job');
+            });
+        } else {
+            alert('Project name must not be empty.');
+        }
+    });
+
+    // ToDo
+    this.$container.on('click', 'button[data-action=editProject]', function () {
+        var $this = $(this);
+    });
+
+    // ToDo
+    this.$container.on('click', 'button[data-action=removeProject]', function () {
+        var $this = $(this);
+    });
+
+    // Changes the active project
+    this.$container.on('change', 'select[data-action=changeProject]', function () {
+        var $this = $(this);
+
+        $this.data('id');
+        console.log($this);
+    });
 };
 
 /**
@@ -50,11 +84,16 @@ TabManager.prototype.draw = function (data) {
     content += '<button class="tabButton active" data-passed=false data-failed=true data-action="changeTableContentMode">Failed</button>';
     content += '<button class="tabButton" data-passed=true data-failed=false data-action="changeTableContentMode">Passed</button>';
     content += '<button class="tabButton" data-passed=true data-failed=true data-action="changeTableContentMode">All</button>';
+
+    // ToDo Wrap in div
+    content += '<button class="tabButton" data-action="addProject">Add</button>';
+    content += '<button class="tabButton" data-action="editProject">Edit</button>';
+    content += '<button class="tabButton" data-action="removeProject">Rem</button>';
     // ToDo: Add class
     content += '<select id="projectSelect" class="projectSelect" data-action="changeProject">';
 
     imageModel.projects.forEach(function (project) {
-        content += '<option id="' + project.id + '">' + project.name + '</option>';
+        content += '<option data-id="' + project.id + '">' + project.name + '</option>';
     });
 
     content += '</select>';
@@ -87,7 +126,7 @@ TabManager.prototype.draw = function (data) {
  * @private
  */
 TabManager.prototype.__getProject = function(projects) {
-    var projectId = $('#projectSelect :selected').attr('id');
+    var projectId = $('#projectSelect :selected').attr('data-id');
 
     return projects.find(function (project) {
         return projectId === project.id;

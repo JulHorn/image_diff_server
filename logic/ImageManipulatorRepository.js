@@ -3,6 +3,9 @@ var DeleteJob = require('./job/DeleteJob');
 var MakeToNewReferenceImageJob = require('./job/MakeNewToReferenceImageJob');
 var ModifyIgnoreAreasJob = require('./job/ModifyIgnoreAreasJob');
 var CompareImageByNameJob = require('./job/CompareImageByNameJob');
+var AddProjectJob = require('./job/AddProjectLog');
+var EditProjectJob = require('./job/EditProjectJob');
+var RemoveProjectJob = require('./job/RemoveProjectJob');
 var ImageManipulator = require('./ImageManipulator');
 var logger = require('winston');
 var config = require('./ConfigurationLoader');
@@ -141,6 +144,63 @@ ImageManipulatorRepository.prototype.getImageSet = function (id, callback) {
    var resultImageSet = jobHandler.getLastActiveJob().getImageMetaInformationModel().getImageSetById(id);
 
     callback(resultImageSet);
+};
+
+/**
+ * ToDo
+ * Add
+ *
+ * @param projectName
+ */
+ImageManipulatorRepository.prototype.addProject = function(projectName, callback) {
+    jobHandler.addJob(
+        new AddProjectJob(projectName, function (job) {
+
+                logger.info("Add project " + projectName);
+
+                if (callback) {
+                    callback(job);
+                }
+            }
+        ));
+};
+
+/**
+ * ToDo
+ * Add
+ *
+ * @param projectId
+ */
+ImageManipulatorRepository.prototype.editProject = function(projectId, projectName, callback) {
+    jobHandler.addJob(
+        new EditProjectJob(projectId, projectName, function (job) {
+
+                logger.info("Edit project " + projectId);
+
+                if (callback) {
+                    callback(job);
+                }
+            }
+        ));
+};
+
+/**
+ * ToDo
+ * Add
+ *
+ * @param projectId
+ */
+ImageManipulatorRepository.prototype.removeProject = function(projectId, callback) {
+    jobHandler.addJob(
+        new RemoveProjectJob(projectId, function (job) {
+
+                logger.info("Remove project " + projectId);
+
+                if (callback) {
+                    callback(job);
+                }
+            }
+        ));
 };
 
 /**

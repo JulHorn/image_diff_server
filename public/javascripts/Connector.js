@@ -66,6 +66,34 @@ Connector.prototype.modifyIgnoreAreas = function (id, ignoreAreas, callback) {
     this.sendRequest('/' + id + '/modifyIgnoreAreas', 'PUT', { ignoreAreas: ignoreAreas }, callback);
 };
 
+/**
+ * ToDo
+ * @param name
+ * @param callback
+ */
+Connector.prototype.addProject = function (name, callback) {
+    this.sendRequest('/addProject', 'POST', { name: name }, callback);
+};
+
+/**
+ * ToDo
+ * @param id
+ * @param newName
+ * @param callback
+ */
+Connector.prototype.editProject = function (id, newName, callback) {
+    this.sendRequest('/' + id + '/editProject', 'PUT', { name: newName }, callback);
+};
+
+/**
+ * ToDo
+ * @param id
+ * @param callback
+ */
+Connector.prototype.removeProject = function (id, callback) {
+    this.sendRequest('/' + id + '/removeProject', 'DELETE', null, callback);
+};
+
 /* ----- General Methods ----- */
 
 /**
