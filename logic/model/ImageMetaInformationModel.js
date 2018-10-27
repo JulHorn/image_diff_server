@@ -1,6 +1,8 @@
 var logger = require('winston');
-var ImageSet = require('./ImageSetModel');
+var Project = require('./ProjectModel');
 var config = require('../ConfigurationLoader');
+
+// ToDo: Add comments and use getter and make default project somewhat more global
 
 /**
  * Constructor. Loads the imageMetaInformationModel information in the imageMetaInformationModel information text file, if it does exist.
@@ -41,11 +43,33 @@ ImageMetaInformationModel.prototype.getBiggestDistanceDifference = function () {
 };
 
 /**
- * Returns the image sets.
+ * Returns the image sets of all projects.
+ *
  * @return {ImageSetModel[]} Returns the image sets.
  * **/
-ImageMetaInformationModel.prototype.getImageSets = function(){
-    return this.imageSets;
+ImageMetaInformationModel.prototype.getImageSets = function(projectId){
+    var resultImageSets = [];
+    var project = this.getProject(projectId);
+
+    if (project) {
+        resultImageSets = project.getImageSets();
+    } else {
+        this.projects.forEach(function (project) {
+            resultImageSets.concat(project.getImageSets());
+        });
+    }
+
+    return resultImageSets;
+};
+
+ImageMetaInformationModel.prototype.getProjects = function() {
+    return this.projects;
+};
+
+ImageMetaInformationModel.prototype.getProject = function(projectId) {
+    if (!projectId) { return null; }
+
+    return this.projects[projectId];
 };
 
 /**
@@ -54,12 +78,12 @@ ImageMetaInformationModel.prototype.getImageSets = function(){
  * @param {String} id The id of the image set which should be returned.
  * @return {ImageSetModel|null} The found image set or null if none was found with the given id.
  * **/
-ImageMetaInformationModel.prototype.getImageSetById = function(id){
-    var result = this.getImageSets().filter(function (imageSet) {
-        return imageSet.getId() === id;
-    });
+ImageMetaInformationModel.prototype.getImageSetById = function(id, projectId){
+    var result = this.getImageSets(projectId).filter(function (imageSet) {
+            return imageSet.getId() === id;
+        });
 
-    // If the image does not already exist in the imageMetaInformationModel information sturcture, then return null
+    // If the image does not already exist in the imageMetaInformationModel information structure, then return null
     if(result.length === 0){
         return null;
     }
@@ -74,7 +98,7 @@ ImageMetaInformationModel.prototype.getImageSetById = function(id){
  * @param {String} imageName The name of the new/reference image for which its image set should be returned.
  * @return {ImageSetModel|null} The found image set or null if none was found with the given id.
  * **/
-ImageMetaInformationModel.prototype.getImageSetByName = function(imageName){
+ImageMetaInformationModel.prototype.getImageSetByName = function(imageName, projectId){
 
     // If no proper name was given, return null
     if(imageName === ''){
@@ -82,12 +106,12 @@ ImageMetaInformationModel.prototype.getImageSetByName = function(imageName){
     }
 
     // Get the image set with the name
-    var result = this.getImageSets().filter(function (imageSet) {
+    var result = this.getImageSets(projectId).filter(function (imageSet) {
         return imageSet.getReferenceImage().getName() === imageName
             || imageSet.getNewImage().getName() === imageName;
     });
 
-    // If the image does not already exist in the imageMetaInformationModel informations sturcture, then return null
+    // If the image does not already exist in the imageMetaInformationModel information structure, then return null
     if(result.length === 0){
         return null;
     }
@@ -119,11 +143,16 @@ ImageMetaInformationModel.prototype.load = function (data) {
 
     this.setTimeStamp(data.timeStamp);
 
-    data.imageSets.forEach(function (imageSetData) {
-        var imageSet = new ImageSet();
-        imageSet.load(imageSetData);
-        that.addImageSet(imageSet);
-    });
+    // Overwrite default project only if no other projects could be loaded
+    if (data.projects) {
+        this.projects = [];
+
+        data.projects.forEach(function (projectData) {
+            var project = new Project();
+            project.load(projectData);
+            that.projects.push(project);
+        });
+    }
 
     // Calculate the biggest image difference of all sets
     this.calculateBiggestDifferences();
@@ -136,51 +165,13 @@ ImageMetaInformationModel.prototype.load = function (data) {
  *
  * @param {ImageSetModel} imageSetToBeAdded The image set to add.
  * **/
-ImageMetaInformationModel.prototype.addImageSet = function (imageSetToBeAdded) {
-    var that = this;
+ImageMetaInformationModel.prototype.addImageSet = function (imageSetToBeAdded, projectId) {
+    var project = this.getProject(projectId);
 
-    // Get existing image set by image name (is unique), if there exists one
-    // ToDo: Find a way to improve the performance
-    var resultSet = this.getImageSets().filter(function (currentImageSet) {
-        return that.__isImageNameTheSame(currentImageSet.getReferenceImage(), imageSetToBeAdded.getReferenceImage())
-            || that.__isImageNameTheSame(currentImageSet.getNewImage(), imageSetToBeAdded.getNewImage());
-    });
+    //  Use given project or undeletable default project
+    project = project ? project : this.getProject('0');
 
-    // Update existing set or add a new one
-    // Use a better way than mapping values like that
-    if(resultSet.length > 0) {
-        resultSet[0].setReferenceImage(imageSetToBeAdded.getReferenceImage());
-        resultSet[0].setNewImage(imageSetToBeAdded.getNewImage());
-        resultSet[0].setDiffImage(imageSetToBeAdded.getDiffImage());
-        resultSet[0].setError(imageSetToBeAdded.getError());
-        resultSet[0].setDifference(imageSetToBeAdded.getDifference());
-        resultSet[0].setDistance(imageSetToBeAdded.getDistance());
-        // No clue why the getter/setter functions are not available here, grml
-        resultSet[0].isThresholdBreached = imageSetToBeAdded.isThresholdBreached;
-    } else {
-        // Add new image set
-        this.getImageSets().push(imageSetToBeAdded);
-    }
-};
-
-/**
- * Removes the image sets whose image differences do not breach a threshold.
- * **/
-ImageMetaInformationModel.prototype.cleanUp = function () {
-    var that = this;
-
-    // Get obsolete (image sets in the green range) image set
-    // and images which do not have a ignore area so the image sets with ignore areas will not be deleted
-    var obsoleteImageSets = this.getImageSets().filter(function (imageSet) {
-        return imageSet.getDistance() <= config.getMaxDistanceDifferenceThreshold()
-            && imageSet.getDifference() <= config.getMaxPixelDifferenceThreshold()
-            && imageSet.getIgnoreAreas().length === 0;
-    });
-
-    // Remove them from the meta information model
-    obsoleteImageSets.forEach(function (imageSet) {
-        that.deleteImageSetFromModel(imageSet.getId());
-    });
+    project.addImageSet(imageSetToBeAdded);
 };
 
 /**
@@ -188,8 +179,18 @@ ImageMetaInformationModel.prototype.cleanUp = function () {
  *
  * @param {String} id The id of the image set to be deleted.
  * **/
-ImageMetaInformationModel.prototype.deleteImageSetFromModel = function (id) {
-    var index = this.__getIndexOfImageSet(id);
+ImageMetaInformationModel.prototype.deleteImageSetFromModel = function (id, projectId) {
+    var project = this.getProject(projectId);
+
+    if (!project) {
+        this.projects.forEach(function (currentProject) {
+            if (currentProject.getProjectId() === projectId) {
+                project = currentProject;
+            }
+        });
+    }
+
+    var index = this.__getIndexOfImageSetInProject(id, projectId);
 
     // Error handling
     if(index < 0){
@@ -201,7 +202,7 @@ ImageMetaInformationModel.prototype.deleteImageSetFromModel = function (id) {
         throw Error(error);
     }
 
-    this.getImageSets().splice(index, 1);
+    this.project.getImageSets().splice(index, 1);
 };
 
 /**
@@ -209,15 +210,16 @@ ImageMetaInformationModel.prototype.deleteImageSetFromModel = function (id) {
  * **/
 ImageMetaInformationModel.prototype.calculateBiggestDifferences = function () {
     var that = this;
+    var imageSets = this.getImageSets();
 
     // If no image set exists, the difference is always 0
-    if(this.getImageSets().length === 0){
+    if(imageSets.length === 0){
         that.biggestPercentualPixelDifference = 0;
         that.biggestDistanceDifference = 0;
     }
 
     // Calculate pixel and distance difference
-    this.getImageSets().forEach(function (set) {
+    imageSets.forEach(function (set) {
         if(that.biggestPercentualPixelDifference < set.getDifference()){
             that.biggestPercentualPixelDifference = set.getDifference();
         }
@@ -253,7 +255,25 @@ ImageMetaInformationModel.prototype.reset = function () {
     this.percentualPixelDifferenceThreshold = 0;
     this.distanceDifferenceThreshold = 0;
     this.timeStamp = '';
-    this.imageSets = [];
+    this.projects = [];
+    this.addProject('Default', '0');
+};
+
+ImageMetaInformationModel.prototype.addProject = function(projectName, projectId) {
+    var project = new Project('Default', projectId);
+
+    this.projects[project.getProjectId()] = project;
+};
+
+ImageMetaInformationModel.prototype.deleteProject = function(projectId) {
+    if (!projectId || projectId === '0') {
+        logger.warn('Tried to delete default project or no project id given. Canceled. Given project id: ' + projectId);
+        return false;
+    }
+
+    this.projects[projectId] = null;
+
+    return true;
 };
 
 /* ----- Helper Methods ----- */
@@ -264,11 +284,13 @@ ImageMetaInformationModel.prototype.reset = function () {
  * @param {String} id The id of the image set for which its index should be returned.
  * @return {Number} Returns the index of the image set or -1.
  * **/
-ImageMetaInformationModel.prototype.__getIndexOfImageSet = function (id) {
+ImageMetaInformationModel.prototype.__getIndexOfImageSetInProject = function (id, projectId) {
     // Use this method instead of the array method for downward compatibility
     var imageSetIndex = -1;
 
-    this.getImageSets().forEach(function (imageSet, index) {
+    if (!projectId) { return -1; }
+
+    this.getImageSets(projectId).forEach(function (imageSet, index) {
         if(imageSet.getId() === id) {
             imageSetIndex = index;
 
