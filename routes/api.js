@@ -51,21 +51,21 @@ router.post('/addProject', function(req, res) {
 });
 
 router.put('/:id/editProject', function(req, res) {
-    var projectId = req.params.name;
+    var projectId = req.params.id;
     var projectName = JSON.parse(req.body.data).name;
 
-    imageManipulatorRepository.editProject(projectId, projectName, function (job) {
+    imageManipulatorRepository.editProject(projectId, projectName, function (wasSuccessful) {
         res.statusCode = 200;
-        res.json({message: 'OK', data: job});
+        res.json({message: 'OK', data: wasSuccessful});
     });
 });
 
 router.delete('/:id/removeProject', function(req, res) {
-    var projectId = req.params.name;
+    var projectId = req.params.id;
 
-    imageManipulatorRepository.removeProject(projectId, function (job) {
+    imageManipulatorRepository.removeProject(projectId, function () {
         res.statusCode = 200;
-        res.json({message: 'OK', data: job});
+        res.json({message: 'OK'});
     });
 });
 

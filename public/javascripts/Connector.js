@@ -81,7 +81,7 @@ Connector.prototype.addProject = function (name, callback) {
  * @param newName
  * @param callback
  */
-Connector.prototype.editProject = function (id, newName, callback) {
+Connector.prototype.editProject = function (newName, id, callback) {
     this.sendRequest('/' + id + '/editProject', 'PUT', { name: newName }, callback);
 };
 

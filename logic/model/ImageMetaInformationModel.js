@@ -69,7 +69,9 @@ ImageMetaInformationModel.prototype.getProjects = function() {
 ImageMetaInformationModel.prototype.getProject = function(projectId) {
     if (!projectId) { return null; }
 
-    return this.projects[projectId];
+    return this.projects.find(function (currentProject) {
+        return currentProject.getProjectId() === projectId;
+    });
 };
 
 /**
@@ -147,13 +149,13 @@ ImageMetaInformationModel.prototype.load = function (data) {
 
     // Overwrite default project only if no other projects could be loaded
     if (data.projects) {
-        this.projects = [];
-
         data.projects.forEach(function (projectData) {
             var project = new Project();
             project.load(projectData);
             that.projects.push(project);
         });
+    } else {
+        this.addProject('Default', '0');
     }
 
     // Calculate the biggest image difference of all sets
@@ -259,16 +261,25 @@ ImageMetaInformationModel.prototype.__init = function () {
     this.percentualPixelDifferenceThreshold = 0;
     this.distanceDifferenceThreshold = 0;
     this.timeStamp = '';
-    // ToDo This wont work -> JS has no associative arrays -> Problems with sending data to the FE
     this.projects = [];
-    // ToDo This should happen in the load method and not everytime
-    this.addProject('Default', '0');
 };
 
 ImageMetaInformationModel.prototype.addProject = function(projectName, projectId) {
     var project = new Project(projectName, projectId);
 
-    this.projects[project.getProjectId()] = project;
+    this.projects.push(project);
+
+    return project;
+};
+
+ImageMetaInformationModel.prototype.renameProject = function(newProjectName, projectId) {
+    var project = this.getProject(projectId);
+
+    if (!project) { return false; }
+
+    project.setProjectName(newProjectName);
+
+    return true;
 };
 
 ImageMetaInformationModel.prototype.deleteProject = function(projectId) {
@@ -277,8 +288,9 @@ ImageMetaInformationModel.prototype.deleteProject = function(projectId) {
         return false;
     }
 
-    this.projects[projectId] = null;
-    // ToDo:   delete obj[k];
+    this.projects = this.projects.filter(function (currentProject) {
+        return currentProject.getProjectId() !== projectId;
+    });
 
     return true;
 };

@@ -40,28 +40,48 @@ TabManager.prototype.bindEvents = function () {
         that.$table.draw(that.project.imageSets, {showFailed: showFailed, showPassed: showPassed});
     });
 
-    // ToDo
+    // Adds another project and updates the select
     this.$container.on('click', 'button[data-action=addProject]', function () {
-        var $this = $(this);
         var newProjectName = prompt('Please enter the project name.','');
 
         if (newProjectName) {
-            that.connector.addProject(newProjectName, function (job) {
-                console.log(job, 'job');
+            that.connector.addProject(newProjectName, function (newProject) {
+                var newOption = that.__createProjectOption(newProject.id, newProject.name);
+
+                that.$container.find('#projectSelect').append(newOption);
             });
         } else {
             alert('Project name must not be empty.');
         }
     });
 
-    // ToDo
+    // Renames a project
     this.$container.on('click', 'button[data-action=editProject]', function () {
-        var $this = $(this);
+        var newProjectName = prompt('Please enter the project name.','');
+
+        if (newProjectName) {
+            var projectSelectOption = that.$container.find('#projectSelect :selected');
+            var projectToBeRenamedId = projectSelectOption.attr('data-id');
+
+            that.connector.editProject(newProjectName, projectToBeRenamedId, function (wasSuccessfull) {
+                projectSelectOption.text(newProjectName);
+            });
+        } else {
+            alert('Project name must not be empty.');
+        }
     });
 
-    // ToDo
+    // Removes a project
     this.$container.on('click', 'button[data-action=removeProject]', function () {
-        var $this = $(this);
+        var projectSelectOption = that.$container.find('#projectSelect :selected');
+        var projectToBeDeletedId = projectSelectOption.attr('data-id');
+
+        if (confirm("Dou you really want to delete the project? All items of that project will be deleted too.")) {
+            that.connector.removeProject(projectToBeDeletedId, function (wasSuccessfull) {
+                console.log(deletedProjectId, 'deletedProjectId');
+                projectSelectOption.remove();
+            });
+        }
     });
 
     // Changes the active project
@@ -80,7 +100,9 @@ TabManager.prototype.bindEvents = function () {
  * **/
 TabManager.prototype.draw = function (data) {
     var imageModel = data.imageMetaInformationModel;
+    var that = this;
     var content = '<div class="tab">';
+
     content += '<button class="tabButton active" data-passed=false data-failed=true data-action="changeTableContentMode">Failed</button>';
     content += '<button class="tabButton" data-passed=true data-failed=false data-action="changeTableContentMode">Passed</button>';
     content += '<button class="tabButton" data-passed=true data-failed=true data-action="changeTableContentMode">All</button>';
@@ -93,13 +115,15 @@ TabManager.prototype.draw = function (data) {
     content += '<select id="projectSelect" class="projectSelect" data-action="changeProject">';
 
     imageModel.projects.forEach(function (project) {
-        content += '<option data-id="' + project.id + '">' + project.name + '</option>';
+        content += that.__createProjectOption(project.id, project.name);
     });
 
     content += '</select>';
 
     content += '<div id="tabContent" class="tabcontent"/>';
 
+    // ToDo Disable certain buttons for All an default project
+    // ToDo
     // var projectSelectContent = '<option id="">All</option>';
 
     // var selectedProjectId = this.$projectSelector.find(':selected').attr('id');
@@ -131,4 +155,14 @@ TabManager.prototype.__getProject = function(projects) {
     return projects.find(function (project) {
         return projectId === project.id;
     });
+};
+
+/**
+ * ToDo
+ * @param projectId
+ * @param projectName
+ * @private
+ */
+TabManager.prototype.__createProjectOption = function (projectId, projectName) {
+    return '<option data-id="' + projectId + '">' + projectName + '</option>';
 };

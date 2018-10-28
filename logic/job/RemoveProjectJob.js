@@ -24,13 +24,16 @@ RemoveProjectJob.prototype = Object.create(Job.prototype);
  * @param {Function} callback The callback which will be called after the job execution is finished.
  * **/
 RemoveProjectJob.prototype.execute = function (imageMetaInformationModel, callback) {
+    var jobCreatorCallback = this.getCallbackFunction();
     this.imageMetaInformationModel = imageMetaInformationModel;
 
-    this.imageMetaInformationModel.deleteProject(this.projectId);
+    var wasSucessful = this.imageMetaInformationModel.deleteProject(this.projectId);
 
-    if (callback) {
-        callback(this);
+    if(jobCreatorCallback) {
+        jobCreatorCallback(wasSucessful);
     }
+    // Notify the job handler that this job is finished
+    callback();
 };
 
 /**

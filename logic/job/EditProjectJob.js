@@ -26,11 +26,16 @@ EditProjectJob.prototype = Object.create(Job.prototype);
  * @param {Function} callback The callback which will be called after the job execution is finished.
  * **/
 EditProjectJob.prototype.execute = function (imageMetaInformationModel, callback) {
+    var jobCreatorCallback = this.getCallbackFunction();
     this.imageMetaInformationModel = imageMetaInformationModel;
 
-    if (callback) {
-        callback(this);
+    var wasSucessful = this.imageMetaInformationModel.renameProject(this.newProjectName, this.projectId);
+
+    if(jobCreatorCallback) {
+        jobCreatorCallback(wasSucessful);
     }
+    // Notify the job handler that this job is finished
+    callback();
 };
 
 /**

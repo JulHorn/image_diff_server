@@ -28,10 +28,10 @@ AddProjectJob.prototype.execute = function (imageMetaInformationModel, callback)
 
     this.imageMetaInformationModel = imageMetaInformationModel;
 
-    this.imageMetaInformationModel.addProject(this.projectName);
+    var resultProject = this.imageMetaInformationModel.addProject(this.projectName);
 
     if(jobCreatorCallback) {
-        jobCreatorCallback(this);
+        jobCreatorCallback(resultProject);
     }
 
     // Notify the job handler that this job is finished
