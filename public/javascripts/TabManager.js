@@ -106,20 +106,21 @@ TabManager.prototype.draw = function (data) {
     content += '<button id="showFailedButton" class="tabButton" data-passed=true data-failed=false data-action="changeTableContentMode">Passed</button>';
     content += '<button class="tabButton" data-passed=true data-failed=true data-action="changeTableContentMode">All</button>';
 
-    // ToDo Wrap in div
-    content += '<button class="tabButton" data-action="addProject">Add</button>';
-    content += '<button class="tabButton" data-action="editProject">Edit</button>';
-    content += '<button class="tabButton" data-action="removeProject">Rem</button>';
-    // ToDo: Add class
+    content += '<div>';
+    content += '<button class="tabButtonProject" data-action="addProject">Add</button>';
+    content += '<button class="tabButtonProject" data-action="editProject">Edit</button>';
+    content += '<button class="tabButtonProject" data-action="removeProject">Rem</button>';
+
+    // ToDo: Add class, use icons for button
     // ToDo Add prototype select property for easier access
-    content += '<select id="projectSelect" class="projectSelect" data-action="changeProject">';
+    content += '<select id="projectSelect" class="tabSelectProject" data-action="changeProject">';
     content += '<option data-id="-1">All</option>';
     this.imageModel.projects.forEach(function (project) {
         content += that.__createProjectOption(project.id, project.name);
     });
 
     content += '</select>';
-
+    content += '</div>';
     content += '<div id="tabContent" class="tabcontent"/>';
 
     // ToDo Disable certain buttons for All an default project

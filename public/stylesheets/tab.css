@@ -18,6 +18,30 @@
   color: black;
 }
 
+.tab .tabButtonProject {
+  background-color: inherit;
+  float: right;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 14px;
+  color: black;
+}
+
+.tab .tabSelectProject {
+  background-color: inherit;
+  float: right;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 14px;
+  color: black;
+}
+
 /* Change background color of buttons on hover */
 .tab .tabButton:hover {
   background-color: #ddd;
