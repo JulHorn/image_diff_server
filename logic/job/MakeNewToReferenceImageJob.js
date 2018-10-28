@@ -32,7 +32,7 @@ MakeNewToReferenceImageJob.prototype.execute = function (imageMetaInformationMod
     // Single option -> Only one image has to be processed
     this.setImagesToBeProcessedCount(1);
 
-    this.__saveAndCompareImage(this.id, function () {
+    this.__saveAndCompareImage(this.id, function (updatedImageSet) {
         var jobCreatorCallback = that.getCallbackFunction();
         // Update the processed image count
         that.incrementProcessImageCounter();
@@ -42,7 +42,7 @@ MakeNewToReferenceImageJob.prototype.execute = function (imageMetaInformationMod
 
         /// Call callback of the job creator when stuff is done
         if (jobCreatorCallback) {
-            jobCreatorCallback(that);
+            jobCreatorCallback(that, updatedImageSet);
         }
 
         // Notify the job handler that this job is finished
@@ -66,7 +66,7 @@ MakeNewToReferenceImageJob.prototype.load = function (data) {
  * Makes a new image to a reference image. Updates and save the imageMetaInformationModel information model.
  *
  * @param {String} id Id of the image set for which the new image should be made a reference image.
- * @param {Function} callback Called when the complete deletion process is done. Has the updated image imageMetaInformationModel information model object as job.
+ * @param {Function} callback Called when the complete process is done. Has the updated image imageSet object as parameter.
  * **/
 MakeNewToReferenceImageJob.prototype.__saveAndCompareImage = function (id, callback) {
     var imageSet = this.getImageMetaInformationModel().getImageSetById(id);
@@ -89,7 +89,7 @@ MakeNewToReferenceImageJob.prototype.__saveAndCompareImage = function (id, callb
 
             // Call callback
             if(callback){
-                callback();
+                callback(imageSet);
             }
         });
     });

@@ -10,6 +10,7 @@ var TabManager = function (connector, callback) {
     this.callback = callback;
     this.connector = connector;
     this.$container = $('#content');
+    this.tableDrawOptions = {showFailed: true, showPassed: false};
 
     this.bindEvents();
 };
@@ -26,8 +27,8 @@ TabManager.prototype.bindEvents = function () {
     this.$container.on('click', 'button[data-action=changeTableContentMode]', function () {
         var $this = $(this);
         // Get display data
-        var showFailed = $this.data('failed');
         var showPassed = $this.data('passed');
+        var showFailed = $this.data('failed');
 
         // Set proper active state for tab button
         $('.tabButton').each(function () {
@@ -35,9 +36,10 @@ TabManager.prototype.bindEvents = function () {
         });
 
         $this.addClass('active');
+        that.tableDrawOptions = {showFailed: showFailed, showPassed: showPassed};
 
         // Draw the fancy table
-        that.$table.draw(that.project.imageSets, {showFailed: showFailed, showPassed: showPassed});
+        that.__drawTable();
     });
 
     // Adds another project and updates the select
@@ -86,10 +88,7 @@ TabManager.prototype.bindEvents = function () {
 
     // Changes the active project
     this.$container.on('change', 'select[data-action=changeProject]', function () {
-        var $this = $(this);
-
-        $this.data('id');
-        console.log($this);
+        that.__drawTable();
     });
 };
 
@@ -99,12 +98,12 @@ TabManager.prototype.bindEvents = function () {
  * @param {Object} data Contains all information about the run job.
  * **/
 TabManager.prototype.draw = function (data) {
-    var imageModel = data.imageMetaInformationModel;
     var that = this;
     var content = '<div class="tab">';
+    this.imageModel = data.imageMetaInformationModel;
 
-    content += '<button class="tabButton active" data-passed=false data-failed=true data-action="changeTableContentMode">Failed</button>';
-    content += '<button class="tabButton" data-passed=true data-failed=false data-action="changeTableContentMode">Passed</button>';
+    content += '<button id="showPassedButton" class="tabButton active" data-passed=false data-failed=true data-action="changeTableContentMode">Failed</button>';
+    content += '<button id="showFailedButton" class="tabButton" data-passed=true data-failed=false data-action="changeTableContentMode">Passed</button>';
     content += '<button class="tabButton" data-passed=true data-failed=true data-action="changeTableContentMode">All</button>';
 
     // ToDo Wrap in div
@@ -112,9 +111,10 @@ TabManager.prototype.draw = function (data) {
     content += '<button class="tabButton" data-action="editProject">Edit</button>';
     content += '<button class="tabButton" data-action="removeProject">Rem</button>';
     // ToDo: Add class
+    // ToDo Add prototype select property for easier access
     content += '<select id="projectSelect" class="projectSelect" data-action="changeProject">';
-
-    imageModel.projects.forEach(function (project) {
+    content += '<option data-id="-1">All</option>';
+    this.imageModel.projects.forEach(function (project) {
         content += that.__createProjectOption(project.id, project.name);
     });
 
@@ -124,37 +124,19 @@ TabManager.prototype.draw = function (data) {
 
     // ToDo Disable certain buttons for All an default project
     // ToDo
-    // var projectSelectContent = '<option id="">All</option>';
+
 
     // var selectedProjectId = this.$projectSelector.find(':selected').attr('id');
     // this.$numberOfSetsField.text(this.__getProject(selectedProjectId, imageModel.projects).imageSets.length);
 
-
-
-
-
     this.$container.html($(content));
 
+
+    // ToDo Declare prototype vars in constructor
     // Set data and draw initial table
-    this.project = this.__getProject(imageModel.projects);
     this.$tabContent = $('#tabContent');
-
-    this.$table = new Table(this.connector, this.$tabContent, this.project.id, this.callback);
-
-    this.$table.draw(this.project.imageSets, {showFailed: true, showPassed: false});
-};
-
-/**
- * ToDo: Comments, foreach to each?
- * @param projects
- * @private
- */
-TabManager.prototype.__getProject = function(projects) {
-    var projectId = $('#projectSelect :selected').attr('data-id');
-
-    return projects.find(function (project) {
-        return projectId === project.id;
-    });
+    this.$table = new Table(this.connector, this.$tabContent, this.callback);
+    this.__drawTable();
 };
 
 /**
@@ -165,4 +147,30 @@ TabManager.prototype.__getProject = function(projects) {
  */
 TabManager.prototype.__createProjectOption = function (projectId, projectName) {
     return '<option data-id="' + projectId + '">' + projectName + '</option>';
+};
+
+TabManager.prototype.__drawTable = function () {
+    var projectId = $('#projectSelect :selected').attr('data-id');
+    var imageSetsToDraw = [];
+
+    console.log(this.imageModel.projects, 'this.imageModel.projects');
+    console.log(projectId, 'projectId');
+    // Get all imageSets if "All" in project select was is selected
+    if (projectId === '-1') {
+        this.imageModel.projects.forEach(function (project) {
+            console.log(project, 'project');
+            imageSetsToDraw = imageSetsToDraw.concat(project.imageSets);
+            console.log(imageSetsToDraw, 'imageSetsToDraw');
+        });
+    } else {
+        var selectedProject = this.imageModel.projects.find(function (project) {
+            return projectId === project.id;
+        });
+
+        imageSetsToDraw = selectedProject.imageSets;
+    }
+
+
+    console.log(imageSetsToDraw, 'imageSetsToDraw2');
+    this.$table.draw(imageSetsToDraw, this.tableDrawOptions);
 };

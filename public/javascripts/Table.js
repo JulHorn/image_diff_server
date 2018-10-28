@@ -3,13 +3,11 @@
  *
  * @param {Connector} connector The object to send requests to the server
  * @param container The container (e.g. a div) in which the table will be drawn in
- * @param projectId ToDo
  * @param {Function} callback Called when the UI needs an update.
  * **/
-var Table = function (connector, container, projectId, callback) {
+var Table = function (connector, container, callback) {
     this.callback = callback;
     this.connector = connector;
-    this.projectId = projectId;
     this.$container = container;
 
     this.bindEvents();
@@ -64,14 +62,9 @@ Table.prototype.bindEvents = function () {
         that.__enableLoaderForRow(id);
 
         that.connector.makeToNewReferenceImage(id, function (data) {
-            // Modify only the row where the action was triggered
-            var resultImageSet = that.__getImageSetById(id, data.imageMetaInformationModel);
-
             informationLabel.text('New reference image');
             // Draw all other components but the table because there could be some bad performance with a lot of images
-            that.callback(data, that);
-            // Update the row manually for a better performance
-            that.__updateImageSetMetaInformation(resultImageSet, id);
+            that.callback(data.job, that);
             that.__disableLoaderForRow(id);
         });
     });
@@ -282,21 +275,6 @@ Table.prototype.__createDefaultDescriptionCellContent = function (image) {
 };
 
 /**
- * Returns an ImageModelSet.
- *
- * @param {String} id The id of the image set which should be retrieved.
- * @param {Object} imageMetaModel The image information imageMetaInformationModel in which the sets are located.
- * @return {Object} The found image set.
- * **/
-Table.prototype.__getImageSetById = function (id, imageMetaModel) {
-    var project = this.__getProject(this.projectId, imageMetaModel.projects);
-
-    return project.imageSets.filter(function (imageSet) {
-        return imageSet.id === id;
-    })[0];
-};
-
-/**
  * Creates the default content of a cell (image with link, basic information).
  *
  * @return {String} The created cell content.
@@ -317,45 +295,6 @@ Table.prototype.__createImageCellContent = function (image) {
     cellContent += '</div>';
 
     return cellContent;
-};
-
-/**
- * Updates the image information/imageMetaInformationModel information.
- *
- * @param {Object} resultImageSet The image set with the new information.
- * @param {String} id The id of an image set.
- * **/
-Table.prototype.__updateImageSetMetaInformation = function (resultImageSet, id) {
-    var $body = $('body');
-    var refImg = $body.find('tr[id="imageRow_' + id + '"] td[role="referenceImage"]');
-    var diffImg = $body.find('tr[id="imageRow_' + id + '"] td[role="diffImage"]');
-    var imageSuffix = '?timestamp=' + new Date().getTime();
-
-    // Set new images
-    diffImg.find('a[role="imageLink"]').attr('href', this.__sanitizeImagePaths(resultImageSet.diffImage.path) + imageSuffix);
-    diffImg.find('img[role="image"]').attr('src', this.__sanitizeImagePaths(resultImageSet.diffImage.path) + imageSuffix);
-    refImg.find('a[role="imageLink"]').attr('href', this.__sanitizeImagePaths(resultImageSet.referenceImage.path) + imageSuffix);
-    refImg.find('img[role="image"]').attr('src', this.__sanitizeImagePaths(resultImageSet.referenceImage.path) + imageSuffix);
-
-    // Display images and hide the no image existing text
-    refImg.find('a[role="imageLink"]').removeClass('hidden');
-    diffImg.find('a[role="imageLink"]').removeClass('hidden');
-    refImg.find('.noImageAvailableText').addClass('hidden');
-    diffImg.find('.noImageAvailableText').addClass('hidden');
-
-    // Set meta information
-    var refDesc = $body.find('tr[id="descriptionRow_' + id + '"] td[role="referenceDescription"]');
-    var diffDesc = $body.find('tr[id="descriptionRow_' + id + '"] td[role="diffDescription"]');
-
-    refDesc.find('*[role="imageName"]').text(resultImageSet.referenceImage.name);
-    diffDesc.find('*[role="imageName"]').text(resultImageSet.diffImage.name);
-    refDesc.find('*[role="height"]').text(resultImageSet.referenceImage.height);
-    diffDesc.find('*[role="height"]').text(resultImageSet.referenceImage.height);
-    refDesc.find('*[role="width"]').text(resultImageSet.referenceImage.width);
-    diffDesc.find('*[role="width"]').text(resultImageSet.referenceImage.width);
-    diffDesc.find('*[role="error"]').text(resultImageSet.error);
-    diffDesc.find('*[role="percPixelDifference"]').text(resultImageSet.difference);
-    diffDesc.find('*[role="distanceDifference"]').text(resultImageSet.distance);
 };
 
 /**
@@ -418,16 +357,4 @@ Table.prototype.__getLoader = function (imageSetId) {
  * **/
 Table.prototype.__sanitizeImagePaths = function (imagePath) {
     return imagePath.replace('public', '.').replace(/\\/g, '/');
-};
-
-/**
- * ToDo: Comments, foreach to each?
- * @param projectId
- * @param projects
- * @private
- */
-Table.prototype.__getProject = function(projectId, projects) {
-    return projects.find(function (project) {
-        return projectId === project.id;
-    });
 };

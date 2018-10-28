@@ -71,14 +71,14 @@ ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function
  * Makes a new image to a reference image. Updates and save the imageMetaInformationModel information model.
  *
  * @param {String} id Id of the image set for which the new image should be made a reference image.
- * @param {Function} callback Called when the complete deletion process is done. Has the updated image imageMetaInformationModel information model object as job.
+ * @param {Function} callback Called when the complete process is done. Has the job and updated image set as parameter.
  * **/
 ImageManipulatorRepository.prototype.makeToNewReferenceImage = function (id, callback) {
     // Add create diff images job to the job handler
     jobHandler.addJob(
-        new MakeToNewReferenceImageJob(id, function (job) {
+        new MakeToNewReferenceImageJob(id, function (job, updatedImageSet) {
             if (callback) {
-                callback(job);
+                callback(job, updatedImageSet);
             }
         }
     ));
