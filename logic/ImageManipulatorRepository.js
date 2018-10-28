@@ -3,9 +3,10 @@ var DeleteJob = require('./job/DeleteJob');
 var MakeToNewReferenceImageJob = require('./job/MakeNewToReferenceImageJob');
 var ModifyIgnoreAreasJob = require('./job/ModifyIgnoreAreasJob');
 var CompareImageByNameJob = require('./job/CompareImageByNameJob');
-var AddProjectJob = require('./job/AddProjectLog');
+var AddProjectJob = require('./job/AddProjectJob');
 var EditProjectJob = require('./job/EditProjectJob');
 var RemoveProjectJob = require('./job/RemoveProjectJob');
+var AssignImageSetToProjectJob = require('./job/AssignImageSetToProjectJob');
 var ImageManipulator = require('./ImageManipulator');
 var logger = require('winston');
 var config = require('./ConfigurationLoader');
@@ -197,6 +198,26 @@ ImageManipulatorRepository.prototype.removeProject = function (projectId, callba
         new RemoveProjectJob(projectId, function (wasSuccessful) {
 
             logger.info("Removed project " + projectId);
+
+            if (callback) {
+                callback(wasSuccessful);
+            }
+        }
+    ));
+};
+
+/**
+ *
+ * @param imageSetId
+ * @param projectIdFrom
+ * @param projectIdTo
+ * @param callback
+ */
+ImageManipulatorRepository.prototype.assignImageSetToProject = function (imageSetId, projectIdFrom, projectIdTo, callback) {
+    jobHandler.addJob(
+        new AssignImageSetToProjectJob(imageSetId, projectIdFrom, projectIdTo, function (wasSuccessful) {
+
+            logger.info("Moved imageSet " + imageSetId + " from project " + projectIdFrom + " to project " + projectIdTo);
 
             if (callback) {
                 callback(wasSuccessful);

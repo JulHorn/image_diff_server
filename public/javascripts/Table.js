@@ -13,6 +13,8 @@ var Table = function (connector, container, callback) {
     this.bindEvents();
 };
 
+// ToDo check data-id calls for attr('data-id') and use data('id') instead
+
 /* ----- Methods ----- */
 
 /**
@@ -68,55 +70,78 @@ Table.prototype.bindEvents = function () {
             that.__disableLoaderForRow(id);
         });
     });
+
+    // Register event to enable the change of the imageSet project
+    this.$container.on('change', 'select[data-action=changeProject]', function () {
+        var $this = $(this);
+        var imageSetId = $this.data('imagesetid');
+        var oldProjectId = $this.data('oldprojectid');
+        var newProjectId = $this.find(':selected').data('id');
+
+        // Disables the edited row and displayes a loading icon
+        that.__enableLoaderForRow(imageSetId);
+
+        that.connector.assignImageSetToProject(imageSetId, oldProjectId, newProjectId, function (data) {
+            // Draw all other components but the table because there could be some bad performance with a lot of images
+            //that.callback(data.job, that);
+            that.__disableLoaderForRow(imageSetId);
+        });
+    });
 };
 
 /**
  * Draws the table and its content.
  * ToDo: Update doc
- * @param imageSets
+ * @param projects
  * @param {Object} displayOptions It is possible to set the properties showFailed/showPassed with boolean values to determine
  *  what should be displayed in the table. If no object was given, only the failure image sets will be displayed.
 * **/
-Table.prototype.draw = function (imageSets, displayOptions) {
+Table.prototype.draw = function (projects, displayOptions) {
     var that = this;
     var rowColor = 'dark';
     var tableHasContent = false;
     // Create table header
     var content = '<table class="tableImageSets"><thead><th class="tableimageSetsHeadlineCell">Reference</th><th>New</th><th>Diff</th></thead></table>';
 
-    // Create one image and one description corresponding row for every image set
-    imageSets.forEach(function (imageSet) {
-        var display = that.__shouldImageSetBeDisplayed(displayOptions, imageSet.isThresholdBreached);
+    projects.forEach(function (project) {
+        if (displayOptions.projects.includes(project.id)) {
+            // Create one image and one description corresponding row for every image set
+            project.imageSets.forEach(function (imageSet) {
+                var display = that.__shouldImageSetBeDisplayed(displayOptions, imageSet.isThresholdBreached);
 
-        // Only display sets with a breached threshold
-        // E.g. images with no breached threshold and ignore zones will be correctly displayed or not
-        if(display) {
-            // Get content for the image and description rows
-            var imageRowContent = that.__createImageRow(imageSet);
-            var descriptionRowContent = that.__createDescriptionRow(imageSet);
-            var headerRowContent = that.__createHeaderRow(imageSet);
+                // Only display sets with a breached threshold
+                // E.g. images with no breached threshold and ignore zones will be correctly displayed or not
+                if(display) {
+                    // Get content for the image and description rows
+                    var imageRowContent = that.__createImageRow(imageSet);
+                    var descriptionRowContent = that.__createDescriptionRow(imageSet);
+                    var headerRowContent = that.__createHeaderRow(imageSet, project.id, projects);
 
-            // Add the content as new rows to the table
-            content += '<div class="imageSet" id="imageSet_' + imageSet.id + '">';
-            content += '<table class="tableImageSets">';
-            content += '<tr id="headerRow_' + imageSet.id + '" class="headerRow ' + rowColor + '">' + headerRowContent + '</tr>';
-            content += '<tr id="imageRow_' + imageSet.id + '" class="imageRow ' + rowColor + '">' + imageRowContent + '</tr>';
-            content += '<tr id="descriptionRow_' + imageSet.id + '" class="descriptionRow ' + rowColor + '">' + descriptionRowContent + '</tr>';
-            content += '</table>';
-            content += '<div class="loader">' + that.__createAjaxLoadingIcon() + '</div>';
-            content += '</div>';
+                    // Add the content as new rows to the table
+                    content += '<div class="imageSet" id="imageSet_' + imageSet.id + '" projectId="' + project.id + '">';
+                    content += '<table class="tableImageSets">';
+                    content += '<tr id="headerRow_' + imageSet.id + '" class="headerRow ' + rowColor + '">' + headerRowContent + '</tr>';
+                    content += '<tr id="imageRow_' + imageSet.id + '" class="imageRow ' + rowColor + '">' + imageRowContent + '</tr>';
+                    content += '<tr id="descriptionRow_' + imageSet.id + '" class="descriptionRow ' + rowColor + '">' + descriptionRowContent + '</tr>';
+                    content += '</table>';
+                    content += '<div class="loader">' + that.__createAjaxLoadingIcon() + '</div>';
+                    content += '</div>';
 
-            // Modify color class for each row
-            if(rowColor === 'light') {
-                rowColor = 'dark';
-            } else {
-                rowColor = 'light';
-            }
-            // Used to determine whether a placeholder should be dispayed
-            tableHasContent = true;
+                    // Modify color class for each row
+                    if(rowColor === 'light') {
+                        rowColor = 'dark';
+                    } else {
+                        rowColor = 'light';
+                    }
+                    // Used to determine whether a placeholder should be dispayed
+                    tableHasContent = true;
+                }
+
+            });
         }
-
     });
+
+
 
     // Display info text if table has no data to prevent a faulty looking table
     if (tableHasContent) {
@@ -181,9 +206,12 @@ Table.prototype.__createImageRow = function (imageSet) {
  * Returns the content of for the header row.
  *
  * @param {Object} imageSet The imageSet object which contains the information about the images.
+ * @param projectId
+ * @param projects ToDo
  * @return {String} The header content for a table row.
  * */
-Table.prototype.__createHeaderRow = function (imageSet) {
+Table.prototype.__createHeaderRow = function (imageSet, projectId, projects) {
+    var that = this;
     var rowContent = '';
     var name = '';
 
@@ -193,7 +221,15 @@ Table.prototype.__createHeaderRow = function (imageSet) {
     else { name = 'No name found.'; }
 
     rowContent += '<td colspan="3">';
+    rowContent += '<div>';
     rowContent += '<h2>' + name + '</h2>';
+    rowContent += '<select data-oldProjectId="' + projectId + '" data-imageSetId="' + imageSet.id + '" data-action="changeProject">';
+    projects.forEach(function (project) {
+        rowContent += that.__createProjectOption(project.id, project.name);
+    });
+
+    rowContent += '</select>';
+    rowContent += '</div>';
     rowContent += '</td>';
 
 
@@ -357,4 +393,14 @@ Table.prototype.__getLoader = function (imageSetId) {
  * **/
 Table.prototype.__sanitizeImagePaths = function (imagePath) {
     return imagePath.replace('public', '.').replace(/\\/g, '/');
+};
+
+/**
+* ToDo
+* @param projectId
+* @param projectName
+* @private
+*/
+Table.prototype.__createProjectOption = function (projectId, projectName) {
+    return '<option data-id="' + projectId + '">' + projectName + '</option>';
 };

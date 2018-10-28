@@ -63,9 +63,21 @@ router.put('/:id/editProject', function(req, res) {
 router.delete('/:id/removeProject', function(req, res) {
     var projectId = req.params.id;
 
-    imageManipulatorRepository.removeProject(projectId, function () {
+    imageManipulatorRepository.removeProject(projectId, function (wasSuccessful) {
         res.statusCode = 200;
-        res.json({message: 'OK'});
+        res.json({message: 'OK', data: wasSuccessful});
+    });
+});
+
+router.put('/:id/assignImageSetToProject', function(req, res) {
+    var reqData = JSON.parse(req.body.data);
+    var imageSetId = req.params.id;
+    var projectIdFrom = reqData.projectIdFrom;
+    var projectIdTo = reqData.projectIdTo;
+
+    imageManipulatorRepository.assignImageSetToProject(imageSetId, projectIdFrom, projectIdTo, function (wasSuccessful) {
+        res.statusCode = 200;
+        res.json({message: 'OK', data: wasSuccessful});
     });
 });
 

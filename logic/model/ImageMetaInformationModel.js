@@ -3,6 +3,7 @@ var Project = require('./ProjectModel');
 var config = require('../ConfigurationLoader');
 
 // ToDo: Add comments and use getter and make default project somewhat more global, check UUID type
+// ToDo Check if methods should really be in this class
 
 /**
  * Constructor. Loads the imageMetaInformationModel information in the imageMetaInformationModel information text file, if it does exist.
@@ -264,6 +265,12 @@ ImageMetaInformationModel.prototype.__init = function () {
     this.projects = [];
 };
 
+/**
+ * ToDo
+ * @param projectName
+ * @param projectId
+ * @return {ProjectModel}
+ */
 ImageMetaInformationModel.prototype.addProject = function(projectName, projectId) {
     var project = new Project(projectName, projectId);
 
@@ -272,6 +279,12 @@ ImageMetaInformationModel.prototype.addProject = function(projectName, projectId
     return project;
 };
 
+/**
+ * ToDo
+ * @param newProjectName
+ * @param projectId
+ * @return {boolean}
+ */
 ImageMetaInformationModel.prototype.renameProject = function(newProjectName, projectId) {
     var project = this.getProject(projectId);
 
@@ -282,6 +295,11 @@ ImageMetaInformationModel.prototype.renameProject = function(newProjectName, pro
     return true;
 };
 
+/**
+ * ToDo
+ * @param projectId
+ * @return {boolean}
+ */
 ImageMetaInformationModel.prototype.deleteProject = function(projectId) {
     if (!projectId || projectId === '0') {
         logger.warn('Tried to delete default project or no project id given. Canceled. Given project id: ' + projectId);
@@ -291,6 +309,22 @@ ImageMetaInformationModel.prototype.deleteProject = function(projectId) {
     this.projects = this.projects.filter(function (currentProject) {
         return currentProject.getProjectId() !== projectId;
     });
+
+    return true;
+};
+
+/**
+ * ToDo Error Handling
+ *
+ * @param imageSetId
+ * @param projectIdFrom
+ * @param projectIdTo
+ * @return {boolean}
+ */
+ImageMetaInformationModel.prototype.assignImageSetToProject = function(imageSetId, projectIdFrom, projectIdTo) {
+    var imageSetToBeMoved = this.getImageSetById(imageSetId, projectIdFrom);
+    this.addImageSet(imageSetToBeMoved, projectIdTo);
+    this.deleteImageSetFromModel(imageSetId, projectIdFrom);
 
     return true;
 };

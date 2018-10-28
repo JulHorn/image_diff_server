@@ -5,9 +5,10 @@ var MakeNewToReferenceImageJob = require('./job/MakeNewToReferenceImageJob');
 var ImageMetaInformationModel = require('./model/ImageMetaInformationModel');
 var ModifyIgnoreAreasJob = require('./job/ModifyIgnoreAreasJob');
 var CompareImageByNameJob = require('./job/CompareImageByNameJob');
-var AddProjectJob = require('./job/AddProjectLog');
+var AddProjectJob = require('./job/AddProjectJob');
 var EditProjectJob = require('./job/EditProjectJob');
 var RemoveProjectJob = require('./job/RemoveProjectJob');
+var AssignImageSetToProjectJob = require('./job/AssignImageSetToProjectJob');
 var logger = require('winston');
 var config = require('./ConfigurationLoader');
 var fs = require('fs-extra');
@@ -210,6 +211,9 @@ JobHandler.prototype.__loadJob = function (jobData) {
             break;
         case 'RemoveProjectJob':
             job = new RemoveProjectJob();
+            break;
+        case 'AssignImageSetToProjectJob':
+            job = new AssignImageSetToProjectJob();
             break;
         case 'EmptyJob':
             return new Job('EmptyJob');

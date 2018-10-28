@@ -3,17 +3,21 @@ var Job = require('./Job');
 /**
  * Job which computes the difference of two images by image names and updates the ImageMetaInformationModel accordingly.
  *
- * @param projectName ToDo
+ * @param imageSetId
+ * @param projectIdFrom ToDo
+ * @param projectIdTo
  * @param {Function} callback The callback method which is called, when diff process has finished. Has the this job as parameter.
  * @constructor
  * **/
-var AddProjectJob = function (projectName, callback) {
-    Job.call(this, 'AddProjectJob', callback);
-    this.projectName = projectName;
+var AssignImageSetToProjectJob = function (imageSetId, projectIdFrom, projectIdTo, callback) {
+    Job.call(this, 'AssignImageSetToProjectJob', callback);
+    this.imageSetId = imageSetId;
+    this.projectIdFrom = projectIdFrom;
+    this.projectIdTo = projectIdTo;
 };
 
 // Do inheritance
-AddProjectJob.prototype = Object.create(Job.prototype);
+AssignImageSetToProjectJob.prototype = Object.create(Job.prototype);
 
 /* ----- Action ----- */
 
@@ -23,15 +27,15 @@ AddProjectJob.prototype = Object.create(Job.prototype);
  * @param {ImageMetaInformationModel} imageMetaInformationModel The image meta model in which the results will be saved.
  * @param {Function} callback The callback which will be called after the job execution is finished.
  * **/
-AddProjectJob.prototype.execute = function (imageMetaInformationModel, callback) {
+AssignImageSetToProjectJob.prototype.execute = function (imageMetaInformationModel, callback) {
     var jobCreatorCallback = this.getCallbackFunction();
-
+// ToDo Add progress counter and to other jobs too
     this.imageMetaInformationModel = imageMetaInformationModel;
 
-    var resultProject = this.imageMetaInformationModel.addProject(this.projectName);
+    var wasSuccessful = this.imageMetaInformationModel.assignImageSetToProject(this.imageSetId, this.projectIdFrom, this.projectIdTo);
 
     if(jobCreatorCallback) {
-        jobCreatorCallback(resultProject);
+        jobCreatorCallback(wasSuccessful);
     }
 
     // Notify the job handler that this job is finished
@@ -39,13 +43,14 @@ AddProjectJob.prototype.execute = function (imageMetaInformationModel, callback)
 };
 
 /**
+ * ToDo: Check all load methods of new Jobs
  * Loads the data into this job. Used to restore a previous state of this object.
  *
  * @param {Object} data The object containing the information which this object should habe.
  * **/
-AddProjectJob.prototype.load = function (data) {
+AssignImageSetToProjectJob.prototype.load = function (data) {
     // Load data in the prototype
     this.loadJobData(data);
 };
 
-module.exports = AddProjectJob;
+module.exports = AssignImageSetToProjectJob;

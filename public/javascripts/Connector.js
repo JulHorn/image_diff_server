@@ -94,6 +94,10 @@ Connector.prototype.removeProject = function (id, callback) {
     this.sendRequest('/' + id + '/removeProject', 'DELETE', null, callback);
 };
 
+Connector.prototype.assignImageSetToProject = function (imageSetId, projectIdFrom, projectIdTo, callback) {
+    this.sendRequest('/' + imageSetId + '/assignImageSetToProject', 'PUT', { projectIdFrom : projectIdFrom, projectIdTo: projectIdTo }, callback);
+};
+
 /* ----- General Methods ----- */
 
 /**

@@ -10,7 +10,7 @@ var TabManager = function (connector, callback) {
     this.callback = callback;
     this.connector = connector;
     this.$container = $('#content');
-    this.tableDrawOptions = {showFailed: true, showPassed: false};
+    this.tableDrawOptions = {showFailed: true, showPassed: false, projects: []};
 
     this.bindEvents();
 };
@@ -151,26 +151,30 @@ TabManager.prototype.__createProjectOption = function (projectId, projectName) {
 
 TabManager.prototype.__drawTable = function () {
     var projectId = $('#projectSelect :selected').attr('data-id');
-    var imageSetsToDraw = [];
+    var projectsToDraw = [];
 
-    console.log(this.imageModel.projects, 'this.imageModel.projects');
-    console.log(projectId, 'projectId');
     // Get all imageSets if "All" in project select was is selected
     if (projectId === '-1') {
-        this.imageModel.projects.forEach(function (project) {
+        /*this.imageModel.projects.forEach(function (project) {
             console.log(project, 'project');
             imageSetsToDraw = imageSetsToDraw.concat(project.imageSets);
             console.log(imageSetsToDraw, 'imageSetsToDraw');
         });
+        */
+
+        this.imageModel.projects.forEach(function (project) {
+            projectsToDraw.push(project.id);
+        });
+
     } else {
         var selectedProject = this.imageModel.projects.find(function (project) {
             return projectId === project.id;
         });
 
-        imageSetsToDraw = selectedProject.imageSets;
+        projectsToDraw.push(selectedProject.id);
     }
 
+    this.tableDrawOptions.projects = projectsToDraw;
 
-    console.log(imageSetsToDraw, 'imageSetsToDraw2');
-    this.$table.draw(imageSetsToDraw, this.tableDrawOptions);
+    this.$table.draw(this.imageModel.projects, this.tableDrawOptions);
 };
