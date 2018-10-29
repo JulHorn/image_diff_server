@@ -10,8 +10,9 @@ block content
                         span Current job:
                         span(id='currentJob')
                 td
-                    span Last job finished:
-                        span(id='timeStamp')
+                    div
+                        span Pixel difference:
+                        span(id='maxPixelPercentage')
             tr
                 td
                     div
@@ -22,17 +23,13 @@ block content
                                 img(src='icons/reload.png')
                 td
                     div
-                        span Pixel difference:
-                        span(id='maxPixelPercentage')
+                        span Hamming distance:
+                        span(id='maxDistance')
             tr
                 td
                     div
-                        span Total results:
-                        span(id='numberOfSets')
-                td
-                    div
-                        span Hamming distance:
-                        span(id='maxDistance')
+                        span Last job finished:
+                        span(id='timeStamp')
             tr
                 td(colspan = 2)
                     div

@@ -1,4 +1,4 @@
-// ToDo Add all switch for projects, save last selected project in local storage
+// ToDo Add all switch for projects, save last selected project in local storage, disable remove/edit button when initially project is "All" or default
 
 /**
  * Offers for a small pseudo tab implementation based on https://www.w3schools.com/howto/howto_js_tabs.asp.
@@ -52,8 +52,6 @@ TabManager.prototype.bindEvents = function () {
 
                 that.$container.find('#projectSelect').append(newOption);
             });
-        } else {
-            alert('Project name must not be empty.');
         }
     });
 
@@ -68,8 +66,6 @@ TabManager.prototype.bindEvents = function () {
             that.connector.editProject(newProjectName, projectToBeRenamedId, function (wasSuccessfull) {
                 projectSelectOption.text(newProjectName);
             });
-        } else {
-            alert('Project name must not be empty.');
         }
     });
 
@@ -88,6 +84,24 @@ TabManager.prototype.bindEvents = function () {
 
     // Changes the active project
     this.$container.on('change', 'select[data-action=changeProject]', function () {
+        var currentProjectId = String($('#projectSelect :selected').data('id'));
+        var removeProjectButton = $('#removeProjectButton');
+        var editProjectButton = $('#editProjectButton');
+
+        //  Disables remove button for "All" and default project
+        if (currentProjectId === '-1' || currentProjectId === '0') {
+            removeProjectButton.attr('disabled', 'disabled');
+        } else {
+            removeProjectButton.removeAttr('disabled');
+        }
+
+        //  Disables edit button for "All"
+        if (currentProjectId === '-1') {
+            editProjectButton.attr('disabled', 'disabled');
+        } else {
+            editProjectButton.removeAttr('disabled');
+        }
+
         that.__drawTable();
     });
 };
@@ -102,14 +116,16 @@ TabManager.prototype.draw = function (data) {
     var content = '<div class="tab">';
     this.imageModel = data.imageMetaInformationModel;
 
+    content += '<div>';
     content += '<button id="showPassedButton" class="tabButton active" data-passed=false data-failed=true data-action="changeTableContentMode">Failed</button>';
     content += '<button id="showFailedButton" class="tabButton" data-passed=true data-failed=false data-action="changeTableContentMode">Passed</button>';
     content += '<button class="tabButton" data-passed=true data-failed=true data-action="changeTableContentMode">All</button>';
+    content += '</div>';
 
     content += '<div>';
-    content += '<button class="tabButtonProject" data-action="addProject">Add</button>';
-    content += '<button class="tabButtonProject" data-action="editProject">Edit</button>';
-    content += '<button class="tabButtonProject" data-action="removeProject">Rem</button>';
+    content += '<button id="addProjectButton" class="tabButtonProject" data-action="addProject">Add</button>';
+    content += '<button id="editProjectButton" class="tabButtonProject" data-action="editProject">Edit</button>';
+    content += '<button id="removeProjectButton" class="tabButtonProject" data-action="removeProject">Rem</button>';
 
     // ToDo: Add class, use icons for button
     // ToDo Add prototype select property for easier access
@@ -123,13 +139,6 @@ TabManager.prototype.draw = function (data) {
     content += '</div>';
     content += '<div id="tabContent" class="tabcontent"/>';
 
-    // ToDo Disable certain buttons for All an default project
-    // ToDo
-
-
-    // var selectedProjectId = this.$projectSelector.find(':selected').attr('id');
-    // this.$numberOfSetsField.text(this.__getProject(selectedProjectId, imageModel.projects).imageSets.length);
-
     this.$container.html($(content));
 
 
@@ -141,9 +150,10 @@ TabManager.prototype.draw = function (data) {
 };
 
 /**
- * ToDo
- * @param projectId
- * @param projectName
+ * Creates a an option element for a select with project information.
+ *
+ * @param {String} projectId The id of the project which will be added as data-id.
+ * @param {String} projectName The name that should be displayed.
  * @private
  */
 TabManager.prototype.__createProjectOption = function (projectId, projectName) {
@@ -151,17 +161,10 @@ TabManager.prototype.__createProjectOption = function (projectId, projectName) {
 };
 
 TabManager.prototype.__drawTable = function () {
-    var projectId = $('#projectSelect :selected').attr('data-id');
+    var projectId = String($('#projectSelect :selected').data('id'));
     var projectsToDraw = [];
-
     // Get all imageSets if "All" in project select was is selected
     if (projectId === '-1') {
-        /*this.imageModel.projects.forEach(function (project) {
-            console.log(project, 'project');
-            imageSetsToDraw = imageSetsToDraw.concat(project.imageSets);
-            console.log(imageSetsToDraw, 'imageSetsToDraw');
-        });
-        */
 
         this.imageModel.projects.forEach(function (project) {
             projectsToDraw.push(project.id);

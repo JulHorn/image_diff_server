@@ -13,7 +13,6 @@ var Table = function (connector, container, callback) {
     this.bindEvents();
 };
 
-// ToDo check data-id calls for attr('data-id') and use data('id') instead
 
 /* ----- Methods ----- */
 
@@ -91,8 +90,8 @@ Table.prototype.bindEvents = function () {
 
 /**
  * Draws the table and its content.
- * ToDo: Update doc
- * @param projects
+ *
+ * @param {Array} projects All existing projects.
  * @param {Object} displayOptions It is possible to set the properties showFailed/showPassed with boolean values to determine
  *  what should be displayed in the table. If no object was given, only the failure image sets will be displayed.
 * **/
@@ -206,8 +205,8 @@ Table.prototype.__createImageRow = function (imageSet) {
  * Returns the content of for the header row.
  *
  * @param {Object} imageSet The imageSet object which contains the information about the images.
- * @param projectId
- * @param projects ToDo
+ * @param {String} projectId The project id of the image set the header id should be created for.
+ * @param {Array} projects All existing projects.
  * @return {String} The header content for a table row.
  * */
 Table.prototype.__createHeaderRow = function (imageSet, projectId, projects) {
@@ -396,9 +395,10 @@ Table.prototype.__sanitizeImagePaths = function (imagePath) {
 };
 
 /**
-* ToDo
-* @param projectId
-* @param projectName
+* Creates a an option element for a select with project information.
+ *
+* @param {String} projectId The id of the project which will be added as data-id.
+* @param {String} projectName The name that should be displayed.
 * @private
 */
 Table.prototype.__createProjectOption = function (projectId, projectName) {

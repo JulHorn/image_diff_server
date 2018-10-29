@@ -67,33 +67,44 @@ Connector.prototype.modifyIgnoreAreas = function (id, ignoreAreas, callback) {
 };
 
 /**
- * ToDo
- * @param name
- * @param callback
+ * Add/create a project.
+ *
+ * @param {String} name Name of the new project.
+ * @param {Function} callback Called when the request is done.
  */
 Connector.prototype.addProject = function (name, callback) {
     this.sendRequest('/addProject', 'POST', { name: name }, callback);
 };
 
 /**
- * ToDo
- * @param id
- * @param newName
- * @param callback
+ * Edit an existing project.
+ *
+ * @param {String} newName The new name of the project.
+ * @param {String} id Project which should be modified.
+ * @param {Function} callback callback Called when the request is done.
  */
 Connector.prototype.editProject = function (newName, id, callback) {
     this.sendRequest('/' + id + '/editProject', 'PUT', { name: newName }, callback);
 };
 
 /**
- * ToDo
- * @param id
- * @param callback
+ * Deletes a project.
+ *
+ * @param {String} id Id of the project to be deleted.
+ * @param {Function} callback  callback Called when the request is done.
  */
 Connector.prototype.removeProject = function (id, callback) {
     this.sendRequest('/' + id + '/removeProject', 'DELETE', null, callback);
 };
 
+/**
+ * Assign an image set to another project.
+ *
+ * @param {String} imageSetId The id of the image set which should be assigned to another project.
+ * @param {String} projectIdFrom Id of the current project.
+ * @param {String} projectIdTo Id of the project it should be assigned to.
+ * @param {Function} callback callback Called when the request is done.
+ */
 Connector.prototype.assignImageSetToProject = function (imageSetId, projectIdFrom, projectIdTo, callback) {
     this.sendRequest('/' + imageSetId + '/assignImageSetToProject', 'PUT', { projectIdFrom : projectIdFrom, projectIdTo: projectIdTo }, callback);
 };

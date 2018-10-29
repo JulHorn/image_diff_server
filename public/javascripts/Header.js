@@ -64,9 +64,6 @@ Header.prototype.draw = function (data) {
     this.$progressIndicator.attr('max',data.imagesToBeProcessedCount);
     this.$progressIndicator.val(data.processedImageCount);
     this.$currentJobField.text(data.jobName);
-
-    // ToDo: Move this to TabManager
-    this.$numberOfSetsField.text(imageModel.projects[0].imageSets.length);
 };
 
 /**
@@ -74,7 +71,6 @@ Header.prototype.draw = function (data) {
  * **/
 Header.prototype.__initElements = function () {
     this.$timeStampField = this.$container.find('#timeStamp');
-    this.$numberOfSetsField = this.$container.find('#numberOfSets');
     this.$maxPixelPercentageField = this.$container.find('#maxPixelPercentage');
     this.$maxDistanceField = this.$container.find('#maxDistance');
     this.$progressIndicator = this.$container.find('#progressIndicator');
