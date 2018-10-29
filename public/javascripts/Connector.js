@@ -129,7 +129,7 @@ Connector.prototype.sendRequest = function (url, method, data, callback) {
         data: { data: JSON.stringify(data) }
     })
     .done(function (data) {
-        console.log('Request was successfull: ', url, method, data);
+        console.log('Request was successful: ', url, method, data);
 
         if (callback) {
             if (typeof data.data === 'undefined' || data.data === null) {

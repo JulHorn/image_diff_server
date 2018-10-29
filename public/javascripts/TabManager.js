@@ -1,5 +1,3 @@
-// ToDo Add all switch for projects, save last selected project in local storage, disable remove/edit button when initially project is "All" or default
-
 /**
  * Offers for a small pseudo tab implementation based on https://www.w3schools.com/howto/howto_js_tabs.asp.
  *
@@ -84,24 +82,7 @@ TabManager.prototype.bindEvents = function () {
 
     // Changes the active project
     this.$container.on('change', 'select[data-action=changeProject]', function () {
-        var currentProjectId = String($('#projectSelect :selected').data('id'));
-        var removeProjectButton = $('#removeProjectButton');
-        var editProjectButton = $('#editProjectButton');
-
-        //  Disables remove button for "All" and default project
-        if (currentProjectId === '-1' || currentProjectId === '0') {
-            removeProjectButton.attr('disabled', 'disabled');
-        } else {
-            removeProjectButton.removeAttr('disabled');
-        }
-
-        //  Disables edit button for "All"
-        if (currentProjectId === '-1') {
-            editProjectButton.attr('disabled', 'disabled');
-        } else {
-            editProjectButton.removeAttr('disabled');
-        }
-
+        that.__updateProjectButtonStates();
         that.__drawTable();
     });
 };
@@ -146,6 +127,7 @@ TabManager.prototype.draw = function (data) {
     // Set data and draw initial table
     this.$tabContent = $('#tabContent');
     this.$table = new Table(this.connector, this.$tabContent, this.callback);
+    that.__updateProjectButtonStates();
     this.__drawTable();
 };
 
@@ -181,4 +163,29 @@ TabManager.prototype.__drawTable = function () {
     this.tableDrawOptions.projects = projectsToDraw;
 
     this.$table.draw(this.imageModel.projects, this.tableDrawOptions);
+};
+
+/**
+ * Updates the current state of the editProject and removeProject buttons.
+ *
+ * @private
+ */
+TabManager.prototype.__updateProjectButtonStates = function () {
+    var currentProjectId = String($('#projectSelect :selected').data('id'));
+    var removeProjectButton = $('#removeProjectButton');
+    var editProjectButton = $('#editProjectButton');
+
+    //  Disables remove button for "All" and default project
+    if (currentProjectId === '-1' || currentProjectId === '0') {
+        removeProjectButton.attr('disabled', 'disabled');
+    } else {
+        removeProjectButton.removeAttr('disabled');
+    }
+
+    //  Disables edit button for "All"
+    if (currentProjectId === '-1') {
+        editProjectButton.attr('disabled', 'disabled');
+    } else {
+        editProjectButton.removeAttr('disabled');
+    }
 };
