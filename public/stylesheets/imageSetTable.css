@@ -145,3 +145,15 @@
   line-height: 50px;
   height: 50px;
 }
+
+.projectSelectProject {
+  background-color: inherit;
+  margin: -12px auto 15px auto;
+  display: block;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 14px;
+  color: black;
+}

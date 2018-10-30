@@ -33,10 +33,10 @@
 .tab .tabSelectProject {
   background-color: inherit;
   float: right;
-  border: none;
+  border: black;
   outline: none;
   cursor: pointer;
-  padding: 14px 16px;
+  margin: 14px 16px;
   transition: 0.3s;
   font-size: 14px;
   color: black;

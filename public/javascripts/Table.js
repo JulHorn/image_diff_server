@@ -15,6 +15,7 @@ var Table = function (connector, container, callback) {
 
 // ToDo Make add work propery for non default projects
 // ToDo Prevent imageSets to be added when there is already an image with the same name in another project (API adaption should be enough)
+// ToDo Remove/Make to new reference as before without reloading whole table. Give a thirdish parameter instead to callback instead which just sets the data in TabManager
 /* ----- Methods ----- */
 
 /**
@@ -219,7 +220,7 @@ Table.prototype.__createHeaderRow = function (imageSet, projectId, projects) {
     rowContent += '<td colspan="3">';
     rowContent += '<div>';
     rowContent += '<h2>' + name + '</h2>';
-    rowContent += '<select data-oldProjectId="' + projectId + '" data-imageSetId="' + imageSet.id + '" data-action="changeProject">';
+    rowContent += '<select class="projectSelectProject" data-oldProjectId="' + projectId + '" data-imageSetId="' + imageSet.id + '" data-action="changeProject">';
     projects.forEach(function (project) {
         var isActiveProject = projectId === project.id;
 
