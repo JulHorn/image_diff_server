@@ -35,7 +35,7 @@ AssignImageSetToProjectJob.prototype.execute = function (imageMetaInformationMod
     var wasSuccessful = this.imageMetaInformationModel.assignImageSetToProject(this.imageSetId, this.projectIdFrom, this.projectIdTo);
 
     if(jobCreatorCallback) {
-        jobCreatorCallback(wasSuccessful);
+        jobCreatorCallback(this, wasSuccessful);
     }
 
     // Notify the job handler that this job is finished

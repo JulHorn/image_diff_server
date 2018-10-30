@@ -76,9 +76,9 @@ router.put('/:id/assignImageSetToProject', function(req, res) {
     var projectIdFrom = reqData.projectIdFrom;
     var projectIdTo = reqData.projectIdTo;
 
-    imageManipulatorRepository.assignImageSetToProject(imageSetId, projectIdFrom, projectIdTo, function (wasSuccessful) {
+    imageManipulatorRepository.assignImageSetToProject(imageSetId, projectIdFrom, projectIdTo, function (job, wasSuccessful) {
         res.statusCode = 200;
-        res.json({message: 'OK', data: wasSuccessful});
+        res.json({message: 'OK', data: job});
     });
 });
 

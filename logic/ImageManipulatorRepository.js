@@ -215,12 +215,12 @@ ImageManipulatorRepository.prototype.removeProject = function (projectId, callba
  */
 ImageManipulatorRepository.prototype.assignImageSetToProject = function (imageSetId, projectIdFrom, projectIdTo, callback) {
     jobHandler.addJob(
-        new AssignImageSetToProjectJob(imageSetId, projectIdFrom, projectIdTo, function (wasSuccessful) {
+        new AssignImageSetToProjectJob(imageSetId, projectIdFrom, projectIdTo, function (job, wasSuccessful) {
 
             logger.info("Moved imageSet " + imageSetId + " from project " + projectIdFrom + " to project " + projectIdTo);
 
             if (callback) {
-                callback(wasSuccessful);
+                callback(job, wasSuccessful);
             }
         }
     ));

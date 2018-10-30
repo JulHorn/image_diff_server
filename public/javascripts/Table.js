@@ -32,10 +32,7 @@ Table.prototype.bindEvents = function () {
 
         that.connector.delete($(this).data('id'), function (data) {
             // Draw all other components but the table because there could be some bad performance with a lot of images
-            that.callback(data, that);
-
-            // Remove the row manually for a better user experience
-            that.$container.find('#imageSet_' + id).remove();
+            that.callback(data, that, true);
         });
     });
 
@@ -82,7 +79,7 @@ Table.prototype.bindEvents = function () {
 
         that.connector.assignImageSetToProject(imageSetId, oldProjectId, newProjectId, function (data) {
             // Draw all other components but the table because there could be some bad performance with a lot of images
-            //that.callback(data.job, that);
+            that.callback(data, that, true);
             that.__disableLoaderForRow(imageSetId);
         });
     });
@@ -224,7 +221,9 @@ Table.prototype.__createHeaderRow = function (imageSet, projectId, projects) {
     rowContent += '<h2>' + name + '</h2>';
     rowContent += '<select data-oldProjectId="' + projectId + '" data-imageSetId="' + imageSet.id + '" data-action="changeProject">';
     projects.forEach(function (project) {
-        rowContent += that.__createProjectOption(project.id, project.name);
+        var isActiveProject = projectId === project.id;
+
+        rowContent += that.__createProjectOption(project.id, project.name, isActiveProject);
     });
 
     rowContent += '</select>';
@@ -399,8 +398,15 @@ Table.prototype.__sanitizeImagePaths = function (imagePath) {
  *
 * @param {String} projectId The id of the project which will be added as data-id.
 * @param {String} projectName The name that should be displayed.
+* @param {Boolean} isActiveProject Determines wheter the option should be active initially.
 * @private
 */
-Table.prototype.__createProjectOption = function (projectId, projectName) {
-    return '<option data-id="' + projectId + '">' + projectName + '</option>';
+Table.prototype.__createProjectOption = function (projectId, projectName, isActiveProject) {
+    var activeOption = '';
+
+    if (isActiveProject) {
+        activeOption = 'selected';
+    }
+
+    return '<option data-id="' + projectId + '" ' + activeOption + '>' + projectName + '</option>';
 };
