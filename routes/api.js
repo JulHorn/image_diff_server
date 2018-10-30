@@ -5,7 +5,7 @@ var config = require('../logic/ConfigurationLoader');
 
 // ToDo: Add projectId params
 // ToDo Prefix incoming screenshots with project id to prevent name clashing
-
+// ToDo Rename response params to something more speaking or unify them
 router.post('/checkAll', function(req, res) {
     // This request might take a while to finish the computations -> Needs a longer timeout,
     // so that the client will not run into a timeout
@@ -29,7 +29,7 @@ router.put('/:id/makeToNewReferenceImage', function(req, res) {
 
     imageManipulatorRepository.makeToNewReferenceImage(setId, function (job, updatedImageSet) {
         res.statusCode = 200;
-        res.json({message: 'OK', data: {job: job, updatedImageSet: updatedImageSet}});
+        res.json({message: 'OK', data: job, updatedImageSet: updatedImageSet});
     });
 });
 

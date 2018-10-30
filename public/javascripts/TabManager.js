@@ -127,9 +127,8 @@ TabManager.prototype.draw = function (data) {
     // Set data and draw initial table
     this.$tabContent = $('#tabContent');
     this.$table = new Table(this.connector, this.$tabContent, function (data, ignoreComponent, onlyRedrawComponent) {
-        console.log(data, 'data');
+        console.log(data, 'dataTable');
         if (onlyRedrawComponent) {
-            console.log(onlyRedrawComponent, 'onlyRedrawComponent');
             that.imageModel = data.imageMetaInformationModel;
             that.__drawTable();
         } else {
@@ -154,6 +153,7 @@ TabManager.prototype.__createProjectOption = function (projectId, projectName) {
 TabManager.prototype.__drawTable = function () {
     var projectId = String($('#projectSelect :selected').data('id'));
     var projectsToDraw = [];
+    console.log(this.imageModel, 'this.imageModel');
     // Get all imageSets if "All" in project select was is selected
     if (projectId === '-1') {
 

@@ -13,7 +13,8 @@ var Table = function (connector, container, callback) {
     this.bindEvents();
 };
 
-
+// ToDo Make add work propery for non default projects
+// ToDo Prevent imageSets to be added when there is already an image with the same name in another project (API adaption should be enough)
 /* ----- Methods ----- */
 
 /**
@@ -31,7 +32,6 @@ Table.prototype.bindEvents = function () {
         that.__enableLoaderForRow(id);
 
         that.connector.delete($(this).data('id'), function (data) {
-            // Draw all other components but the table because there could be some bad performance with a lot of images
             that.callback(data, that, true);
         });
     });
@@ -61,9 +61,9 @@ Table.prototype.bindEvents = function () {
 
         that.connector.makeToNewReferenceImage(id, function (data) {
             informationLabel.text('New reference image');
-            // Draw all other components but the table because there could be some bad performance with a lot of images
-            that.callback(data.job, that);
             that.__disableLoaderForRow(id);
+            console.log(data, 'datadatadatadata');
+            that.callback(data, that, true);
         });
     });
 
