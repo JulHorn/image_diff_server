@@ -106,6 +106,15 @@ ImageSetModel.prototype.isThresholdBreached = function () {
 /* ----- Setter ----- */
 
 /**
+ * Sets the id.
+ *
+ * @param {String} id Sets the id. must be unique to avoid  side effects.
+ * **/
+ImageSetModel.prototype.setId = function (id) {
+    this.id = id;
+};
+
+/**
  * Sets the percentual pixel difference between the reference and new image.
  *
  * @param {Number} difference The difference between the reference and new image.

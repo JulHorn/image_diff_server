@@ -40,6 +40,7 @@ TabManager.prototype.bindEvents = function () {
         that.__drawTable();
     });
 
+    // ToDo make callback refresh table
     // Adds another project and updates the select
     this.$container.on('click', 'button[data-action=addProject]', function () {
         var newProjectName = prompt('Please enter the project name.','');

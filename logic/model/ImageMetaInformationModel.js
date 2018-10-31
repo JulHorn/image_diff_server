@@ -63,6 +63,11 @@ ImageMetaInformationModel.prototype.getImageSets = function(projectId){
     return resultImageSets;
 };
 
+/**
+ * ToDo
+ *
+ * @return {Project}
+ */
 ImageMetaInformationModel.prototype.getProjects = function() {
     return this.projects;
 };
@@ -149,7 +154,7 @@ ImageMetaInformationModel.prototype.load = function (data) {
     this.setTimeStamp(data.timeStamp);
 
     // Overwrite default project only if no other projects could be loaded
-    if (data.projects) {
+    if (data.projects && data.projects.length > 0) {
         data.projects.forEach(function (projectData) {
             var project = new Project();
             project.load(projectData);
@@ -173,6 +178,16 @@ ImageMetaInformationModel.prototype.load = function (data) {
  * **/
 ImageMetaInformationModel.prototype.addImageSet = function (imageSetToBeAdded, projectId) {
     var project = this.getProject(projectId);
+
+    // Try to find project without project id
+    if (!project) {
+        project = this.getProjects().find(function (currentProject) {
+             return currentProject.getImageSets().find(function (currentImageSet) {
+                return imageSetToBeAdded.getId() === currentImageSet.getId();
+            });
+        });
+    }
+
 
     //  Use given project or undeletable default project
     project = project ? project : this.getProject('0');
