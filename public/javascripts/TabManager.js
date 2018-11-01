@@ -127,12 +127,14 @@ TabManager.prototype.draw = function (data) {
     // ToDo Declare prototype vars in constructor
     // Set data and draw initial table
     this.$tabContent = $('#tabContent');
-    this.$table = new Table(this.connector, this.$tabContent, function (data, ignoreComponent, onlyRedrawComponent) {
+    this.$table = new Table(this.connector, this.$tabContent, function (data, ignoreComponent, redrawOption) {
         console.log(data, 'dataTable');
-        if (onlyRedrawComponent) {
+        if (redrawOption === 'redrawTable') {
             that.imageModel = data.imageMetaInformationModel;
             that.__drawTable();
-        } else {
+        } else if (redrawOption === 'redrawNone') {
+            that.imageModel = data.imageMetaInformationModel;
+        }else {
             that.callback(data, ignoreComponent);
         }
     });

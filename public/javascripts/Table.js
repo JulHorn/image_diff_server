@@ -15,7 +15,7 @@ var Table = function (connector, container, callback) {
 
 // ToDo Make add work propery for non default projects
 // ToDo Prevent imageSets to be added when there is already an image with the same name in another project (API adaption should be enough)
-// ToDo Remove/Make to new reference as before without reloading whole table. Give a thirdish parameter instead to callback instead which just sets the data in TabManager
+// ToDo Make add not reload the whole table
 /* ----- Methods ----- */
 
 /**
@@ -33,7 +33,10 @@ Table.prototype.bindEvents = function () {
         that.__enableLoaderForRow(id);
 
         that.connector.delete($(this).data('id'), function (data) {
-            that.callback(data, that, true);
+            that.callback(data, that, 'redrawNone');
+
+            // Remove the row manually for a better user experience
+            that.$container.find('#imageSet_' + id).remove();
         });
     });
 
@@ -62,9 +65,9 @@ Table.prototype.bindEvents = function () {
 
         that.connector.makeToNewReferenceImage(id, function (data) {
             informationLabel.text('New reference image');
+            that.callback(data, that, 'redrawTable');
+
             that.__disableLoaderForRow(id);
-            console.log(data, 'datadatadatadata');
-            that.callback(data, that, true);
         });
     });
 
@@ -80,7 +83,7 @@ Table.prototype.bindEvents = function () {
 
         that.connector.assignImageSetToProject(imageSetId, oldProjectId, newProjectId, function (data) {
             // Draw all other components but the table because there could be some bad performance with a lot of images
-            that.callback(data, that, true);
+            that.callback(data, that, 'redrawTable');
             that.__disableLoaderForRow(imageSetId);
         });
     });
