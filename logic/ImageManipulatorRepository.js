@@ -233,12 +233,13 @@ ImageManipulatorRepository.prototype.assignImageSetToProject = function (imageSe
  * @param {String} imageName The name of the image.
  * @param {String} imageType The type of the image (png, ...)
  * @param {String} imageBase64 The base 64 encoded image.
+ * @param projectId ToDo
  * @param {Function} callback Called when the complete image comparison process is done. Has the updated image imageMetaInformationModel information model object as job.
  */
-ImageManipulatorRepository.prototype.compareImageByName = function (imageName, imageType, imageBase64, callback) {
+ImageManipulatorRepository.prototype.compareImageByName = function (imageName, imageType, imageBase64, projectId, callback) {
 
     jobHandler.addJob(
-        new CompareImageByNameJob(imageName, imageType, imageBase64, function (job, resultImageSet) {
+        new CompareImageByNameJob(imageName, imageType, imageBase64, projectId, function (job, resultImageSet) {
 
             logger.info("Compared image " + imageName + "." + imageType + " with the threshold breached result: " + resultImageSet.isThresholdBreached);
 

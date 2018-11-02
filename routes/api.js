@@ -6,6 +6,7 @@ var config = require('../logic/ConfigurationLoader');
 // ToDo: Add projectId params
 // ToDo Prefix incoming screenshots with project id to prevent name clashing
 // ToDo Rename response params to something more speaking or unify them
+// ToDo Better Error Handling
 router.post('/checkAll', function(req, res) {
     // This request might take a while to finish the computations -> Needs a longer timeout,
     // so that the client will not run into a timeout
@@ -53,11 +54,13 @@ router.put('/:id/modifyIgnoreAreas', function(req, res) {
 });
 
 router.put('/compareImageByName', function(req, res) {
-    var imageBase64 = req.body.imageBase64;
-    var imageName = req.body.imageName;
-    var imageType = req.body.imageType;
+    var reqData = JSON.parse(req.body.data);
+    var imageBase64 = reqData.imageBase64;
+    var imageName = reqData.imageName;
+    var imageType = reqData.imageType;
+    var projectId = reqData.projectId;
 
-    imageManipulatorRepository.compareImageByName(imageName, imageType, imageBase64, function(job, isThresholdBreached) {
+    imageManipulatorRepository.compareImageByName(imageName, imageType, imageBase64, projectId, function(job, isThresholdBreached) {
         res.statusCode = 200;
         res.json({ message: 'OK', data: {job: job, isThresholdBreached: isThresholdBreached}});
     });

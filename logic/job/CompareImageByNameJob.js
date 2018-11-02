@@ -9,14 +9,16 @@ var path = require('path');
  * @param {String} imageName The name of the image.
  * @param {String} imageType The type of the image (png, ...)
  * @param {String} imageBase64 The base 64 encoded image.
+ * @param projectId ToDo
  * @param {Function} callback The callback method which is called, when diff process has finished. Has the this job as parameter.
  * @constructor
  * **/
-var CompareImageByNameJob = function (imageName, imageType, imageBase64, callback) {
+var CompareImageByNameJob = function (imageName, imageType, imageBase64, projectId, callback) {
     Job.call(this, 'CompareImageByNameJob', callback);
     this.imageName = imageName;
     this.imageType = imageType;
     this.imageBase64 = imageBase64;
+    this.projectId = projectId;
 };
 
 // Do inheritance
@@ -37,7 +39,7 @@ CompareImageByNameJob.prototype.execute = function (imageMetaInformationModel, c
     this.setImagesToBeProcessedCount(1);
 
     // Save the image to disc and compare it
-    this.__saveAndCompareImage(this.imageName, this.imageType, this.imageBase64, function (resultImageSet) {
+    this.__saveAndCompareImage(this.imageName, this.imageType, this.imageBase64, this.projectId, function (resultImageSet) {
         var jobCreatorCallback = that.getCallbackFunction();
         // Update the processed image count
         that.incrementProcessImageCounter();
@@ -74,9 +76,10 @@ CompareImageByNameJob.prototype.load = function (data) {
  * @param {String} imageName The name of the image.
  * @param {String} imageType The type of the image (png, ...)
  * @param {String} imageBase64 The base 64 encoded image.
+ * @param projectId ToDo
  * @param {Function} callback Called when the complete deletion process is done. Has the updated image imageMetaInformationModel information model object as job.
  * **/
-CompareImageByNameJob.prototype.__saveAndCompareImage = function (imageName, imageType, imageBase64, callback) {
+CompareImageByNameJob.prototype.__saveAndCompareImage = function (imageName, imageType, imageBase64, projectId, callback) {
     var fullImageName = imageName + '.' + imageType;
     var that = this;
     var filePath = config.getNewImageFolderPath() + path.sep + fullImageName;
@@ -97,12 +100,12 @@ CompareImageByNameJob.prototype.__saveAndCompareImage = function (imageName, ima
         // New image should always exist because it was just given
         var isReferenceImageExisting = that.getImageManipulator().isImageExisting(config.getReferenceImageFolderPath() + path.sep + fullImageName);
         if(isReferenceImageExisting) {
-            var imageSet = that.getImageMetaInformationModel().getImageSetByName(fullImageName);
+            var imageSet = that.getImageMetaInformationModel().getImageSetByName(fullImageName, projectId);
             var ignoreAreas = imageSet ? imageSet.getIgnoreAreas() : [];
 
             that.getImageManipulator().createDiffImage(fullImageName, false, ignoreAreas, function (resultSet) {
                 // Compare
-                that.getImageMetaInformationModel().addImageSet(resultSet);
+                that.getImageMetaInformationModel().addImageSet(resultSet, projectId);
                 that.calculateMetaInformation();
 
                 // Call callback
@@ -114,7 +117,7 @@ CompareImageByNameJob.prototype.__saveAndCompareImage = function (imageName, ima
         } else {
             that.getImageManipulator().loadImage(filePath, function (err, newImage) {
                 var resultImageSet = that.getImageManipulator().createSingleImageSet(fullImageName, newImage, 'There is no reference image existing yet.', false);
-                that.getImageMetaInformationModel().addImageSet(resultImageSet);
+                that.getImageMetaInformationModel().addImageSet(resultImageSet, projectId);
 
                 // Call callback
                 if(callback){
@@ -122,7 +125,6 @@ CompareImageByNameJob.prototype.__saveAndCompareImage = function (imageName, ima
                 }
             });
         }
-
     });
 };
 
