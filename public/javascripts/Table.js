@@ -29,7 +29,7 @@ Table.prototype.bindEvents = function () {
         var $this = $(this);
         var id = $this.data('id');
 
-        // Disables the edited row and displayes a loading icon
+        // Disables the edited row and displays a loading icon
         that.__enableLoaderForRow(id);
 
         that.connector.delete($(this).data('id'), function (data) {
@@ -54,7 +54,7 @@ Table.prototype.bindEvents = function () {
         });
     });
 
-    // Bind add new image to reference imageaction to add button
+    // Bind add new image to reference image action to add button
     this.$container.on('click', 'button[data-action=add]', function () {
         var $this = $(this);
         var informationLabel = $this.next('label');
@@ -65,7 +65,11 @@ Table.prototype.bindEvents = function () {
 
         that.connector.makeToNewReferenceImage(id, function (data) {
             informationLabel.text('New reference image');
-            that.callback(data, that, 'redrawTable');
+
+            // Draw all other components but the table because there could be some bad performance with a lot of images
+            that.callback(data, that);
+            // Update the row manually for a better performance
+            that.__updateImageSetMetaInformation(data.updatedImageSet, id);
 
             that.__disableLoaderForRow(id);
         });
@@ -140,8 +144,6 @@ Table.prototype.draw = function (projects, displayOptions) {
             });
         }
     });
-
-
 
     // Display info text if table has no data to prevent a faulty looking table
     if (tableHasContent) {
@@ -313,6 +315,19 @@ Table.prototype.__createDefaultDescriptionCellContent = function (image) {
 };
 
 /**
+ * Returns an ImageModelSet.
+ *
+ * @param {String} id The id of the image set which should be retrieved.
+ * @param {Object} imageMetaModel The image information imageMetaInformationModel in which the sets are located.
+ * @return {Object} The found image set.
+ * **/
+Table.prototype.__getImageSetById = function (id, imageMetaModel) {
+    return imageMetaModel.imageSets.filter(function (imageSet) {
+        return imageSet.id === id;
+    })[0];
+};
+
+/**
  * Creates the default content of a cell (image with link, basic information).
  *
  * @return {String} The created cell content.
@@ -333,6 +348,45 @@ Table.prototype.__createImageCellContent = function (image) {
     cellContent += '</div>';
 
     return cellContent;
+};
+
+/**
+ * Updates the image information/imageMetaInformationModel information.
+ *
+ * @param {Object} resultImageSet The image set with the new information.
+ * @param {String} id The id of an image set.
+ * **/
+Table.prototype.__updateImageSetMetaInformation = function (resultImageSet, id) {
+    var $body = $('body');
+    var refImg = $body.find('tr[id="imageRow_' + id + '"] td[role="referenceImage"]');
+    var diffImg = $body.find('tr[id="imageRow_' + id + '"] td[role="diffImage"]');
+    var imageSuffix = '?timestamp=' + new Date().getTime();
+
+    // Set new images
+    diffImg.find('a[role="imageLink"]').attr('href', this.__sanitizeImagePaths(resultImageSet.diffImage.path) + imageSuffix);
+    diffImg.find('img[role="image"]').attr('src', this.__sanitizeImagePaths(resultImageSet.diffImage.path) + imageSuffix);
+    refImg.find('a[role="imageLink"]').attr('href', this.__sanitizeImagePaths(resultImageSet.referenceImage.path) + imageSuffix);
+    refImg.find('img[role="image"]').attr('src', this.__sanitizeImagePaths(resultImageSet.referenceImage.path) + imageSuffix);
+
+    // Display images and hide the no image existing text
+    refImg.find('a[role="imageLink"]').removeClass('hidden');
+    diffImg.find('a[role="imageLink"]').removeClass('hidden');
+    refImg.find('.noImageAvailableText').addClass('hidden');
+    diffImg.find('.noImageAvailableText').addClass('hidden');
+
+    // Set meta information
+    var refDesc = $body.find('tr[id="descriptionRow_' + id + '"] td[role="referenceDescription"]');
+    var diffDesc = $body.find('tr[id="descriptionRow_' + id + '"] td[role="diffDescription"]');
+
+    refDesc.find('*[role="imageName"]').text(resultImageSet.referenceImage.name);
+    diffDesc.find('*[role="imageName"]').text(resultImageSet.diffImage.name);
+    refDesc.find('*[role="height"]').text(resultImageSet.referenceImage.height);
+    diffDesc.find('*[role="height"]').text(resultImageSet.referenceImage.height);
+    refDesc.find('*[role="width"]').text(resultImageSet.referenceImage.width);
+    diffDesc.find('*[role="width"]').text(resultImageSet.referenceImage.width);
+    diffDesc.find('*[role="error"]').text(resultImageSet.error);
+    diffDesc.find('*[role="percPixelDifference"]').text(resultImageSet.difference);
+    diffDesc.find('*[role="distanceDifference"]').text(resultImageSet.distance);
 };
 
 /**

@@ -135,7 +135,7 @@ TabManager.prototype.draw = function (data) {
         } else if (redrawOption === 'redrawNone') {
             that.imageModel = data.job.imageMetaInformationModel;
         }else {
-            that.callback(data, ignoreComponent);
+            that.callback(data, that);
         }
     });
     that.__updateProjectButtonStates();
