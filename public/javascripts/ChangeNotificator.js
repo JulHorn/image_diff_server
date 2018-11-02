@@ -37,7 +37,7 @@ ChangeNotificator.prototype.__registerComponents = function () {
 ChangeNotificator.prototype.__notify = function (data, ignoreComponent) {
     this.components.forEach(function (component) {
         if(component !== ignoreComponent) {
-            component.draw(data);
+            component.draw(data.job);
         }
     });
 };

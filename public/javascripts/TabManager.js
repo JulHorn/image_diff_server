@@ -130,10 +130,10 @@ TabManager.prototype.draw = function (data) {
     this.$table = new Table(this.connector, this.$tabContent, function (data, ignoreComponent, redrawOption) {
         console.log(data, 'dataTable');
         if (redrawOption === 'redrawTable') {
-            that.imageModel = data.imageMetaInformationModel;
+            that.imageModel = data.job.imageMetaInformationModel;
             that.__drawTable();
         } else if (redrawOption === 'redrawNone') {
-            that.imageModel = data.imageMetaInformationModel;
+            that.imageModel = data.job.imageMetaInformationModel;
         }else {
             that.callback(data, ignoreComponent);
         }

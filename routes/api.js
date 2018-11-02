@@ -20,7 +20,7 @@ router.post('/checkAll', function(req, res) {
         , bodyData.distThreshold
         , function (job, isThresholdBreached) {
             res.statusCode = 200;
-            res.json({message: 'OK', data: job, isThresholdBreached: isThresholdBreached});
+            res.json({message: 'OK', data: {job: job, isThresholdBreached: isThresholdBreached}});
         });
 });
 
@@ -29,7 +29,7 @@ router.put('/:id/makeToNewReferenceImage', function(req, res) {
 
     imageManipulatorRepository.makeToNewReferenceImage(setId, function (job, updatedImageSet) {
         res.statusCode = 200;
-        res.json({message: 'OK', data: job, updatedImageSet: updatedImageSet});
+        res.json({message: 'OK', data: {job: job, updatedImageSet: updatedImageSet}});
     });
 });
 
@@ -38,7 +38,44 @@ router.get('/:id/getImageSet', function(req, res) {
 
     imageManipulatorRepository.getImageSet(setId, function (imageSet) {
         res.statusCode = 200;
-        res.json({message: 'OK', data: imageSet});
+        res.json({message: 'OK', data: {resultImageSet: imageSet}});
+    });
+});
+
+router.put('/:id/modifyIgnoreAreas', function(req, res) {
+    var setId = req.params.id;
+    var ignoreAreas = JSON.parse(req.body.data).ignoreAreas;
+
+    imageManipulatorRepository.modifyIgnoreAreas(setId, ignoreAreas, function (imageSet) {
+        res.statusCode = 200;
+        res.json({message: 'OK', data: {resultImageSet: imageSet}});
+    });
+});
+
+router.put('/compareImageByName', function(req, res) {
+    var imageBase64 = req.body.imageBase64;
+    var imageName = req.body.imageName;
+    var imageType = req.body.imageType;
+
+    imageManipulatorRepository.compareImageByName(imageName, imageType, imageBase64, function(job, isThresholdBreached) {
+        res.statusCode = 200;
+        res.json({ message: 'OK', data: {job: job, isThresholdBreached: isThresholdBreached}});
+    });
+});
+
+router.get('/', function (req, res) {
+    imageManipulatorRepository.getLastActiveJob(function (job) {
+        res.statusCode = 200;
+        res.json({ message: 'OK', data: {job: job} });
+    });
+});
+
+router.delete('/:id', function (req, res) {
+    var setId = req.params.id;
+
+    imageManipulatorRepository.deleteImageSetFromModel(setId, function (job) {
+        res.statusCode = 200;
+        res.json({ message: 'OK', data: {job: job}});
     });
 });
 
@@ -79,43 +116,6 @@ router.put('/:id/assignImageSetToProject', function(req, res) {
     imageManipulatorRepository.assignImageSetToProject(imageSetId, projectIdFrom, projectIdTo, function (job, wasSuccessful) {
         res.statusCode = 200;
         res.json({message: 'OK', data: job});
-    });
-});
-
-router.put('/:id/modifyIgnoreAreas', function(req, res) {
-    var setId = req.params.id;
-    var ignoreAreas = JSON.parse(req.body.data).ignoreAreas;
-
-    imageManipulatorRepository.modifyIgnoreAreas(setId, ignoreAreas, function (imageSet) {
-        res.statusCode = 200;
-        res.json({message: 'OK', data: imageSet});
-    });
-});
-
-router.put('/compareImageByName', function(req, res) {
-    var imageBase64 = req.body.imageBase64;
-    var imageName = req.body.imageName;
-    var imageType = req.body.imageType;
-
-	imageManipulatorRepository.compareImageByName(imageName, imageType, imageBase64, function(job, isThresholdBreached) {
-        res.statusCode = 200;
-        res.json({ message: 'OK', data: job, isThresholdBreached: isThresholdBreached});
-	});
-});
-
-router.delete('/:id', function (req, res) {
-    var setId = req.params.id;
-
-    imageManipulatorRepository.deleteImageSetFromModel(setId, function (job) {
-        res.statusCode = 200;
-        res.json({ message: 'OK', data: job});
-    });
-});
-
-router.get('/', function (req, res) {
-    imageManipulatorRepository.getLastActiveJob(function (data) {
-        res.statusCode = 200;
-        res.json({ message: 'OK', data: data });
     });
 });
 

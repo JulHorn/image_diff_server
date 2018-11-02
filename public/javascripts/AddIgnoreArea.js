@@ -47,13 +47,13 @@ AddIgnoreArea.prototype.bindEvents = function () {
     this.$container.on('click', 'button[data-action=addIgnoreOk]', function () {
         var id = $(this).data('id');
 
-        that.connector.modifyIgnoreAreas(id, $('#addIgnoreImage').selectAreas('relativeAreas'), function (resultImageSet) {
+        that.connector.modifyIgnoreAreas(id, $('#addIgnoreImage').selectAreas('relativeAreas'), function (data) {
             that.$container.hide();
             that.$container.html('');
 
             // Call finish function
             if(that.callback) {
-                that.callback(resultImageSet);
+                that.callback(data.resultImageSet);
             }
         });
     });

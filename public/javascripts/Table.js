@@ -47,8 +47,8 @@ Table.prototype.bindEvents = function () {
         var id = $this.data('id');
         var imgPath = that.__sanitizeImagePaths($this.data('image'));
 
-        that.connector.getImageSet(id, function (imageSet) {
-            new AddIgnoreArea($ignoreRegion, that.connector).show(imgPath, imageSet, function (resultImageSet) {
+        that.connector.getImageSet(id, function (data) {
+            new AddIgnoreArea($ignoreRegion, that.connector).show(imgPath, data.resultImageSet, function (resultImageSet) {
                 $this.siblings('#ignoreAreaField').text(resultImageSet.ignoreAreas.length);
             });
         });
