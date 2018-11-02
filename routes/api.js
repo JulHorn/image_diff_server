@@ -82,9 +82,9 @@ router.delete('/:id', function (req, res) {
 router.post('/addProject', function(req, res) {
     var projectName = JSON.parse(req.body.data).name;
 
-    imageManipulatorRepository.addProject(projectName, function (job) {
+    imageManipulatorRepository.addProject(projectName, function (job, newProject) {
         res.statusCode = 200;
-        res.json({message: 'OK', data: job});
+        res.json({message: 'OK', data: {job: job, project: newProject}});
     });
 });
 
@@ -92,18 +92,18 @@ router.put('/:id/editProject', function(req, res) {
     var projectId = req.params.id;
     var projectName = JSON.parse(req.body.data).name;
 
-    imageManipulatorRepository.editProject(projectId, projectName, function (wasSuccessful) {
+    imageManipulatorRepository.editProject(projectId, projectName, function (job, wasSuccessful) {
         res.statusCode = 200;
-        res.json({message: 'OK', data: wasSuccessful});
+        res.json({message: 'OK', data: {job: job, wasSuccessful: wasSuccessful}});
     });
 });
 
 router.delete('/:id/removeProject', function(req, res) {
     var projectId = req.params.id;
 
-    imageManipulatorRepository.removeProject(projectId, function (wasSuccessful) {
+    imageManipulatorRepository.removeProject(projectId, function (job, wasSuccessful) {
         res.statusCode = 200;
-        res.json({message: 'OK', data: wasSuccessful});
+        res.json({message: 'OK', data: {job: job, wasSuccessful: wasSuccessful}});
     });
 });
 
@@ -115,7 +115,7 @@ router.put('/:id/assignImageSetToProject', function(req, res) {
 
     imageManipulatorRepository.assignImageSetToProject(imageSetId, projectIdFrom, projectIdTo, function (job, wasSuccessful) {
         res.statusCode = 200;
-        res.json({message: 'OK', data: job});
+        res.json({message: 'OK', data: {job: job, wasSuccessful: wasSuccessful}});
     });
 });
 

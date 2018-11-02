@@ -46,10 +46,10 @@ TabManager.prototype.bindEvents = function () {
         var newProjectName = prompt('Please enter the project name.','');
 
         if (newProjectName) {
-            that.connector.addProject(newProjectName, function (newProject) {
-                var newOption = that.__createProjectOption(newProject.id, newProject.name);
-
-                that.$container.find('#projectSelect').append(newOption);
+            that.connector.addProject(newProjectName, function (data) {
+                var newOption = that.__createProjectOption(data.project.id, data.project.name);
+                that.callback(data, null);
+               // that.$container.find('#projectSelect').append(newOption);
             });
         }
     });
@@ -62,7 +62,7 @@ TabManager.prototype.bindEvents = function () {
             var projectSelectOption = that.$container.find('#projectSelect :selected');
             var projectToBeRenamedId = projectSelectOption.attr('data-id');
 
-            that.connector.editProject(newProjectName, projectToBeRenamedId, function (wasSuccessfull) {
+            that.connector.editProject(newProjectName, projectToBeRenamedId, function (data) {
                 projectSelectOption.text(newProjectName);
             });
         }
@@ -74,9 +74,9 @@ TabManager.prototype.bindEvents = function () {
         var projectToBeDeletedId = projectSelectOption.attr('data-id');
 
         if (confirm("Dou you really want to delete the project? All items of that project will be deleted too.")) {
-            that.connector.removeProject(projectToBeDeletedId, function (wasSuccessfull) {
-                console.log(deletedProjectId, 'deletedProjectId');
-                projectSelectOption.remove();
+            that.connector.removeProject(projectToBeDeletedId, function (data) {
+                console.log(projectToBeDeletedId, 'deletedProjectId');
+                that.callback(data, null);
             });
         }
     });

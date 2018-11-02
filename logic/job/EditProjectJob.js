@@ -32,7 +32,7 @@ EditProjectJob.prototype.execute = function (imageMetaInformationModel, callback
     var wasSucessful = this.imageMetaInformationModel.renameProject(this.newProjectName, this.projectId);
 
     if(jobCreatorCallback) {
-        jobCreatorCallback(wasSucessful);
+        jobCreatorCallback(this, wasSucessful);
     }
     // Notify the job handler that this job is finished
     callback();

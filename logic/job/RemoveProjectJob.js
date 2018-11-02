@@ -30,7 +30,7 @@ RemoveProjectJob.prototype.execute = function (imageMetaInformationModel, callba
     var wasSucessful = this.imageMetaInformationModel.deleteProject(this.projectId);
 
     if(jobCreatorCallback) {
-        jobCreatorCallback(wasSucessful);
+        jobCreatorCallback(this, wasSucessful);
     }
     // Notify the job handler that this job is finished
     callback();

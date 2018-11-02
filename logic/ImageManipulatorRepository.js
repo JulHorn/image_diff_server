@@ -157,12 +157,12 @@ ImageManipulatorRepository.prototype.getImageSet = function (id, callback) {
  */
 ImageManipulatorRepository.prototype.addProject = function (projectName, callback) {
     jobHandler.addJob(
-        new AddProjectJob(projectName, function (job) {
+        new AddProjectJob(projectName, function (job, newProject) {
 
             logger.info("Added project " + projectName);
 
             if (callback) {
-                callback(job);
+                callback(job, newProject);
             }
         }
     ));
@@ -176,12 +176,12 @@ ImageManipulatorRepository.prototype.addProject = function (projectName, callbac
  */
 ImageManipulatorRepository.prototype.editProject = function (projectId, projectName, callback) {
     jobHandler.addJob(
-        new EditProjectJob(projectId, projectName, function (wasSuccessful) {
+        new EditProjectJob(projectId, projectName, function (job, wasSuccessful) {
 
             logger.info("Edited project " + projectId);
 
             if (callback) {
-                callback(wasSuccessful);
+                callback(job, wasSuccessful);
             }
         }
     ));
@@ -195,12 +195,12 @@ ImageManipulatorRepository.prototype.editProject = function (projectId, projectN
  */
 ImageManipulatorRepository.prototype.removeProject = function (projectId, callback) {
     jobHandler.addJob(
-        new RemoveProjectJob(projectId, function (wasSuccessful) {
+        new RemoveProjectJob(projectId, function (job, wasSuccessful) {
 
             logger.info("Removed project " + projectId);
 
             if (callback) {
-                callback(wasSuccessful);
+                callback(job, wasSuccessful);
             }
         }
     ));
