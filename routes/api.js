@@ -13,7 +13,7 @@ router.post('/checkAll', function(req, res) {
     res.setTimeout(config.getRequestTimeout());
     var bodyData = JSON.parse(req.body.data);
 
-    // ToDo
+    // Sets a default falue to the body data if it was null
     bodyData = bodyData ? bodyData : {};
 
     imageManipulatorRepository.calculateDifferencesForAllImages(bodyData.autoCrop

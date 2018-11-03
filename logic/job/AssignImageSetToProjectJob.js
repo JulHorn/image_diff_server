@@ -3,9 +3,9 @@ var Job = require('./Job');
 /**
  * Job which computes the difference of two images by image names and updates the ImageMetaInformationModel accordingly.
  *
- * @param imageSetId
- * @param projectIdFrom ToDo
- * @param projectIdTo
+ * @param {String} imageSetId The id of the image set that should be assigned to a new project.
+ * @param {String} projectIdFrom The id of the source project. If no id is given, the set will be searched through all projects.
+ * @param {String} projectIdTo The project the image set should be assigned to.
  * @param {Function} callback The callback method which is called, when diff process has finished. Has the this job as parameter.
  * @constructor
  * **/

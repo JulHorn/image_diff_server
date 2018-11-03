@@ -64,14 +64,20 @@ ImageMetaInformationModel.prototype.getImageSets = function(projectId){
 };
 
 /**
- * ToDo
+ * Returns all projects
  *
- * @return {Project}
+ * @return {Array} The projects.
  */
 ImageMetaInformationModel.prototype.getProjects = function() {
     return this.projects;
 };
 
+/**
+ * Returns the project by the giben project id. If none was found, null will be returned.
+ *
+ * @param {String} projectId The project id.
+ * @return {Project | null} The project by the giben project id. If none was found, null will be returned.
+ */
 ImageMetaInformationModel.prototype.getProject = function(projectId) {
     if (!projectId) { return null; }
 
@@ -84,7 +90,7 @@ ImageMetaInformationModel.prototype.getProject = function(projectId) {
  * Returns the image set with a specific id.
  *
  * @param {String} id The id of the image set which should be returned.
- * @param projectId ToDo
+ * @param {String} projectId The id of the project to which the imageSet belongs. If no id is given, the set will be searched through all projects.
  * @return {ImageSetModel|null} The found image set or null if none was found with the given id.
  * **/
 ImageMetaInformationModel.prototype.getImageSetById = function(id, projectId){
@@ -105,7 +111,7 @@ ImageMetaInformationModel.prototype.getImageSetById = function(id, projectId){
  * Returns the image set which contains a specific image name for its reference/new image.
  *
  * @param {String} imageName The name of the new/reference image for which its image set should be returned.
- * @param projectId ToDo
+ * @param {String} projectId The id of the project to which the imageSet belongs. If no id is given, the set will be searched through all projects.
  * @return {ImageSetModel|null} The found image set or null if none was found with the given id.
  * **/
 ImageMetaInformationModel.prototype.getImageSetByName = function(imageName, projectId){
@@ -174,7 +180,7 @@ ImageMetaInformationModel.prototype.load = function (data) {
  * Adds an image set. If an image set with the same (reference/new) image name exists, the existing image set will be updated.
  *
  * @param {ImageSetModel} imageSetToBeAdded The image set to add.
- * @param projectId ToDo
+ * @param {String} projectId The id of the project to which the imageSet will be added. If none was given or the id was not found, all projects will be searched for an existing image set with the same id and that one will be updated. Else, the image set will be added to the default project.
  * **/
 ImageMetaInformationModel.prototype.addImageSet = function (imageSetToBeAdded, projectId) {
     var project = this.getProject(projectId);
@@ -199,7 +205,7 @@ ImageMetaInformationModel.prototype.addImageSet = function (imageSetToBeAdded, p
  * Deletes an image set.
  *
  * @param {String} id The id of the image set to be deleted.
- * @param projectId ToDo
+ * @param {String} projectId The id of the project of which the imageSet will be removed. If none was given or the id was not found, all projects will be searched for an existing image set and that one will be removed.
  * **/
 ImageMetaInformationModel.prototype.deleteImageSetFromModel = function (id, projectId) {
     var project = this.getProject(projectId);
@@ -281,10 +287,11 @@ ImageMetaInformationModel.prototype.__init = function () {
 };
 
 /**
- * ToDo
- * @param projectName
- * @param projectId
- * @return {ProjectModel}
+ * Adds a new project to the ImageMetaInformationModel.
+ *
+ * @param {String} projectName The name of the new project.
+ * @param {String} projectId The id of the new project. Must be unique.
+ * @return {ProjectModel} The newly created project.
  */
 ImageMetaInformationModel.prototype.addProject = function(projectName, projectId) {
     var project = new Project(projectName, projectId);
@@ -295,10 +302,11 @@ ImageMetaInformationModel.prototype.addProject = function(projectName, projectId
 };
 
 /**
- * ToDo
- * @param newProjectName
- * @param projectId
- * @return {boolean}
+ * Renames an existing project of the ImageMetaInformationModel.
+ *
+ * @param {String} newProjectName The new project name.
+ * @param {String} projectId The id of the project of which the name should be changed.
+ * @return {boolean} True if the renaming was successful, else false.
  */
 ImageMetaInformationModel.prototype.renameProject = function(newProjectName, projectId) {
     var project = this.getProject(projectId);
@@ -311,9 +319,10 @@ ImageMetaInformationModel.prototype.renameProject = function(newProjectName, pro
 };
 
 /**
- * ToDo
- * @param projectId
- * @return {boolean}
+ * Deletes an existing project of the ImageMetaInformationModel.
+ *
+ * @param projectId The id of the project to be deleted.
+ * @return {boolean} True if the deletion was successful, else false.
  */
 ImageMetaInformationModel.prototype.deleteProject = function(projectId) {
     if (!projectId || projectId === '0') {

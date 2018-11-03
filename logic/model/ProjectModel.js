@@ -1,13 +1,13 @@
 var uuid = require('uuid/v4');
 var ImageSet = require('./ImageSetModel');
 
-// ToDo: Add comments
-
 /**
  * Constructor.
  *
+ * @param projectName Name of the project.
+ * @param projectId Id of the project. If none was given, a UID will be created.
  * @constructor
- * **/
+ */
 var ProjectModel = function (projectName, projectId) {
     this.name = projectName ? projectName : 'Name me';
     this.id = projectId ? projectId : uuid();
@@ -66,7 +66,7 @@ ProjectModel.prototype.setProjectId = function (projectId) {
 /* ----- Action Methods ----- */
 
 /**
- *
+ * Loads the given data with a project structure into this project.
  *
  * @param {Object} data The objects containing the data. The objects structure must be identical to this prototype.
  * **/
@@ -76,8 +76,10 @@ ProjectModel.prototype.load = function (data) {
     this.id = data.id;
     this.name = data.name;
 
+    // Add image sets
     data.imageSets.forEach(function (imageSetData) {
         var imageSet = new ImageSet();
+
         imageSet.load(imageSetData);
         that.addImageSet(imageSet);
     });
