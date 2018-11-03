@@ -2,7 +2,7 @@
 	"server":{
 		"port":"3000",
 		"timeoutInMs": 600000,
-		"workingMode": 0,
+		"workingMode": 1,
 		"maxNumberOfStoredJobs": 10,
 		"maxImageSize": 5
 	},

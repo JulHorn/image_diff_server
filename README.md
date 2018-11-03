@@ -33,7 +33,7 @@ In order to configure this project, rename the file "default-example.json" in th
 1. "server" 
     1. "port": The port under which the application is reachable. The default value  is 3000.
     2. "timeoutInMs": The timeout in milliseconds for the requests/responses, which need a lot of computation time (e.g. the "calculateDifferencesForAllImages" request). This is used to avoid connection timeouts. The default value is 600000. 
-    3. "workingMode": Determines the working mode. If the value is set to 0 and the server is already processing a request, incoming requests will be discarded. If the value is 1 and the server is already processing a request, incoming requests will be stored in a queue and will be processed via the FIFO principle. The default value is 0.
+    3. "workingMode": Determines the working mode. If the value is set to 0 and the server is already processing a request, incoming requests will be discarded. If the value is 1 and the server is already processing a request, incoming requests will be stored in a queue and will be processed via the FIFO principle. The default value is 1.
     4. "maxNumberOfStoredJob": The maximum number of jobs which will be stored in the job history. The history will be saved to disc, when a requests was processed successfully and loaded when the server starts. The default value is 10.
     5. "maxImageSize": The maximum allowed size in MB which is allowed for an imaged send via API.
 2. "images"
