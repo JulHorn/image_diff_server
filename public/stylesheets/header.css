@@ -26,9 +26,10 @@
     text-align: center;
 }
 
-#refreshButton img {
-    height: 12px;
-    width: 12px;
+#refreshButton i {
+    font-size: 10px;
+    margin: auto;
+    display: block;
 }
 
 #refreshButton {

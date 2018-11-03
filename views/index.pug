@@ -20,7 +20,7 @@ block content
                             span Progress:
                             progress(id='progressIndicator' value=0 max=10)
                             button(id='refreshButton' data-action='refresh')
-                                img(src='icons/reload.png')
+                                i(class="fas fa-sync-alt")
                 td
                     div
                         span Hamming distance:
@@ -40,3 +40,8 @@ block content
             input(type='text', id='serverAddress')
             button(data-action='saveServerAddress') Save
     div(id='content')
+    div(id='licenceBlock')
+        span Licence information:
+        ul
+            li The ajax loading icon was created via http://loading.io/.
+            li All other icons are part of Font Awesome (https://fontawesome.com/)

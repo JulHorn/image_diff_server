@@ -54,3 +54,11 @@ button:active {
   text-shadow: none;
   font-weight: 600;
 }
+
+#content {
+  margin-bottom: 10px;
+}
+
+#licenceBlock {
+  font-size:10px;
+}

@@ -138,6 +138,6 @@ where the jobs might look like that:
 
 Note: "imageSets" contains all image sets, even if the job did nothing with them. 
 
-## Licence
-1. The reload icon was created by Anastasya Bolshakova and taken from https://www.iconfinder.com/icons/984748/arrows_refresh_reload_update_icon. It is available under the Creative Commons (https://creativecommons.org/licenses/by/3.0/) licence. The icon color was changed to white.
-2. The ajax loading icon was created via http://loading.io/.
+## Licence information
+1. The ajax loading icon was created via http://loading.io/. 
+2. All other icons are part of Font Awesome (https://fontawesome.com/)

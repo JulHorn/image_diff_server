@@ -105,14 +105,15 @@ TabManager.prototype.draw = function (data) {
     content += '</div>';
 
     content += '<div>';
-    content += '<button id="addProjectButton" class="tabButtonProject" data-action="addProject">Add</button>';
-    content += '<button id="editProjectButton" class="tabButtonProject" data-action="editProject">Edit</button>';
-    content += '<button id="removeProjectButton" class="tabButtonProject" data-action="removeProject">Rem</button>';
+
+    content += '<button id="removeProjectButton" class="tabButtonProject" data-action="removeProject"><i class="far fa-trash-alt"></i></button>';
+    content += '<button id="editProjectButton" class="tabButtonProject" data-action="editProject"><i class="far fa-edit"></i></button>';
+    content += '<button id="addProjectButton" class="tabButtonProject" data-action="addProject"><i class="fas fa-plus"></i></button>';
 
     // ToDo: Add class, use icons for button
     // ToDo Add prototype select property for easier access
     content += '<select id="projectSelect" class="tabSelectProject" data-action="changeProject">';
-    content += '<option data-id="-1">All</option>';
+    content += '<option data-id="-1">All Projects</option>';
     this.imageModel.projects.forEach(function (project) {
         content += that.__createProjectOption(project.id, project.name);
     });
@@ -190,14 +191,18 @@ TabManager.prototype.__updateProjectButtonStates = function () {
     //  Disables remove button for "All" and default project
     if (currentProjectId === '-1' || currentProjectId === '0') {
         removeProjectButton.attr('disabled', 'disabled');
+        removeProjectButton.addClass('tabProjectButtonDisabled');
     } else {
+        removeProjectButton.removeClass('tabProjectButtonDisabled');
         removeProjectButton.removeAttr('disabled');
     }
 
     //  Disables edit button for "All"
     if (currentProjectId === '-1') {
         editProjectButton.attr('disabled', 'disabled');
+        editProjectButton.addClass('tabProjectButtonDisabled');
     } else {
+        editProjectButton.removeClass('tabProjectButtonDisabled');
         editProjectButton.removeAttr('disabled');
     }
 };
