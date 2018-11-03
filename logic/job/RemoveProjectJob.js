@@ -8,7 +8,7 @@ var Job = require('./Job');
  * @constructor
  * **/
 var RemoveProjectJob = function (projectId, callback) {
-    Job.call(this, 'EditProjectJob', callback);
+    Job.call(this, 'RemoveProjectJob', callback);
     this.projectId = projectId;
 };
 
@@ -26,8 +26,10 @@ RemoveProjectJob.prototype = Object.create(Job.prototype);
 RemoveProjectJob.prototype.execute = function (imageMetaInformationModel, callback) {
     var jobCreatorCallback = this.getCallbackFunction();
     this.imageMetaInformationModel = imageMetaInformationModel;
-
     var wasSucessful = this.imageMetaInformationModel.deleteProject(this.projectId);
+
+    this.setImagesToBeProcessedCount(1);
+    this.incrementProcessImageCounter();
 
     if(jobCreatorCallback) {
         jobCreatorCallback(this, wasSucessful);

@@ -4,8 +4,6 @@ var imageManipulatorRepository = require('../logic/ImageManipulatorRepository');
 var config = require('../logic/ConfigurationLoader');
 
 // ToDo: Add projectId params
-// ToDo Prefix incoming screenshots with project id to prevent name clashing
-// ToDo Rename response params to something more speaking or unify them
 // ToDo Better Error Handling
 router.post('/checkAll', function(req, res) {
     // This request might take a while to finish the computations -> Needs a longer timeout,

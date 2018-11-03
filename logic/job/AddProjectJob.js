@@ -3,7 +3,7 @@ var Job = require('./Job');
 /**
  * Job which computes the difference of two images by image names and updates the ImageMetaInformationModel accordingly.
  *
- * @param projectName ToDo
+ * @param {String} projectName Name of the project to be created.
  * @param {Function} callback The callback method which is called, when diff process has finished. Has the this job as parameter.
  * @constructor
  * **/
@@ -25,10 +25,12 @@ AddProjectJob.prototype = Object.create(Job.prototype);
  * **/
 AddProjectJob.prototype.execute = function (imageMetaInformationModel, callback) {
     var jobCreatorCallback = this.getCallbackFunction();
-// ToDo Add progress counter and to other jobs too
+    var resultProject = null;
     this.imageMetaInformationModel = imageMetaInformationModel;
 
-    var resultProject = this.imageMetaInformationModel.addProject(this.projectName);
+    resultProject = this.imageMetaInformationModel.addProject(this.projectName);
+    this.setImagesToBeProcessedCount(1);
+    this.incrementProcessImageCounter();
 
     if(jobCreatorCallback) {
         jobCreatorCallback(this, resultProject);

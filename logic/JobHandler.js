@@ -120,8 +120,6 @@ JobHandler.prototype.__executeJob = function() {
                 // Execute the next job
                 that.__executeJob();
             });
-        } else {
-            // ToDo: Some Error Handling or do nothing because there is nothing to do?
         }
     } catch (exception) {
         logger.error(exception);

@@ -40,7 +40,6 @@ TabManager.prototype.bindEvents = function () {
         that.__drawTable();
     });
 
-    // ToDo make callback refresh table
     // Adds another project and updates the select
     this.$container.on('click', 'button[data-action=addProject]', function () {
         var newProjectName = prompt('Please enter the project name.','');
@@ -49,7 +48,6 @@ TabManager.prototype.bindEvents = function () {
             that.connector.addProject(newProjectName, function (data) {
                 var newOption = that.__createProjectOption(data.project.id, data.project.name);
                 that.callback(data, null);
-               // that.$container.find('#projectSelect').append(newOption);
             });
         }
     });
@@ -63,7 +61,8 @@ TabManager.prototype.bindEvents = function () {
             var projectToBeRenamedId = projectSelectOption.attr('data-id');
 
             that.connector.editProject(newProjectName, projectToBeRenamedId, function (data) {
-                projectSelectOption.text(newProjectName);
+                // projectSelectOption.text(newProjectName);
+                that.callback(data, null);
             });
         }
     });
@@ -110,7 +109,6 @@ TabManager.prototype.draw = function (data) {
     content += '<button id="editProjectButton" class="tabButtonProject" data-action="editProject"><i class="far fa-edit"></i></button>';
     content += '<button id="addProjectButton" class="tabButtonProject" data-action="addProject"><i class="fas fa-plus"></i></button>';
 
-    // ToDo: Add class, use icons for button
     // ToDo Add prototype select property for easier access
     content += '<select id="projectSelect" class="tabSelectProject" data-action="changeProject">';
     content += '<option data-id="-1">All Projects</option>';

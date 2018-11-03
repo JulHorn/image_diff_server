@@ -29,10 +29,11 @@ AssignImageSetToProjectJob.prototype = Object.create(Job.prototype);
  * **/
 AssignImageSetToProjectJob.prototype.execute = function (imageMetaInformationModel, callback) {
     var jobCreatorCallback = this.getCallbackFunction();
-// ToDo Add progress counter and to other jobs too
     this.imageMetaInformationModel = imageMetaInformationModel;
-
     var wasSuccessful = this.imageMetaInformationModel.assignImageSetToProject(this.imageSetId, this.projectIdFrom, this.projectIdTo);
+
+    this.setImagesToBeProcessedCount(1);
+    this.incrementProcessImageCounter();
 
     if(jobCreatorCallback) {
         jobCreatorCallback(this, wasSuccessful);

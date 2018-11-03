@@ -150,10 +150,10 @@ ImageManipulatorRepository.prototype.getImageSet = function (id, callback) {
 };
 
 /**
- * ToDo
- * Add
+ * Add a new project to the image meta model.
  *
- * @param projectName
+ * @param {String} projectName The name of the project to be added.
+ * @param {Function} callback Called when finished. Has the job and the newly created project object as parameter.
  */
 ImageManipulatorRepository.prototype.addProject = function (projectName, callback) {
     jobHandler.addJob(
@@ -169,10 +169,11 @@ ImageManipulatorRepository.prototype.addProject = function (projectName, callbac
 };
 
 /**
- * ToDo
- * Add
+ * Renames the given project.
  *
- * @param projectId
+ * @param {String} projectId Project to be renamed.
+ * @param {String} projectName New name of the project.
+ * @param {Function} callback Called when finished. Has the job and a boolean (renaming was successful?) as parameter.
  */
 ImageManipulatorRepository.prototype.editProject = function (projectId, projectName, callback) {
     jobHandler.addJob(
@@ -188,10 +189,10 @@ ImageManipulatorRepository.prototype.editProject = function (projectId, projectN
 };
 
 /**
- * ToDo
- * Add
+ * Removes a project from the image manipulation repository.
  *
- * @param projectId
+ * @param {String} projectId The project to be removed.
+ * @param {Function} callback Called when finished. Has the job and a boolean (removing was successful?) as parameter.
  */
 ImageManipulatorRepository.prototype.removeProject = function (projectId, callback) {
     jobHandler.addJob(
@@ -207,11 +208,12 @@ ImageManipulatorRepository.prototype.removeProject = function (projectId, callba
 };
 
 /**
+ * Re-assigns an image set to another project.
  *
- * @param imageSetId
- * @param projectIdFrom
- * @param projectIdTo
- * @param callback
+ * @param {String} imageSetId The image set that should be re-assigned.
+ * @param {String} projectIdFrom The project to which the image set currently belongs.
+ * @param {String} projectIdTo Project to which the image set should be moved to.
+ * @param {Function} callback Called when finished. Has the job and a boolean (removing was successful?) as parameter.
  */
 ImageManipulatorRepository.prototype.assignImageSetToProject = function (imageSetId, projectIdFrom, projectIdTo, callback) {
     jobHandler.addJob(
@@ -233,7 +235,7 @@ ImageManipulatorRepository.prototype.assignImageSetToProject = function (imageSe
  * @param {String} imageName The name of the image.
  * @param {String} imageType The type of the image (png, ...)
  * @param {String} imageBase64 The base 64 encoded image.
- * @param projectId ToDo
+ * @param {String} projectId Project to be compared.
  * @param {Function} callback Called when the complete image comparison process is done. Has the updated image imageMetaInformationModel information model object as job.
  */
 ImageManipulatorRepository.prototype.compareImageByName = function (imageName, imageType, imageBase64, projectId, callback) {

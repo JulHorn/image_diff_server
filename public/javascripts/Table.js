@@ -13,9 +13,6 @@ var Table = function (connector, container, callback) {
     this.bindEvents();
 };
 
-// ToDo Make add work propery for non default projects
-// ToDo Prevent imageSets to be added when there is already an image with the same name in another project (API adaption should be enough)
-// ToDo Make add not reload the whole table
 /* ----- Methods ----- */
 
 /**

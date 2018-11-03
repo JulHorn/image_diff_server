@@ -9,7 +9,7 @@ var path = require('path');
  * @param {String} imageName The name of the image.
  * @param {String} imageType The type of the image (png, ...)
  * @param {String} imageBase64 The base 64 encoded image.
- * @param projectId ToDo
+ * @param {String} projectId The project id for which the comparison will be made.
  * @param {Function} callback The callback method which is called, when diff process has finished. Has the this job as parameter.
  * @constructor
  * **/
@@ -76,7 +76,7 @@ CompareImageByNameJob.prototype.load = function (data) {
  * @param {String} imageName The name of the image.
  * @param {String} imageType The type of the image (png, ...)
  * @param {String} imageBase64 The base 64 encoded image.
- * @param projectId ToDo
+ * @param {String} projectId The project for which the image should be compared to.
  * @param {Function} callback Called when the complete deletion process is done. Has the updated image imageMetaInformationModel information model object as job.
  * **/
 CompareImageByNameJob.prototype.__saveAndCompareImage = function (imageName, imageType, imageBase64, projectId, callback) {

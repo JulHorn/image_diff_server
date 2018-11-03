@@ -340,10 +340,12 @@ ImageMetaInformationModel.prototype.deleteProject = function(projectId) {
 /**
  * ToDo Error Handling
  *
- * @param imageSetId
- * @param projectIdFrom
- * @param projectIdTo
- * @return {boolean}
+ * Re-assigns an image set to another project.
+ *
+ * @param {String} imageSetId The image set which should be assigned to another project.
+ * @param {String} projectIdFrom The project to which the image set currently belongs.
+ * @param {String} projectIdTo The project to which the image set should be assigned to.
+ * @return {boolean} True if the assignment was a success, else false.
  */
 ImageMetaInformationModel.prototype.assignImageSetToProject = function(imageSetId, projectIdFrom, projectIdTo) {
     var imageSetToBeMoved = this.getImageSetById(imageSetId, projectIdFrom);

@@ -28,8 +28,10 @@ EditProjectJob.prototype = Object.create(Job.prototype);
 EditProjectJob.prototype.execute = function (imageMetaInformationModel, callback) {
     var jobCreatorCallback = this.getCallbackFunction();
     this.imageMetaInformationModel = imageMetaInformationModel;
-
     var wasSucessful = this.imageMetaInformationModel.renameProject(this.newProjectName, this.projectId);
+
+    this.setImagesToBeProcessedCount(1);
+    this.incrementProcessImageCounter();
 
     if(jobCreatorCallback) {
         jobCreatorCallback(this, wasSucessful);
