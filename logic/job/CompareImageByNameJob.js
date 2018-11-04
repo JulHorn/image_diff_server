@@ -69,7 +69,6 @@ CompareImageByNameJob.prototype.load = function (data) {
     this.id = data.id;
 };
 
-// ToDo: Refactor this method to do only one thing at once
 /**
  * Saves the given image to disc and compares it to the reference image after that.
  *

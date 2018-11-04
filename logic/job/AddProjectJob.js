@@ -46,6 +46,8 @@ AddProjectJob.prototype.execute = function (imageMetaInformationModel, callback)
  * @param {Object} data The object containing the information which this object should habe.
  * **/
 AddProjectJob.prototype.load = function (data) {
+    this.projectName = data.projectName;
+
     // Load data in the prototype
     this.loadJobData(data);
 };

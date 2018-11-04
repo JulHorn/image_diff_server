@@ -46,9 +46,11 @@ EditProjectJob.prototype.execute = function (imageMetaInformationModel, callback
  * @param {Object} data The object containing the information which this object should habe.
  * **/
 EditProjectJob.prototype.load = function (data) {
+    this.projectId = data.projectId;
+    this.newProjectName = data.newProjectName;
+
     // Load data in the prototype
     this.loadJobData(data);
-
 };
 
 module.exports = EditProjectJob;

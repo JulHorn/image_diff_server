@@ -2,8 +2,7 @@ var logger = require('winston');
 var Project = require('./ProjectModel');
 var config = require('../ConfigurationLoader');
 
-// ToDo: Add comments and use getter and make default project somewhat more global, check UUID type
-// ToDo Check if methods should really be in this class
+// ToDo: Use getter and make default project somewhat more global, check UUID type
 
 /**
  * Constructor. Loads the imageMetaInformationModel information in the imageMetaInformationModel information text file, if it does exist.
@@ -177,6 +176,48 @@ ImageMetaInformationModel.prototype.load = function (data) {
 };
 
 /**
+ * Calculates the biggest percentual pixel and distance difference considering all current image sets.
+ * **/
+ImageMetaInformationModel.prototype.calculateBiggestDifferences = function () {
+    var that = this;
+    var imageSets = this.getImageSets();
+
+    // If no image set exists, the difference is always 0
+    if(imageSets.length === 0){
+        that.biggestPercentualPixelDifference = 0;
+        that.biggestDistanceDifference = 0;
+    }
+
+    // Calculate pixel and distance difference
+    imageSets.forEach(function (set) {
+        if(that.biggestPercentualPixelDifference < set.getDifference()){
+            that.biggestPercentualPixelDifference = set.getDifference();
+        }
+
+        if(that.biggestDistanceDifference < set.getDistance()){
+            that.biggestDistanceDifference = set.getDistance();
+        }
+    });
+
+    // Set thresholds here to have the current values after each refresh of the calculations
+    this.percentualPixelDifferenceThreshold = config.getMaxPixelDifferenceThreshold();
+    this.distanceDifferenceThreshold = config.getMaxDistanceDifferenceThreshold();
+};
+
+/**
+ * Returns a new ImageMetaInformationModel object containing the data of this object as a copy.
+ *
+ * @return {ImageMetaInformationModel} Returns a new ImageMetaInformationModel object containing the data of this object as a copy.
+ * **/
+ImageMetaInformationModel.prototype.getCopy = function () {
+    var copyObject = new ImageMetaInformationModel();
+    copyObject.load(this);
+
+    return copyObject;
+};
+
+
+/**
  * Adds an image set. If an image set with the same (reference/new) image name exists, the existing image set will be updated.
  *
  * @param {ImageSetModel} imageSetToBeAdded The image set to add.
@@ -188,7 +229,7 @@ ImageMetaInformationModel.prototype.addImageSet = function (imageSetToBeAdded, p
     // Try to find project without project id
     if (!project) {
         project = this.getProjects().find(function (currentProject) {
-             return currentProject.getImageSets().find(function (currentImageSet) {
+            return currentProject.getImageSets().find(function (currentImageSet) {
                 return imageSetToBeAdded.getId() === currentImageSet.getId();
             });
         });
@@ -231,59 +272,6 @@ ImageMetaInformationModel.prototype.deleteImageSetFromModel = function (id, proj
     }
 
     project.getImageSets().splice(index, 1);
-};
-
-/**
- * Calculates the biggest percentual pixel and distance difference considering all current image sets.
- * **/
-ImageMetaInformationModel.prototype.calculateBiggestDifferences = function () {
-    var that = this;
-    var imageSets = this.getImageSets();
-
-    // If no image set exists, the difference is always 0
-    if(imageSets.length === 0){
-        that.biggestPercentualPixelDifference = 0;
-        that.biggestDistanceDifference = 0;
-    }
-
-    // Calculate pixel and distance difference
-    imageSets.forEach(function (set) {
-        if(that.biggestPercentualPixelDifference < set.getDifference()){
-            that.biggestPercentualPixelDifference = set.getDifference();
-        }
-
-        if(that.biggestDistanceDifference < set.getDistance()){
-            that.biggestDistanceDifference = set.getDistance();
-        }
-    });
-
-    // Set thresholds here to have the current values after each refresh of the calculations
-    this.percentualPixelDifferenceThreshold = config.getMaxPixelDifferenceThreshold();
-    this.distanceDifferenceThreshold = config.getMaxDistanceDifferenceThreshold();
-};
-
-/**
- * Returns a new ImageMetaInformationModel object containing the data of this object as a copy.
- *
- * @return {ImageMetaInformationModel} Returns a new ImageMetaInformationModel object containing the data of this object as a copy.
- * **/
-ImageMetaInformationModel.prototype.getCopy = function () {
-    var copyObject = new ImageMetaInformationModel();
-    copyObject.load(this);
-
-    return copyObject;
-};
-
-/**
- * Resets the imageMetaInformationModel information model to its initial state.
- * **/
-ImageMetaInformationModel.prototype.__init = function () {
-    this.biggestPercentualPixelDifference = 0;
-    this.biggestDistanceDifference = 0;
-    this.percentualPixelDifferenceThreshold = 0;
-    this.distanceDifferenceThreshold = 0;
-    this.timeStamp = '';
-    this.projects = [];
 };
 
 /**
@@ -391,6 +379,19 @@ ImageMetaInformationModel.prototype.__getIndexOfImageSetInProject = function (id
 ImageMetaInformationModel.prototype.__isImageNameTheSame = function (image1, image2) {
     return image1.getName() === image2.getName()
         && image1.getName() !== '';
+};
+
+
+/**
+ * Resets the imageMetaInformationModel information model to its initial state.
+ * **/
+ImageMetaInformationModel.prototype.__init = function () {
+    this.biggestPercentualPixelDifference = 0;
+    this.biggestDistanceDifference = 0;
+    this.percentualPixelDifferenceThreshold = 0;
+    this.distanceDifferenceThreshold = 0;
+    this.timeStamp = '';
+    this.projects = [];
 };
 
 module.exports = ImageMetaInformationModel;

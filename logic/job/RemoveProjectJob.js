@@ -44,9 +44,10 @@ RemoveProjectJob.prototype.execute = function (imageMetaInformationModel, callba
  * @param {Object} data The object containing the information which this object should habe.
  * **/
 RemoveProjectJob.prototype.load = function (data) {
+    this.projectId = data.projectId;
+
     // Load data in the prototype
     this.loadJobData(data);
-
 };
 
 module.exports = RemoveProjectJob;
