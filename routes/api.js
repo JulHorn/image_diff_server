@@ -52,7 +52,8 @@ router.put('/:id/modifyIgnoreAreas', function(req, res) {
 });
 
 router.put('/compareImageByName', function(req, res) {
-    var reqData = JSON.parse(req.body.data);
+    // ToDo Make it consistent again
+    var reqData = req.body;
     var imageBase64 = reqData.imageBase64;
     var imageName = reqData.imageName;
     var imageType = reqData.imageType;
