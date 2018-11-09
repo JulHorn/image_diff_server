@@ -65,6 +65,9 @@ Table.prototype.bindEvents = function () {
 
             // Draw all other components but the table because there could be some bad performance with a lot of images
             that.callback(data, that);
+            // Give data back to have the correct data for the table stored
+            that.callback(data, null, 'redrawNone');
+
             // Update the row manually for a better performance
             that.__updateImageSetMetaInformation(data.updatedImageSet, id);
 

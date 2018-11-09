@@ -46,7 +46,7 @@ AssignImageSetToProjectJob.prototype.execute = function (imageMetaInformationMod
 /**
  * Loads the data into this job. Used to restore a previous state of this object.
  *
- * @param {Object} data The object containing the information which this object should habe.
+ * @param {Object} data The object containing the information which this object should have.
  * **/
 AssignImageSetToProjectJob.prototype.load = function (data) {
     this.imageSetId = data.imageSetId;
