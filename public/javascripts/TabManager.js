@@ -9,6 +9,8 @@ var TabManager = function (connector, callback) {
     this.connector = connector;
     this.$container = $('#content');
     this.tableDrawOptions = {showFailed: true, showPassed: false, projects: []};
+	this.$tabContent = {};
+	this.$table = {};
 
     this.bindEvents();
 };
@@ -109,7 +111,6 @@ TabManager.prototype.draw = function (data) {
     content += '<button id="editProjectButton" class="tabButtonProject" data-action="editProject"><i class="far fa-edit"></i></button>';
     content += '<button id="addProjectButton" class="tabButtonProject" data-action="addProject"><i class="fas fa-plus"></i></button>';
 
-    // ToDo Add prototype select property for easier access
     content += '<select id="projectSelect" class="tabSelectProject" data-action="changeProject">';
     content += '<option data-id="-1">All Projects</option>';
     this.imageModel.projects.forEach(function (project) {
@@ -122,8 +123,6 @@ TabManager.prototype.draw = function (data) {
 
     this.$container.html($(content));
 
-
-    // ToDo Declare prototype vars in constructor
     // Set data and draw initial table
     this.$tabContent = $('#tabContent');
     this.$table = new Table(this.connector, this.$tabContent, function (data, ignoreComponent, redrawOption) {

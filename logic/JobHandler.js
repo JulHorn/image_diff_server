@@ -106,7 +106,7 @@ JobHandler.prototype.__executeJob = function() {
             this.isJobRunning = true;
             this.runningJob = this.jobQueue.shift();
 
-            // ToDo: Error handling: If something happens, the job locks the execution queue forever
+            // ToDo: Error handling: If something happens, the job locks the execution queue forever -> Evaluate while using when this really happens
             logger.info('Executing job:', this.runningJob.getJobName());
             this.runningJob.execute(that.currentMetaInformationModel, function () {
                 // When finished: Put the job on the history stack

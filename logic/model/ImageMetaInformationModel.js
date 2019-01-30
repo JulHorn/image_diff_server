@@ -2,8 +2,6 @@ var logger = require('winston');
 var Project = require('./ProjectModel');
 var config = require('../ConfigurationLoader');
 
-// ToDo: Use getter and make default project somewhat more global, check UUID type
-
 /**
  * Constructor. Loads the imageMetaInformationModel information in the imageMetaInformationModel information text file, if it does exist.
  *

@@ -18,8 +18,6 @@ var ImageManipulator = function () {};
  * Creates a diff image of the reference and new image and saves it to the, in the config file configured, folder path.
  * Does not update the imageMetaInformationModel information itself.
  *
- * ToDo: Refactor this method. It has gotten quite big.
- *
  * @param {String} imageName The name of the images that should be compared. The image must have the same name in the reference and new folder. The diff image will have the name, too.
  * @param {Boolean} autoCrop Determines if the new/reference images should be auto croped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
  * @param {IgnoreArea[]} ignoreAreas The areas which will not be part of the comparison.
@@ -35,7 +33,6 @@ ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, igno
     // Get images
     var referenceImagePath = config.getReferenceImageFolderPath() + path.sep + imageName;
     var newImagePath = config.getNewImageFolderPath() + path.sep + imageName;
-    var diffImagePath = config.getResultImageFolderPath() + path.sep + imageName;
     logger.info('Creating diff image for:', imageName);
 
     // If one of the images does not exist, then quit
@@ -53,39 +50,11 @@ ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, igno
     // Compute differences
     this.loadImage(referenceImagePath, function (err, referenceImage) {
         that.loadImage(newImagePath, function (err, newImage) {
-            var errorText = '';
-
-            // If the image size is not identical
-            if((referenceImage.bitmap.height !== newImage.bitmap.height
-                || referenceImage.bitmap.width !== newImage.bitmap.width)){
-                errorText = 'Image dimensions are not equal: '
-                    + '\nreference: ' + referenceImage.bitmap.height + '/' + referenceImage.bitmap.width
-                    + '\nnew: ' + newImage.bitmap.height + '/' + newImage.bitmap.width
-                    + '\nThe defined ignore areas were ignored for the image comparison.';
-                logger.error(errorText);
-            } else {
-                try {
-                    // Add ignore areas, which should not be part of the comparison
-                    that.__setIgnoreAreas(referenceImage, newImage, ignoreAreas);
-                } catch(err) {
-                    errorText = err;
-                }
-            }
-
-            // Autocrop if argument is given to normalalize images
-            that.__autoCrop(referenceImage, newImage, autoCrop);
-
-            // Create diff, ensure that folder structure exists and write file
-            var diff = jimp.diff(referenceImage, newImage);
-            fs.ensureDirSync(config.getResultImageFolderPath());
-            diff.image.write(diffImagePath, function () {
-                // Create data structure for the gathering of imageMetaInformationModel information (distance and difference are between 0 and 0 -> * 100 for percent)
-                callback(that.createCompleteImageSet(imageName, referenceImage, newImage, diff.image, diff.percent * 100, jimp.distance(referenceImage, newImage) * 100, errorText));
-
-            });
+            that.__createDiffImage(imageName, newImage, referenceImage, autoCrop, ignoreAreas, callback);
         });
     });
 };
+
 
 /**
  * Deletes images of an image set.
@@ -311,6 +280,52 @@ ImageManipulator.prototype.__checkIgnoreAreaBoundaries = function (image, ignore
 
     // No problem occurred
     callback();
+};
+
+/**
+ * Creates a diff image of the reference and new image and saves it to the, in the config file configured, folder path.
+ * Does not update the imageMetaInformationModel information itself.
+ *
+ * @param {String} imageName The name of the images that should be compared. The image must have the same name in the reference and new folder. The diff image will have the name, too.
+ * @param {Object} newImage The new image.
+ * @param {Object} referenceImage The reference image.
+ * @param {Boolean} autoCrop Determines if the new/reference images should be auto croped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
+ * @param {IgnoreArea[]} ignoreAreas The areas which will not be part of the comparison.
+ * @param {Function} callback The callback function which is called, when the method has finished the comparison. The callback has an imageSet as job.
+ */
+ImageManipulator.prototype.__createDiffImage = function(imageName, newImage, referenceImage, autoCrop, ignoreAreas, callback) {
+	var errorText = '';
+	var that = this;
+	var diffImagePath = config.getResultImageFolderPath() + path.sep + imageName;
+
+	// If the image size is not identical
+	if((referenceImage.bitmap.height !== newImage.bitmap.height
+		|| referenceImage.bitmap.width !== newImage.bitmap.width)){
+		errorText = 'Image dimensions are not equal: '
+					+ '\nreference: ' + referenceImage.bitmap.height + '/' + referenceImage.bitmap.width
+					+ '\nnew: ' + newImage.bitmap.height + '/' + newImage.bitmap.width
+					+ '\nThe defined ignore areas were ignored for the image comparison.';
+		logger.error(errorText);
+	} else {
+		try {
+			// Add ignore areas, which should not be part of the comparison
+			this.__setIgnoreAreas(referenceImage, newImage, ignoreAreas);
+		} catch(err) {
+			errorText = err;
+		}
+	}
+
+	// Autocrop if argument is given to normalize images
+	this.__autoCrop(referenceImage, newImage, autoCrop);
+
+	// Create diff, ensure that folder structure exists and write file
+	var diff = jimp.diff(referenceImage, newImage);
+	fs.ensureDirSync(config.getResultImageFolderPath());
+	diff.image.write(diffImagePath, function () {
+		// Create data structure for the gathering of imageMetaInformationModel information (distance and difference are between 0 and 0 -> * 100 for percent)
+		callback(that.createCompleteImageSet(imageName, referenceImage, newImage, diff.image, diff.percent * 100, jimp.distance(referenceImage, newImage) * 100, errorText));
+
+	});
 };
 
 module.exports = ImageManipulator;
