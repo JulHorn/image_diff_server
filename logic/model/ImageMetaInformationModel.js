@@ -324,8 +324,6 @@ ImageMetaInformationModel.prototype.deleteProject = function(projectId) {
 };
 
 /**
- * ToDo Error Handling
- *
  * Re-assigns an image set to another project.
  *
  * @param {String} imageSetId The image set which should be assigned to another project.
@@ -334,9 +332,14 @@ ImageMetaInformationModel.prototype.deleteProject = function(projectId) {
  * @return {boolean} True if the assignment was a success, else false.
  */
 ImageMetaInformationModel.prototype.assignImageSetToProject = function(imageSetId, projectIdFrom, projectIdTo) {
-    var imageSetToBeMoved = this.getImageSetById(imageSetId, projectIdFrom);
-    this.addImageSet(imageSetToBeMoved, projectIdTo);
-    this.deleteImageSetFromModel(imageSetId, projectIdFrom);
+    try {
+		var imageSetToBeMoved = this.getImageSetById(imageSetId, projectIdFrom);
+		this.addImageSet(imageSetToBeMoved, projectIdTo);
+		this.deleteImageSetFromModel(imageSetId, projectIdFrom);
+    } catch (exc) {
+        logger.error('Failed to assign ImageSet ' + imageSetId + ' to project ' + projectIdTo);
+        return false;
+    }
 
     return true;
 };
