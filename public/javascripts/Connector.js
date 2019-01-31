@@ -121,12 +121,15 @@ Connector.prototype.assignImageSetToProject = function (imageSetId, projectIdFro
  * **/
 Connector.prototype.sendRequest = function (url, method, data, callback) {
     var serverEndpoint = this.getServerEndpoint() + '/api' + url;
+	data = data ? data : {};
     console.log('Attempting a request to ' + url + ' with method ' + method + ' and data ' + data);
 
     $.ajax({
         method: method,
         url: serverEndpoint,
-        data: { data: JSON.stringify(data) }
+        data: JSON.stringify(data),
+       contentType:"application/json; charset=utf-8",
+       dataType:"json"
     })
     .done(function (data) {
         console.log('Request was successful: ', url, method, data);
