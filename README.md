@@ -90,17 +90,17 @@ Every response contains a job object, which contains all information about the c
 7. Modify an existing project.
     1. Type: PUT
     2. URL: http://127.0.0.1:xxxx/api/:id/editProject
-        1. :id: The id of the project which should be modified.
+        1. :id : The id of the project which should be modified.
     3. The request body must be in JSON format with the following properties:
         1. name: The new name the project should have.
 8. Delete an existing project.
     1. Type: DELETE
     2. URL: http://127.0.0.1:xxxx/api//:id/removeProject
-        1. :id: The id of the project which should be deleted.
+        1. :id : The id of the project which should be deleted.
 6. Assign an image set to another project.
     1. Type: PUT
     2. URL: http://127.0.0.1:xxxx/api/:id/assignImageSetToProject
-        1. :id: The id of the image set which should be assigned to another project.
+        1. :id : The id of the image set which should be assigned to another project.
     3. The request body must be in JSON format with the following properties:
         1. projectIdFrom: The project id to which the image set currently belongs.
         2. projectIdTo: The project to which the image set should be assigned.
