@@ -48,7 +48,6 @@ TabManager.prototype.bindEvents = function () {
 
         if (newProjectName) {
             that.connector.addProject(newProjectName, function (data) {
-                var newOption = that.__createProjectOption(data.project.id, data.project.name);
                 that.callback(data, null);
             });
         }
@@ -56,12 +55,12 @@ TabManager.prototype.bindEvents = function () {
 
     // Renames a project
     this.$container.on('click', 'button[data-action=editProject]', function () {
-        var newProjectName = prompt('Please enter the project name.','');
+        var projectSelectOption = that.$container.find('#projectSelect :selected');
+        var projectToBeRenamedId = projectSelectOption.attr('data-id');
+        var currentProjectName = projectSelectOption.text();
+        var newProjectName = prompt('Please enter the new project name for the project "' + currentProjectName + '" (ID:' + projectToBeRenamedId + ' )','');
 
         if (newProjectName) {
-            var projectSelectOption = that.$container.find('#projectSelect :selected');
-            var projectToBeRenamedId = projectSelectOption.attr('data-id');
-
             that.connector.editProject(newProjectName, projectToBeRenamedId, function (data) {
                 // projectSelectOption.text(newProjectName);
                 that.callback(data, null);

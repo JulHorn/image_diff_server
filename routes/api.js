@@ -3,7 +3,6 @@ var router = express.Router();
 var imageManipulatorRepository = require('../logic/ImageManipulatorRepository');
 var config = require('../logic/ConfigurationLoader');
 
-// ToDo: Add projectId params
 // ToDo Better Error Handling
 router.post('/checkAll', function(req, res) {
     // This request might take a while to finish the computations -> Needs a longer timeout,
@@ -22,6 +21,7 @@ router.post('/checkAll', function(req, res) {
 
 router.put('/:id/makeToNewReferenceImage', function(req, res) {
     var setId = req.params.id;
+
 
     imageManipulatorRepository.makeToNewReferenceImage(setId, function (job, updatedImageSet) {
         res.statusCode = 200;
@@ -48,6 +48,16 @@ router.put('/:id/modifyIgnoreAreas', function(req, res) {
     });
 });
 
+/**
+ * Compares a new image to a reference image with the same name.
+ *
+ * The request body must contain the following properties:
+ *
+ * {String} imageName The name of the image it should be compared to.
+ * {String} imageType The type of the image (png, ...)
+ * {String} imageBase64 The base 64 encoded image.
+ * {String} projectId Project for which the comparison will be made. If empty, the default project will be used.
+ */
 router.put('/compareImageByName', function(req, res) {
     var reqData = req.body;
     var imageBase64 = reqData.imageBase64;

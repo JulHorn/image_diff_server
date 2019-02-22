@@ -21,7 +21,10 @@ It consists of the following:
 
 1. Meta information concerning all image diff sets, e.g. the creation timestamp or the biggest percentage pixel difference of all image sets.
 2. A button to trigger the image comparison of all images which are in the reference and new image folder. The path to those folders can be configured in the configuration file. Images in the reference and the new folder with the same file name will be compared. Depending on the size and number of images, the time to finish that comparison can take a couple of minutes.
-3. An overview table with these 3 columns: reference, new and diff. All images can be enlarged by clicking on them.
+3. A pane with tabs which lets you 
+    1. chose between failed, passed and all images.
+    2. manage projects. There will always be a default project which can be renamed but not deleted. The feature makes it possible assign images to different projects for better management. Image names should be unique to avoid collision.
+4. An overview table with these 3 columns: reference, new and diff. All images can be enlarged by clicking on them. It is possible to change the assigned project via the dropdown menu.
     1. The reference image column displays the reference image and some meta information about it. That is what the new image should look like. If the "Delete" button is clicked, the reference, new and diff images will be deleted. If the "Modify Ignore Areas" button is clicked, it is possible to define areas in which the images will not compared by clicking on the image and keeping the mouse button pressed until you are satisfied with the area.
     2. The new image column displays the new image and some meta information about it. That is what the new image looks like. This image can be made to the new reference image by clicking on the "Add" button.
     3. The diff image column displays the diff image, which visualizes the differences between the reference and the new image and some meta information (percentual pixel difference, ...) about it.
@@ -71,6 +74,7 @@ Every response contains a job object, which contains all information about the c
         1. imageBase64: The new image, which should be compared to a reference image.
         2. imageName: The name of the image.
         3. imageType: The type of the image (png, ...)
+        4. projectId: Project for which the comparison will be made. If not set, the default project will be used. The projectId can be viewed in the edit project panel.
 4. Delete an image set including all images of that set and the meta data about that set.
     1. Type: DELETE
     2. URL: http://127.0.0.1:xxxx/api/:id
@@ -78,6 +82,28 @@ Every response contains a job object, which contains all information about the c
 5. Return the currently executed job or if none is running, the last executed job.
     1. Type: GET
     2. URL: http://127.0.0.1:xxxx/api/
+6. Add a new project.
+    1. Type: POST
+    2. URL: http://127.0.0.1:xxxx/api/addProject
+    3. The request body must be in JSON format with the following properties:
+        1. name: The name the newly created project should have.
+7. Modify an existing project.
+    1. Type: PUT
+    2. URL: http://127.0.0.1:xxxx/api/:id/editProject
+        1. :id: The id of the project which should be modified.
+    3. The request body must be in JSON format with the following properties:
+        1. name: The new name the project should have.
+8. Delete an existing project.
+    1. Type: DELETE
+    2. URL: http://127.0.0.1:xxxx/api//:id/removeProject
+        1. :id: The id of the project which should be deleted.
+6. Assign an image set to another project.
+    1. Type: PUT
+    2. URL: http://127.0.0.1:xxxx/api/:id/assignImageSetToProject
+        1. :id: The id of the image set which should be assigned to another project.
+    3. The request body must be in JSON format with the following properties:
+        1. projectIdFrom: The project id to which the image set currently belongs.
+        2. projectIdTo: The project to which the image set should be assigned.
 
 ### Example
 
@@ -98,43 +124,51 @@ where the jobs might look like that:
 [
     {
         "jobName": "MakeToNewBaselineImage",
-            "processedImageCount": 1,
-            "imagesToBeProcessedCount": 1,
-            "imageMetaInformationModel": {
-              "biggestPercentualPixelDifference": 100,
-              "biggestDistanceDifference": 100,
-              "timeStamp": "2017-02-07T08:27:49.673Z",
+        "processedImageCount": 1,
+        "imagesToBeProcessedCount": 1,
+        "imageManipulator": {},
+        "imageMetaInformationModel": {
+          "biggestPercentualPixelDifference": 0,
+          "biggestDistanceDifference": 0,
+          "percentualPixelDifferenceThreshold": 0.15,
+          "distanceDifferenceThreshold": 0.15,
+          "timeStamp": "17:38:58 09.11.2018",
+          "projects": [
+            {
+              "name": "Default",
+              "id": "0",
               "imageSets": [
                 {
                   "difference": 0,
                   "distance": 0,
                   "error": "",
-                  "id": "72a21520-ec81-11e6-9631-b913296dd823",
+                  "isThresholdBreached": false,
+                  "id": "c6528c1d-51ed-4c55-b0ca-9d909a138e0d",
                   "referenceImage": {
-                    "height": 1218,
-                    "width": 1280,
-                    "name": "imageName.png",
+                    "height": 1000,
+                    "width": 1000,
+                    "name": "imageName.PNG",
                     "path": "pathToImage"
                   },
                   "newImage": {
-                    "height": 1218,
-                    "width": 1280,
-                    "name": "imageName.png",
+                    "height": 1000,
+                    "width": 1000,
+                    "name": "imageName.PNG",
                     "path": "pathToImage"
                   },
                   "diffImage": {
-                    "height": 1218,
-                    "width": 1280,
-                    "name": "imageName.png",
+                    "height": 1000,
+                    "width": 1000,
+                    "name": "imageName.PNG",
                     "path": "pathToImage"
-                  }
+                  },
+                  "ignoreAreas": []
                 },
                 ...
-            ]
-},
-...
+              ]
+            },
+        ...
 ]
-```
 
 Note: "imageSets" contains all image sets, even if the job did nothing with them. 
 
