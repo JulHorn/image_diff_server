@@ -98,7 +98,7 @@ ImageSetModel.prototype.getIgnoreAreas = function () {
  *
  * @return {Boolean} The threshold breached state.
  * **/
-ImageSetModel.prototype.isThresholdBreached = function () {
+ImageSetModel.prototype.getThresholdBreachedState = function () {
     return this.isThresholdBreached;
 };
 

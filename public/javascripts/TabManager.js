@@ -84,6 +84,7 @@ TabManager.prototype.bindEvents = function () {
     // Changes the active project
     this.$container.on('change', 'select[data-action=changeProject]', function () {
         that.__updateProjectButtonStates();
+        that.__updateImageSetCount();
         that.__drawTable();
     });
 };
@@ -99,9 +100,9 @@ TabManager.prototype.draw = function (data) {
     this.imageModel = data.imageMetaInformationModel;
 
     content += '<div>';
-    content += '<button id="showPassedButton" class="tabButton active" data-passed=false data-failed=true data-action="changeTableContentMode">Failed</button>';
-    content += '<button id="showFailedButton" class="tabButton" data-passed=true data-failed=false data-action="changeTableContentMode">Passed</button>';
-    content += '<button class="tabButton" data-passed=true data-failed=true data-action="changeTableContentMode">All</button>';
+    content += '<button id="showPassedButton" class="tabButton active" data-passed=false data-failed=true data-action="changeTableContentMode">Failed <span id="failedCount">(0)</span></button>';
+    content += '<button id="showFailedButton" class="tabButton" data-passed=true data-failed=false data-action="changeTableContentMode">Passed <span id="passedCount">(0)</span></button>';
+    content += '<button class="tabButton" data-passed=true data-failed=true data-action="changeTableContentMode">All <span id="totalCount">(0)</span></button>';
     content += '</div>';
 
     content += '<div>';
@@ -125,18 +126,56 @@ TabManager.prototype.draw = function (data) {
     // Set data and draw initial table
     this.$tabContent = $('#tabContent');
     this.$table = new Table(this.connector, this.$tabContent, function (data, ignoreComponent, redrawOption) {
-        console.log(data, 'dataTable');
         if (redrawOption === 'redrawTable') {
             that.imageModel = data.job.imageMetaInformationModel;
+            that.__updateImageSetCount();
             that.__drawTable();
         } else if (redrawOption === 'redrawNone') {
             that.imageModel = data.job.imageMetaInformationModel;
+            that.__updateImageSetCount();
         }else {
             that.callback(data, that);
         }
     });
-    that.__updateProjectButtonStates();
+
+    this.__updateProjectButtonStates();
+    this.__updateImageSetCount();
     this.__drawTable();
+};
+
+/**
+ * Updates the number of item sets for failed, passed and total amount of image sets in the tabs.
+ *
+ * @private
+ */
+TabManager.prototype.__updateImageSetCount = function () {
+    var selectedProjectId = String($('#projectSelect :selected').data('id'));
+    var $failedCountSpan = $('#failedCount');
+    var $passedCountSpan = $('#passedCount');
+    var $totalCountSpan = $('#totalCount');
+    var failedCount = 0;
+    var passedCount = 0;
+    var totalCount = 0;
+
+    if (selectedProjectId === '-1') {
+        this.imageModel.projects.forEach(function (project) {
+            failedCount += project.failedCount;
+            passedCount += project.passedCount;
+            totalCount += project.totalCount;
+        });
+    } else {
+        var selectedProject = this.imageModel.projects.find(function (project) {
+            return project.id === selectedProjectId;
+        });
+
+        failedCount = selectedProject.failedCount;
+        passedCount = selectedProject.passedCount;
+        totalCount = selectedProject.totalCount;
+    }
+
+    $failedCountSpan.text('(' + failedCount + ')');
+    $passedCountSpan.text('(' + passedCount + ')');
+    $totalCountSpan.text('(' + totalCount + ')');
 };
 
 /**
@@ -153,7 +192,7 @@ TabManager.prototype.__createProjectOption = function (projectId, projectName) {
 TabManager.prototype.__drawTable = function () {
     var projectId = String($('#projectSelect :selected').data('id'));
     var projectsToDraw = [];
-    console.log(this.imageModel, 'this.imageModel');
+
     // Get all imageSets if "All" in project select was is selected
     if (projectId === '-1') {
 

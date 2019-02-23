@@ -12,6 +12,9 @@ var ProjectModel = function (projectName, projectId) {
     this.name = projectName ? projectName : 'Name me';
     this.id = projectId ? projectId : uuid();
     this.imageSets = [];
+    this.failedCount = 0;
+    this.passedCount = 0;
+    this.totalCount = 0;
 };
 
 /* ----- Getter ----- */
@@ -42,6 +45,33 @@ ProjectModel.prototype.getImageSets = function(){
     return this.imageSets;
 };
 
+/**
+ * Returns the number of image sets in this project which break the threshold.
+ *
+ * @return {number} The number of image sets in this project which break the threshold.
+ */
+ProjectModel.prototype.getFailedCount = function () {
+  return this.failedCount;
+};
+
+/**
+ * Returns the number of image sets in this project which don't  break the threshold.
+ *
+ * @return {number} The number of image sets in this project which don't break the threshold.
+ */
+ProjectModel.prototype.getPassedCount = function () {
+    return this.passedCount;
+};
+
+/**
+ * Returns the number of all image sets in this project.
+ *
+ * @return {number} The number of all image sets in this project.
+ */
+ProjectModel.prototype.getTotalCount = function () {
+    return this.totalCount;
+};
+
 /* ----- Setter ----- */
 
 /**
@@ -61,7 +91,6 @@ ProjectModel.prototype.setProjectName = function (projectName) {
 ProjectModel.prototype.setProjectId = function (projectId) {
     this.id = projectId;
 };
-
 
 /* ----- Action Methods ----- */
 
@@ -114,6 +143,10 @@ ProjectModel.prototype.addImageSet = function (imageSetToBeAdded) {
     } else {
         // Add new image set
         this.getImageSets().push(imageSetToBeAdded);
+
+        // Update image set counts
+        imageSetToBeAdded.getThresholdBreachedState() ? this.failedCount++ : this.passedCount++;
+        this.totalCount++;
     }
 };
 
@@ -124,12 +157,23 @@ ProjectModel.prototype.addImageSet = function (imageSetToBeAdded) {
  * @return True if there was an image set removed, else false.
  */
 ProjectModel.prototype.removeImageSet = function (imageSetId) {
-  var index = this.getImageSets().findIndex(function (imageSet) {
-      return imageSet.getId() === imageSetId;
+    var imageSetToBeDeletedIndex = -1;
+
+    var imageSetToBeDeleted = this.getImageSets().find(function (imageSet, index) {
+        if (imageSet.getId() === imageSetId) {
+            imageSetToBeDeletedIndex = index;
+            return true;
+        }
+
+      return false;
   });
 
-  if (index >= 0) {
-      this.getImageSets().splice(index, 1);
+  if (imageSetToBeDeletedIndex >= 0) {
+      this.getImageSets().splice(imageSetToBeDeletedIndex, 1);
+
+      // Update image set counts
+      imageSetToBeDeleted.getThresholdBreachedState() ? this.failedCount-- : this.passedCount--;
+      this.totalCount--;
 
       return true;
   }
