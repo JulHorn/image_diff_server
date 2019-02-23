@@ -117,6 +117,26 @@ ProjectModel.prototype.addImageSet = function (imageSetToBeAdded) {
     }
 };
 
+/**
+ * Removes an image set from this project.
+ *
+ * @param imageSetId The image set to be removed.
+ * @return True if there was an image set removed, else false.
+ */
+ProjectModel.prototype.removeImageSet = function (imageSetId) {
+  var index = this.getImageSets().findIndex(function (imageSet) {
+      return imageSet.getId() === imageSetId;
+  });
+
+  if (index >= 0) {
+      this.getImageSets().splice(index, 1);
+
+      return true;
+  }
+
+  return false;
+};
+
 /* ----- Helper Methods ----- */
 
 /**

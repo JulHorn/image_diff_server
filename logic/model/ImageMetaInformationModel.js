@@ -248,19 +248,20 @@ ImageMetaInformationModel.prototype.addImageSet = function (imageSetToBeAdded, p
  * **/
 ImageMetaInformationModel.prototype.deleteImageSetFromModel = function (id, projectId) {
     var project = this.getProject(projectId);
+    var success = false;
 
-    if (!project) {
-        project = this.projects.find(function (currentProject) {
-            return currentProject.getImageSets().find(function (currentImageSet) {
-                return currentImageSet.getId() === id
-            });
+    if (project) {
+        success = project.removeImageSet(id)
+    } else {
+        this.getProjects().forEach(function (project) {
+            if (!success) {
+                success = project.removeImageSet(id);
+            }
         });
     }
 
-    var index = this.__getIndexOfImageSetInProject(id, project);
-
     // Error handling
-    if(index < 0){
+    if(!success){
         var error = 'The image set with the id '
             + id
             + ' does not exist and thus can not be deleted.';
@@ -268,8 +269,6 @@ ImageMetaInformationModel.prototype.deleteImageSetFromModel = function (id, proj
         logger.error(error);
         throw Error(error);
     }
-
-    project.getImageSets().splice(index, 1);
 };
 
 /**
@@ -345,30 +344,6 @@ ImageMetaInformationModel.prototype.assignImageSetToProject = function(imageSetI
 };
 
 /* ----- Helper Methods ----- */
-
-/**
- * Returns the index of the imageSet by the given id.
- *
- * @param {String} id The id of the image set for which its index should be returned.
- * @param project
- * @return {Number} Returns the index of the image set or -1.
- * **/
-ImageMetaInformationModel.prototype.__getIndexOfImageSetInProject = function (id, project) {
-    // Use this method instead of the array method for downward compatibility
-    var imageSetIndex = -1;
-
-    if (!project) { return -1; }
-
-    project.getImageSets().forEach(function (imageSet, index) {
-        if(imageSet.getId() === id) {
-            imageSetIndex = index;
-
-            return false;
-        }
-    });
-
-    return imageSetIndex;
-};
 
 /**
  * Checks whether two image names are identical and not empty.
