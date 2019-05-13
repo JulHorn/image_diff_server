@@ -306,13 +306,13 @@ ImageManipulator.prototype.__createDiffImage = function(imageName, newImage, ref
 					+ '\nnew: ' + newImage.bitmap.height + '/' + newImage.bitmap.width
 					+ '\nThe defined ignore areas were ignored for the image comparison.';
 		logger.error(errorText);
-	} else {
-		try {
-			// Add ignore areas, which should not be part of the comparison
-			this.__setIgnoreAreas(referenceImage, newImage, ignoreAreas);
-		} catch(err) {
-			errorText = err;
-		}
+	}
+
+	try {
+		// Add ignore areas, which should not be part of the comparison
+		this.__setIgnoreAreas(referenceImage, newImage, ignoreAreas);
+	} catch(err) {
+		errorText = err;
 	}
 
 	// Autocrop if argument is given to normalize images
