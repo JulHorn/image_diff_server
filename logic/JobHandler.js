@@ -4,6 +4,7 @@ var DeleteJob = require('./job/DeleteJob');
 var MakeNewToReferenceImageJob = require('./job/MakeNewToReferenceImageJob');
 var ImageMetaInformationModel = require('./model/ImageMetaInformationModel');
 var ModifyIgnoreAreasJob = require('./job/ModifyIgnoreAreasJob');
+var ModifyCheckAreasJob = require('./job/ModifyCheckAreasJob');
 var CompareImageByNameJob = require('./job/CompareImageByNameJob');
 var AddProjectJob = require('./job/AddProjectJob');
 var EditProjectJob = require('./job/EditProjectJob');
@@ -198,6 +199,9 @@ JobHandler.prototype.__loadJob = function (jobData) {
         case 'ModifyIgnoreAreasJob':
             job = new ModifyIgnoreAreasJob();
             break;
+		case 'ModifyCheckAreasJob':
+			job = new ModifyCheckAreasJob();
+			break;
         case 'CompareImageByNameJob':
             job = new CompareImageByNameJob();
             break;

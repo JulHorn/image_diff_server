@@ -1,20 +1,20 @@
 var Job = require('./Job');
 
 /**
- * Job to modify the ignore areas of an image set.
+ * Job to modify the check areas of an image set.
  *
- * @param {String} id The id of the image set for which the ignore areas should be modified.
- * @param {MarkedArea[]} ignoreAreas The new ignore areas.
+ * @param {String} id The id of the image set for which the check areas should be modified.
+ * @param {MarkedArea[]} checkAreas The new ignore areas.
  * @param {Function} callback The callback method which is called, when diff process has finished. Has the this job as parameter.
  * **/
-var ModifyIgnoreAreasJob = function (id, ignoreAreas, callback) {
-    Job.call(this, 'ModifyIgnoreAreasJob', callback);
+var ModifyCheckAreasJob = function (id, checkAreas, callback) {
+    Job.call(this, 'ModifyCheckAreasJob', callback);
     this.id = id;
-    this.ignoreAreas = ignoreAreas;
+    this.checkAreas = checkAreas;
 };
 
 // Do inheritance
-ModifyIgnoreAreasJob.prototype = Object.create(Job.prototype);
+ModifyCheckAreasJob.prototype = Object.create(Job.prototype);
 
 /**
  * Executes this job.
@@ -22,13 +22,13 @@ ModifyIgnoreAreasJob.prototype = Object.create(Job.prototype);
  * @param {ImageMetaInformationModel} imageMetaInformationModel The image meta model in which the results will be saved.
  * @param {Function} callback The callback which will be called after the job execution is finished.
  * **/
-ModifyIgnoreAreasJob.prototype.execute = function (imageMetaInformationModel, callback) {
+ModifyCheckAreasJob.prototype.execute = function (imageMetaInformationModel, callback) {
     var that = this;
     that.imageMetaInformationModel = imageMetaInformationModel;
     // Single option -> Only one image has to be processed
     this.setImagesToBeProcessedCount(1);
 
-    this.__modifyIgnoreAreas(this.id, this.ignoreAreas, function () {
+    this.__modifyCheckAreas(this.id, this.CheckAreas, function () {
         var jobCreatorCallback = that.getCallbackFunction();
         // Update the processed image count
         that.incrementProcessImageCounter();
@@ -51,25 +51,25 @@ ModifyIgnoreAreasJob.prototype.execute = function (imageMetaInformationModel, ca
  *
  * @param {Object} data The object containing the information which this object should have.
  * **/
-ModifyIgnoreAreasJob.prototype.load = function (data) {
+ModifyCheckAreasJob.prototype.load = function (data) {
     // Load data in the prototype
     this.loadJobData(data);
 
     this.id = data.id;
-    this.ignoreAreas = data.ignoreAreas;
+    this.checkAreas = data.checkAreas;
 };
 
 /**
  * Sets the ignore areas of an image set.
  *
  * @param {String} id The id of the image set for which the ignore areas should be modified.
- * @param {MarkedArea[]} ignoreAreas The new ignore areas.
+ * @param {MarkedArea[]} checkAreas The new ignore areas.
  * @param {Function} callback The callback method which is called, when the method has finished.
  * **/
-ModifyIgnoreAreasJob.prototype.__modifyIgnoreAreas = function (id, ignoreAreas, callback) {
+ModifyCheckAreasJob.prototype.__modifyCheckAreas = function (id, checkAreas, callback) {
     var imageSet = this.getImageMetaInformationModel().getImageSetById(id);
 
-    imageSet.setIgnoreAreas(ignoreAreas);
+    imageSet.setCheckAreas(checkAreas);
 
     // Call callback
     if(callback){
@@ -77,4 +77,4 @@ ModifyIgnoreAreasJob.prototype.__modifyIgnoreAreas = function (id, ignoreAreas, 
     }
 };
 
-module.exports = ModifyIgnoreAreasJob;
+module.exports = ModifyCheckAreasJob;

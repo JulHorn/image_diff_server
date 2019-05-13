@@ -1,6 +1,6 @@
 var uuid = require('uuid/v4');
 var ImageModel = require('./ImageModel');
-var IgnoreArea = require('./IgnoreArea');
+var MarkedArea = require('./MarkedArea');
 
 /**
  * Constructor. Adds empty ImageModel objects as its reference, new and diff images.
@@ -17,6 +17,7 @@ var ImageSetModel = function () {
     this.newImage = new ImageModel();
     this.diffImage = new ImageModel();
     this.ignoreAreas = [];
+	this.checkAreas = [];
 };
 
 /* ----- Getter ----- */
@@ -87,10 +88,19 @@ ImageSetModel.prototype.getDiffImage = function () {
 /**
  * Returns the ignore areas.
  *
- * @return {IgnoreArea[]} The ignore areas.
+ * @return {MarkedArea[]} The ignore areas.
  * **/
 ImageSetModel.prototype.getIgnoreAreas = function () {
     return this.ignoreAreas;
+};
+
+/**
+ * Returns the check areas.
+ *
+ * @return {MarkedArea[]} The check areas.
+ * **/
+ImageSetModel.prototype.getCheckAreas = function () {
+	return this.checkAreas;
 };
 
 /**
@@ -171,10 +181,19 @@ ImageSetModel.prototype.setDiffImage = function (image) {
 /**
  * Sets the ignore areas.
  *
- * @param {IgnoreArea[]} ignoreAreas The ignore areas to be set.
+ * @param {MarkedArea[]} ignoreAreas The ignore areas to be set.
  * **/
 ImageSetModel.prototype.setIgnoreAreas = function (ignoreAreas) {
   this.ignoreAreas = ignoreAreas;
+};
+
+/**
+ * Sets the check areas.
+ *
+ * @param {MarkedArea[]} checkAreas The ignore areas to be set.
+ * **/
+ImageSetModel.prototype.setCheckAreas = function (checkAreas) {
+	this.checkAreas = checkAreas;
 };
 
 /**
@@ -206,14 +225,30 @@ ImageSetModel.prototype.load = function (data) {
     this.getNewImage().load(data.newImage);
     this.getDiffImage().load(data.diffImage);
 
-    if(data.ignoreAreas) {
-        data.ignoreAreas.forEach(function (ignoreAreaData) {
-            var newIgnoreArea = new IgnoreArea();
+    this.setIgnoreAreas(this.__loadMarkedAreas(data.ignoreAreas));
+	this.setCheckAreas(this.__loadMarkedAreas(data.checkAreas));
+};
 
-            newIgnoreArea.load(ignoreAreaData);
-            that.ignoreAreas.push(newIgnoreArea);
-        });
+/**
+ * Loads marked areas from the general object into MarkedArea objects.
+ *
+ * @param markedAreas The markedAreas which should be loaded into proper MarkedArea objects.
+ * @return {Array} The result array with the MarkedArea objects. Empty if there was nothing to load.
+ * @private
+ */
+ImageSetModel.prototype.__loadMarkedAreas = function(markedAreas) {
+    var newMarkedAreas = [];
+
+    if (markedAreas) {
+		markedAreas.forEach(function (markedAreaData) {
+			var newMarkedArea = new MarkedArea();
+
+			newMarkedArea.load(markedAreaData);
+			newMarkedAreas.push(newMarkedArea);
+		});
     }
+
+    return newMarkedAreas;
 };
 
 module.exports = ImageSetModel;

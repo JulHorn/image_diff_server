@@ -20,7 +20,7 @@ var ImageManipulator = function () {};
  *
  * @param {String} imageName The name of the images that should be compared. The image must have the same name in the reference and new folder. The diff image will have the name, too.
  * @param {Boolean} autoCrop Determines if the new/reference images should be auto croped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
- * @param {IgnoreArea[]} ignoreAreas The areas which will not be part of the comparison.
+ * @param {MarkedArea[]} ignoreAreas The areas which will not be part of the comparison.
  * @param {Function} callback The callback function which is called, when the method has finished the comparison. The callback has an imageSet as job.
  * **/
 ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, ignoreAreas, callback) {
@@ -228,7 +228,7 @@ ImageManipulator.prototype.__deleteFile = function (path) {
  *
  * @param {Image} referenceImage The reference image.
  * @param {Image} newImage The new image which will be manipulated.
- * @param {IgnoreArea[]} ignoreAreas The areas which should be ignored.
+ * @param {MarkedArea[]} ignoreAreas The areas which should be ignored.
  * @throws {String} Thrown, if an ignore area is out of bounds.
  * **/
 ImageManipulator.prototype.__setIgnoreAreas = function (referenceImage, newImage, ignoreAreas) {
@@ -274,7 +274,6 @@ ImageManipulator.prototype.__checkIgnoreAreaBoundaries = function (image, ignore
                 + '\nImage height: ' + image.bitmap.width
                 + '\nIgnore area y: ' + ignoreArea.x
                 + '\nIgnore area height: ' + ignoreArea.width);
-            return;
         }
     });
 
@@ -290,7 +289,7 @@ ImageManipulator.prototype.__checkIgnoreAreaBoundaries = function (image, ignore
  * @param {Object} newImage The new image.
  * @param {Object} referenceImage The reference image.
  * @param {Boolean} autoCrop Determines if the new/reference images should be auto croped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
- * @param {IgnoreArea[]} ignoreAreas The areas which will not be part of the comparison.
+ * @param {MarkedArea[]} ignoreAreas The areas which will not be part of the comparison.
  * @param {Function} callback The callback function which is called, when the method has finished the comparison. The callback has an imageSet as job.
  */
 ImageManipulator.prototype.__createDiffImage = function(imageName, newImage, referenceImage, autoCrop, ignoreAreas, callback) {
@@ -303,8 +302,7 @@ ImageManipulator.prototype.__createDiffImage = function(imageName, newImage, ref
 		|| referenceImage.bitmap.width !== newImage.bitmap.width)){
 		errorText = 'Image dimensions are not equal: '
 					+ '\nreference: ' + referenceImage.bitmap.height + '/' + referenceImage.bitmap.width
-					+ '\nnew: ' + newImage.bitmap.height + '/' + newImage.bitmap.width
-					+ '\nThe defined ignore areas were ignored for the image comparison.';
+					+ '\nnew: ' + newImage.bitmap.height + '/' + newImage.bitmap.width;
 		logger.error(errorText);
 	}
 

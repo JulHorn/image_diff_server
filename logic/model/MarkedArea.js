@@ -3,7 +3,7 @@
  *
  * @constructor
  * **/
-var IgnoreArea = function () {
+var MarkedArea = function () {
     this.x = 0;
     this.y = 0;
     this.z = 0;
@@ -17,7 +17,7 @@ var IgnoreArea = function () {
  *
  * @return {Number} Returns the x value where the area starts.
  * **/
-IgnoreArea.prototype.getX = function () {
+MarkedArea.prototype.getX = function () {
   return this.x;
 };
 
@@ -26,7 +26,7 @@ IgnoreArea.prototype.getX = function () {
  *
  * @return {Number} Returns the y value where the area starts.
  * **/
-IgnoreArea.prototype.getY = function () {
+MarkedArea.prototype.getY = function () {
     return this.y;
 };
 
@@ -35,7 +35,7 @@ IgnoreArea.prototype.getY = function () {
  *
  * @return {Number} Returns the z value.
  * **/
-IgnoreArea.prototype.getZ = function () {
+MarkedArea.prototype.getZ = function () {
     return this.z;
 };
 
@@ -44,7 +44,7 @@ IgnoreArea.prototype.getZ = function () {
  *
  * @return {Number} Returns the height.
  * **/
-IgnoreArea.prototype.getHeight = function () {
+MarkedArea.prototype.getHeight = function () {
     return this.height;
 };
 
@@ -53,7 +53,7 @@ IgnoreArea.prototype.getHeight = function () {
  *
  * @return {Number} Returns the width.
  * **/
-IgnoreArea.prototype.getWidth = function () {
+MarkedArea.prototype.getWidth = function () {
     return this.width;
 };
 
@@ -62,7 +62,7 @@ IgnoreArea.prototype.getWidth = function () {
  *
  * @return {String} Returns the id of this ignore area.
  * **/
-IgnoreArea.prototype.getId = function () {
+MarkedArea.prototype.getId = function () {
     return this.id;
 };
 
@@ -71,7 +71,7 @@ IgnoreArea.prototype.getId = function () {
  *
  * @param {Number} x Sets the x value.
  * **/
-IgnoreArea.prototype.setX = function (x) {
+MarkedArea.prototype.setX = function (x) {
   this.x = x;
 };
 
@@ -80,7 +80,7 @@ IgnoreArea.prototype.setX = function (x) {
  *
  * @param {Number} y Sets the y value.
  * **/
-IgnoreArea.prototype.setY = function (y) {
+MarkedArea.prototype.setY = function (y) {
     this.y = y;
 };
 
@@ -89,7 +89,7 @@ IgnoreArea.prototype.setY = function (y) {
  *
  * @param {Number} z Sets the z value.
  * **/
-IgnoreArea.prototype.setZ = function (z) {
+MarkedArea.prototype.setZ = function (z) {
     this.z = z;
 };
 
@@ -98,7 +98,7 @@ IgnoreArea.prototype.setZ = function (z) {
  *
  * @param {Number} height Sets the height.
  * **/
-IgnoreArea.prototype.setHeight = function (height) {
+MarkedArea.prototype.setHeight = function (height) {
     this.height = height;
 };
 
@@ -107,7 +107,7 @@ IgnoreArea.prototype.setHeight = function (height) {
  *
  * @param {Number} width Sets the width.
  * **/
-IgnoreArea.prototype.setWidth = function (width) {
+MarkedArea.prototype.setWidth = function (width) {
     this.width = width;
 };
 
@@ -116,22 +116,22 @@ IgnoreArea.prototype.setWidth = function (width) {
  *
  * @param {Number} id Sets the id.
  * **/
-IgnoreArea.prototype.setId = function (id) {
+MarkedArea.prototype.setId = function (id) {
     this.id = id;
 };
 
 /**
  * Loads the data from an object.
  *
- * @param {Object} ignoreAreaData The objects containing the data. The objects structure must be identical to this prototype.
+ * @param {Object} markedAreaData The objects containing the data. The objects structure must be identical to this prototype.
  * **/
-IgnoreArea.prototype.load = function (ignoreAreaData) {
-    this.x = ignoreAreaData.x;
-    this.y = ignoreAreaData.y;
-    this.z = ignoreAreaData.z;
-    this.height = ignoreAreaData.height;
-    this.width = ignoreAreaData.width;
-    this.id = ignoreAreaData.id;
+MarkedArea.prototype.load = function (markedAreaData) {
+    this.x = markedAreaData.x;
+    this.y = markedAreaData.y;
+    this.z = markedAreaData.z;
+    this.height = markedAreaData.height;
+    this.width = markedAreaData.width;
+    this.id = markedAreaData.id;
 };
 
-module.exports = IgnoreArea;
+module.exports = MarkedArea;
