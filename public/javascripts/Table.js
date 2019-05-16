@@ -45,9 +45,13 @@ Table.prototype.bindEvents = function () {
         var imgPath = that.__sanitizeImagePaths($this.data('image'));
 
         that.connector.getImageSet(id, function (data) {
+            // ToDo: Rename ignoreRegion
             new AddIgnoreArea($ignoreRegion).show(imgPath, data.resultImageSet, data.resultImageSet.ignoreAreas, function (markedAreas) {
+                console.log('T0');
 				that.connector.modifyIgnoreAreas(id, markedAreas, function (data) {
+				    console.log('T1');
 					$this.siblings('#ignoreAreaField').text(data.resultImageSet.ignoreAreas.length);
+					console.log('T2');
 				});
             });
         });

@@ -73,16 +73,13 @@ ModifyIgnoreAreasJob.prototype.__modifyIgnoreAreas = function (id, ignoreAreas, 
 	// Transform general marked objects, which are received via API, to proper MarkedArea objects for function support etcö
 	var transformedIgnoreAreas = [];
 
-	checkAreas.forEach(function(ignoreArea) {
+	ignoreAreas.forEach(function(ignoreArea) {
 		var newIgnoreArea = new MarkedArea(ignoreArea.x, ignoreArea.y, ignoreArea.z, ignoreArea.height, ignoreArea.width);
 
 		transformedIgnoreAreas.push(newIgnoreArea);
 	});
 
-
-	imageSet.setCheckAreas(transformedIgnoreAreas);
-
-    imageSet.setIgnoreAreas(ignoreAreas);
+    imageSet.setIgnoreAreas(transformedIgnoreAreas);
 
     // Call callback
     if(callback){

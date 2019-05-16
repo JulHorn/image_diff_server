@@ -40,10 +40,18 @@ AddIgnoreArea.prototype.bindEvents = function () {
     // Submit data to server
     this.$container.on('click', 'button[data-action=addIgnoreOk]', function () {
         var id = $(this).data('id');
-		var selectedAreas = $('#addIgnoreImage').selectAreas('relativeAreas');
+        console.log('$(\'#addIgnoreImage\')', $('#addIgnoreImage'));
 
-		that.callback(selectedAreas);
+		var selectedAreas = that.$container.find('#addIgnoreImage').selectAreas('relativeAreas');
+		console.log('selectedAreas', selectedAreas);
+
+		if (that.callback) {
+			that.callback(selectedAreas);
+		}
+
 		that.$container.hide();
+		// Off event handler to prevent
+		that.$container.off('click', 'button[data-action=addIgnoreOk]');
 		that.$container.html('');
     });
 };

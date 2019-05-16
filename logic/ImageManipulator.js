@@ -228,49 +228,65 @@ ImageManipulator.prototype.__deleteFile = function (path) {
 /**
  * Sets the ignore areas by setting the ignore areas pixel of the new image to the pixels of the reference image.
  * Because the images are the same in these areas, the resulting diff image will look ok in these areas.
- *
+ * ToDo: Update
  * @param {Image} referenceImage The reference image.
  * @param {Image} newImage The new image which will be manipulated.
  * @param {MarkedArea[]} ignoreAreas The areas which should be ignored.
  * @param {MarkedArea[]} checkAreas Areas which will be used for checking. Everything not part of such an areay will be ignored (only when there is at least one).
  * @throws {String} Thrown, if an ignore area is out of bounds.
  * **/
-ImageManipulator.prototype.__setMarkedAreas = function (referenceImage, newImage, ignoreAreas, checkAreas) {
+ImageManipulator.prototype.__applyMarkedAreas = function (referenceImage, newImage, ignoreAreas, checkAreas) {
 	// ToDo: Probably move this to the autocrop function -> Adapt? Error message/Note
 	var usableImageWidth = newImage.bitmap.width >= referenceImage.bitmap.width ? referenceImage.bitmap.width : newImage.bitmap.width;
 	var usableImageHeight = newImage.bitmap.height >= referenceImage.bitmap.height ? referenceImage.bitmap.height : newImage.bitmap.height;
+	var resultImage = newImage;
 
 	referenceImage.crop(0, 0, usableImageWidth, usableImageHeight);
 	newImage.crop(0, 0, usableImageWidth, usableImageHeight);
 
 	if(ignoreAreas) {
 		// Apply the ignore area stuff
-		ignoreAreas.forEach(function (ignoreArea) {
-			for(var xPosition = ignoreArea.x; xPosition >= ignoreArea.x && xPosition <= ignoreArea.x + ignoreArea.width && xPosition <= usableImageWidth; xPosition++) {
-				for(var yPosition = ignoreArea.y; yPosition >= ignoreArea.y && yPosition <= ignoreArea.y + ignoreArea.height && yPosition <= usableImageHeight; yPosition++) {
-					var referencePixelColour = referenceImage.getPixelColor(xPosition, yPosition);
-					newImage.setPixelColor(referencePixelColour, xPosition, yPosition);
-				}
-			}
-        });
+		this.__iterateThroughMarkedAreas(ignoreAreas, usableImageWidth, usableImageHeight, function(xPosition, yPosition) {
+			var referencePixelColour = referenceImage.getPixelColor(xPosition, yPosition);
+			newImage.setPixelColor(referencePixelColour, xPosition, yPosition);
+		});
     }
-	// ToDo: Color marked regions
+	// ToDo: Color marked regions and add doku
 	if (checkAreas) {
-		referenceImage.scan(0, 0, usableImageWidth, usableImageHeight, function(xPosition, yPosition) {
+		resultImage = referenceImage.clone();
 
-			checkAreas.forEach(function (checkArea) {
-				if (!checkArea.contains(xPosition, yPosition)) {
-					var referencePixelColour = referenceImage.getPixelColor(xPosition, yPosition);
-					newImage.setPixelColor(referencePixelColour, xPosition, yPosition);
-				}
-			});
+		this.__iterateThroughMarkedAreas(checkAreas, usableImageWidth, usableImageHeight, function(xPosition, yPosition) {
+			var newImageColour = newImage.getPixelColor(xPosition, yPosition);
+			resultImage.setPixelColor(newImageColour, xPosition, yPosition);
 		});
 	}
+	return resultImage;
 };
 
-// Draw bounding box stuff
-ImageManipulator.prototype.__calculateMarkedAreasMinMax = function(markedAreas) {
+/**
+ * ToDo
+ * @param image
+ * @param markedAreas
+ * @param r
+ * @param g
+ * @param b
+ * @private
+ */
+ImageManipulator.prototype.__drawMarkedAreaBoxes = function(image, markedAreas, r, g, b) {
+	var targetColor = jimp.rgbaToInt(r, g, b, 200);
 
+	if (markedAreas) {
+		markedAreas.forEach(function(markedArea) {
+			var xPosition = 0;
+			for (xPosition = markedArea.getX(); xPosition < markedArea.getX() + markedArea.getWidth(); xPosition++) { image.setPixelColor(targetColor, xPosition, markedArea.getY()); }
+			for (xPosition = markedArea.getX(); xPosition < markedArea.getX() + markedArea.getWidth(); xPosition++) { image.setPixelColor(targetColor, xPosition, markedArea.getY() + markedArea.getHeight()); }
+
+			var yPosition = 0;
+			for (yPosition = markedArea.getY(); yPosition < markedArea.getY() + markedArea.getHeight(); yPosition++) { image.setPixelColor(targetColor, markedArea.getX(), yPosition); }
+			for (yPosition = markedArea.getY(); yPosition < markedArea.getY() + markedArea.getHeight(); yPosition++) { image.setPixelColor(targetColor, markedArea.getX() + markedArea.getWidth(), yPosition); }
+		});
+		console.log('yeah');
+	}
 };
 
 /**
@@ -289,6 +305,8 @@ ImageManipulator.prototype.__createDiffImage = function(imageName, newImage, ref
 	var errorText = '';
 	var that = this;
 	var diffImagePath = config.getResultImageFolderPath() + path.sep + imageName;
+	// The image used for the comparison, might change because of marked areas
+	var newImageUsedForComparison = newImage;
 
 	// If the image size is not identical
 	if((referenceImage.bitmap.height !== newImage.bitmap.height
@@ -301,22 +319,49 @@ ImageManipulator.prototype.__createDiffImage = function(imageName, newImage, ref
 
 	try {
 		// Add ignore areas, which should not be part of the comparison
-		this.__setMarkedAreas(referenceImage, newImage, ignoreAreas, checkAreas);
+		newImageUsedForComparison = this.__applyMarkedAreas(referenceImage, newImage, ignoreAreas, checkAreas);
 	} catch(err) {
 		errorText = err;
 	}
 
 	// Autocrop if argument is given to normalize images
+	// ToDo: Still necessary?
 	this.__autoCrop(referenceImage, newImage, autoCrop);
 
 	// Create diff, ensure that folder structure exists and write file
-	var diff = jimp.diff(referenceImage, newImage);
+	var diff = jimp.diff(referenceImage, newImageUsedForComparison);
+
+	// Draw marked area boundaries after diff was done to exclude them from te comparison
+	this.__drawMarkedAreaBoxes(diff.image, ignoreAreas, 255, 0, 100);
+	this.__drawMarkedAreaBoxes(diff.image, checkAreas, 0, 255, 100);
+
 	fs.ensureDirSync(config.getResultImageFolderPath());
 
 	diff.image.write(diffImagePath, function () {
 		// Create data structure for the gathering of imageMetaInformationModel information (distance and difference are between 0 and 0 -> * 100 for percent)
+		// Use the original newImage again because we do not want to falsifiy the information about the original image
 		callback(that.createCompleteImageSet(imageName, referenceImage, newImage, diff.image, diff.percent * 100, jimp.distance(referenceImage, newImage) * 100, errorText));
 
+	});
+};
+
+/**
+ * ToDo
+ * @param markedAreas
+ * @param usableImageWidth
+ * @param usableImageHeight
+ * @param callback
+ * @private
+ */
+ImageManipulator.prototype.__iterateThroughMarkedAreas = function(markedAreas, usableImageWidth, usableImageHeight, callback) {
+	markedAreas.forEach(function (markedArea) {
+		for(var xPosition = markedArea.x; xPosition >= markedArea.x && xPosition <= markedArea.x + markedArea.width && xPosition <= usableImageWidth; xPosition++) {
+			for(var yPosition = markedArea.y; yPosition >= markedArea.y && yPosition <= markedArea.y + markedArea.height && yPosition <= usableImageHeight; yPosition++) {
+				if (callback) {
+					callback(xPosition, yPosition);
+				}
+			}
+		}
 	});
 };
 

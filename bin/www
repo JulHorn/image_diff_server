@@ -7,7 +7,9 @@
 var app = require('../app');
 var debug = require('debug')('image_diff_server:server');
 var http = require('http');
+var https = require('https');
 var conf = require('../logic/ConfigurationLoader');
+var fs = require('fs-extra');
 
 /**
  * Get port from environment and store in Express.
@@ -16,11 +18,18 @@ var conf = require('../logic/ConfigurationLoader');
 var port = normalizePort(conf.getServerPort());
 app.set('port', port);
 
+// console.log('fs.readFileSync(\'server.key\')', fs.readFileSync('server.key', 'UTF8'));
+
 /**
  * Create HTTP server.
  */
+var options = {
+	key: fs.readFileSync('server.key'),
+	cert: fs.readFileSync('server.cert')
+};
 
-var server = http.createServer(app);
+
+var server = https.createServer(options, app);
 
 /**
  * Listen on provided port, on all network interfaces.
