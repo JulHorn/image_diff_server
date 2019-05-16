@@ -1,4 +1,5 @@
 var Job = require('./Job');
+var MarkedArea = require('../model/MarkedArea');
 
 /**
  * Job to modify the check areas of an image set.
@@ -28,7 +29,7 @@ ModifyCheckAreasJob.prototype.execute = function (imageMetaInformationModel, cal
     // Single option -> Only one image has to be processed
     this.setImagesToBeProcessedCount(1);
 
-    this.__modifyCheckAreas(this.id, this.CheckAreas, function () {
+    this.__modifyCheckAreas(this.id, this.checkAreas, function () {
         var jobCreatorCallback = that.getCallbackFunction();
         // Update the processed image count
         that.incrementProcessImageCounter();
@@ -69,7 +70,17 @@ ModifyCheckAreasJob.prototype.load = function (data) {
 ModifyCheckAreasJob.prototype.__modifyCheckAreas = function (id, checkAreas, callback) {
     var imageSet = this.getImageMetaInformationModel().getImageSetById(id);
 
-    imageSet.setCheckAreas(checkAreas);
+    // Transform general marked objects, which are received via API, to proper MarkedArea objects for function support etcö
+    var transformedCheckAreas = [];
+
+    checkAreas.forEach(function(checkArea) {
+		var newCheckArea = new MarkedArea(checkArea.x, checkArea.y, checkArea.z, checkArea.height, checkArea.width);
+
+		transformedCheckAreas.push(newCheckArea);
+    });
+
+
+    imageSet.setCheckAreas(transformedCheckAreas);
 
     // Call callback
     if(callback){

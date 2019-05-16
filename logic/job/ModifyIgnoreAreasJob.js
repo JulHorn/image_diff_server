@@ -1,4 +1,5 @@
 var Job = require('./Job');
+MarkedArea = require('../model/MarkedArea');
 
 /**
  * Job to modify the ignore areas of an image set.
@@ -68,6 +69,18 @@ ModifyIgnoreAreasJob.prototype.load = function (data) {
  * **/
 ModifyIgnoreAreasJob.prototype.__modifyIgnoreAreas = function (id, ignoreAreas, callback) {
     var imageSet = this.getImageMetaInformationModel().getImageSetById(id);
+
+	// Transform general marked objects, which are received via API, to proper MarkedArea objects for function support etcö
+	var transformedIgnoreAreas = [];
+
+	checkAreas.forEach(function(ignoreArea) {
+		var newIgnoreArea = new MarkedArea(ignoreArea.x, ignoreArea.y, ignoreArea.z, ignoreArea.height, ignoreArea.width);
+
+		transformedIgnoreAreas.push(newIgnoreArea);
+	});
+
+
+	imageSet.setCheckAreas(transformedIgnoreAreas);
 
     imageSet.setIgnoreAreas(ignoreAreas);
 

@@ -45,11 +45,31 @@ Table.prototype.bindEvents = function () {
         var imgPath = that.__sanitizeImagePaths($this.data('image'));
 
         that.connector.getImageSet(id, function (data) {
-            new AddIgnoreArea($ignoreRegion, that.connector).show(imgPath, data.resultImageSet, function (resultImageSet) {
-                $this.siblings('#ignoreAreaField').text(resultImageSet.ignoreAreas.length);
+            new AddIgnoreArea($ignoreRegion).show(imgPath, data.resultImageSet, data.resultImageSet.ignoreAreas, function (markedAreas) {
+				that.connector.modifyIgnoreAreas(id, markedAreas, function (data) {
+					$this.siblings('#ignoreAreaField').text(data.resultImageSet.ignoreAreas.length);
+				});
             });
         });
     });
+
+	this.$container.on('click', 'button[data-action=addCheckRegions]', function () {
+		var $this = $(this);
+		// ToDo: Rename field
+		var $checkRegion = $('#ignoreRegion');
+		var id = $this.data('id');
+		var imgPath = that.__sanitizeImagePaths($this.data('image'));
+
+		that.connector.getImageSet(id, function (data) {
+			new AddIgnoreArea($checkRegion).show(imgPath, data.resultImageSet, data.resultImageSet.checkAreas, function (markedAreas) {
+				console.log('markedAreas', markedAreas);
+			    that.connector.modifyCheckAreas(id, markedAreas, function (data) {
+					console.log('data', data);
+					$this.siblings('#checkAreaField').text(data.resultImageSet.checkAreas.length);
+				});
+			});
+		});
+	});
 
     // Bind add new image to reference image action to add button
     this.$container.on('click', 'button[data-action=add]', function () {
@@ -253,13 +273,17 @@ Table.prototype.__createDescriptionRow = function (imageSet) {
     desRowContent += this.__createDefaultDescriptionCellContent(imageSet.referenceImage);
     desRowContent += '<span>Ignored Areas:</span>';
     desRowContent += '<span id="ignoreAreaField">' + imageSet.ignoreAreas.length + '</span><br>';
-    desRowContent += '<button data-id="' + imageSet.id + '" data-action="delete">Delete</button>';
+	desRowContent += '<span>Check Areas:</span>';
+	desRowContent += '<span id="checkAreaField">' + imageSet.checkAreas.length + '</span><br>';
+	desRowContent += '<button data-id="' + imageSet.id + '" data-action="delete">Delete</button>';
 
     // Disable button if no image exists
     if(imageSet.referenceImage.path) {
         desRowContent += '<button data-id="' + imageSet.id + '" data-image="' + imageSet.referenceImage.path +  '" data-action="addIgnoreRegions">Modify Ignore Regions</button>';
+		desRowContent += '<button data-id="' + imageSet.id + '" data-image="' + imageSet.referenceImage.path +  '" data-action="addCheckRegions">Modify Check Regions</button>';
     } else {
         desRowContent += '<button class="disabledButton" disabled data-id="' + imageSet.id + '" data-image="' + imageSet.referenceImage.path +  '" data-action="addIgnoreRegions">Modify Ignore Regions</button>';
+		desRowContent += '<button class="disabledButton" disabled data-id="' + imageSet.id + '" data-image="' + imageSet.referenceImage.path +  '" data-action="addCheckRegions">Modify Check Regions</button>';
     }
     desRowContent += '</td>';
 

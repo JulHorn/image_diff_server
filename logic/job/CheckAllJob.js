@@ -87,12 +87,12 @@ CheckAllJob.prototype.createDiffImages = function (autoCrop, pixDiffThreshold, d
     // Tell the job how many images have to be processed
     this.setImagesToBeProcessedCount(refDiffImageNames.length + newDiffImageNames.length + imageNames.length);
 
-    // Create map with ignore areas
-    var ignoreAreaMap = this.__createIgnoreMap(this.imageMetaInformationModel);
+    // Create object with marked areas
+    var markedAreaMappings = this.__createMarkedAreaMappings(this.imageMetaInformationModel);
 
     // Create diff images
     this.__createSingleImages(refDiffImageNames, newDiffImageNames, function () {
-        that.__createDiffImages(imageNames, autoCrop, ignoreAreaMap, pixDiffThreshold, distThreshold, function () {
+        that.__createDiffImages(imageNames, autoCrop, markedAreaMappings, pixDiffThreshold, distThreshold, function () {
             that.calculateMetaInformation();
 
             if(callback) {
@@ -105,22 +105,25 @@ CheckAllJob.prototype.createDiffImages = function (autoCrop, pixDiffThreshold, d
 /**
  * Goes through the image meta information model and creates a map of ignore areas for better accessibility. Only
  * image sets with a reference image will be included.
- *
+ * ToDo: Update Doku
+ * ToDo: Mappings noetig?
  * @param {ImageMetaInformationModel} imageMetaInformationModel The model from which the ignore area set will be created.
- * @return {map} The map containing the ignore areas. The key is an image name and the value is an ignore area object.
+ * @return {Object} The map containing the ignore areas. The key is an image name and the value is an ignore area object.
  * **/
-CheckAllJob.prototype.__createIgnoreMap = function (imageMetaInformationModel) {
+CheckAllJob.prototype.__createMarkedAreaMappings = function (imageMetaInformationModel) {
     var resultIgnoreAreaMap = new Map();
+	var resultCheckAreaMap = new Map();
 
     imageMetaInformationModel.getImageSets().forEach(function (imageSet) {
         var imageName = imageSet.getReferenceImage().getName();
 
         if(imageName) {
             resultIgnoreAreaMap.set(imageName, imageSet.getIgnoreAreas());
+			resultCheckAreaMap.set(imageName, imageSet.getCheckAreas());
         }
     });
 
-    return resultIgnoreAreaMap;
+    return {ignoreAreas: resultIgnoreAreaMap, checkAreas: resultCheckAreaMap};
 };
 
 /**
@@ -129,12 +132,12 @@ CheckAllJob.prototype.__createIgnoreMap = function (imageMetaInformationModel) {
  *
  * @param {String[]} imageNames Array of image names which should be compared.
  * @param {Boolean} autoCrop Determines if the new/reference images should be autocroped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
- * @param {map} ignoreAreasMap The map containing the ignore areas. The key is an image name and the value is an ignore area object.
+ * @param {map} markedAreaMappings The map containing the ignore areas. The key is an image name and the value is an ignore area object. ToDo: Update doku
  * @param {Number} pixDiffThreshold
  * @param {Number} distThreshold
  * @param {Function} callback Will be called, when the method has finished to compute all images. Has the number of processed images as job.
  * **/
-CheckAllJob.prototype.__createDiffImages = function (imageNames, autoCrop, ignoreAreasMap, pixDiffThreshold, distThreshold, callback) {
+CheckAllJob.prototype.__createDiffImages = function (imageNames, autoCrop, markedAreaMappings, pixDiffThreshold, distThreshold, callback) {
 
     logger.info("Number of images left to compare: ", imageNames.length);
     // If no images are left to process, call the callback method and stop
@@ -150,19 +153,24 @@ CheckAllJob.prototype.__createDiffImages = function (imageNames, autoCrop, ignor
         var imageToProcess = imageNames.shift();
         var that = this;
         var ignoreAreas = [];
+		var checkAreas = [];
 
         // Get ignore areas for the given image
-        if(ignoreAreasMap.has(imageToProcess)) {
-            ignoreAreas = ignoreAreasMap.get(imageToProcess);
+        if(markedAreaMappings.ignoreAreas.has(imageToProcess)) {
+            ignoreAreas = markedAreaMappings.ignoreAreas.get(imageToProcess);
         }
 
-        that.getImageManipulator().createDiffImage(imageToProcess, autoCrop, ignoreAreas, function (resultSet) {
+		if(markedAreaMappings.checkAreas.has(imageToProcess)) {
+			checkAreas = markedAreaMappings.checkAreas.get(imageToProcess);
+		}
+
+        that.getImageManipulator().createDiffImage(imageToProcess, autoCrop, ignoreAreas, checkAreas, function (resultSet) {
             that.imageMetaInformationModel.addImageSet(resultSet);
 
             // Increase the number of processed images by one
             that.incrementProcessImageCounter();
 
-            that.__createDiffImages(imageNames, autoCrop, ignoreAreasMap, pixDiffThreshold, distThreshold, callback);
+            that.__createDiffImages(imageNames, autoCrop, markedAreaMappings, pixDiffThreshold, distThreshold, callback);
         });
     }
 };

@@ -1,13 +1,11 @@
 /**
  * Creates the select area for images prototype.
- *
+ * ToDo: Rename stuff
  * @param {Object} $targetDiv The jQuery object under which the ignore area select stuff will be added.
- * @param {Connector} connector The connector to access the servert for the ignore area modifications.
  * @constructor
  * **/
-var AddIgnoreArea = function ($targetDiv, connector) {
+var AddIgnoreArea = function ($targetDiv) {
     this.$container = $targetDiv;
-    this.connector = connector;
     this.callback = null;
     this.__init();
     this.bindEvents();
@@ -18,12 +16,13 @@ var AddIgnoreArea = function ($targetDiv, connector) {
  *
  * @param {String} imagePath The image path to the image which should be displayed in the ignore image window.
  * @param {ImageSet} imageSet The image which contains the image information.
- * @param {Function} callback The callback function which will be called when the ignore area window was closed.
+ * @param markedAreas ToDO
+ * @param {Function} callback The callback function which will be called when the ignore area window was closed via OK button.
  * **/
-AddIgnoreArea.prototype.show = function (imagePath, imageSet, callback) {
+AddIgnoreArea.prototype.show = function (imagePath, imageSet, markedAreas, callback) {
     this.callback = callback;
     this.__createMarkup(imagePath, imageSet);
-    this.__configureSelectAreaPlugin(imageSet);
+    this.__configureSelectAreaPlugin(markedAreas);
 };
 
 /**
@@ -36,26 +35,16 @@ AddIgnoreArea.prototype.bindEvents = function () {
     this.$container.on('click', 'button[data-action=addIgnoreCancel]', function () {
         that.$container.hide();
         that.$container.html('');
-
-        // Call finish function
-        if(that.callback) {
-            that.callback();
-        }
     });
 
     // Submit data to server
     this.$container.on('click', 'button[data-action=addIgnoreOk]', function () {
         var id = $(this).data('id');
+		var selectedAreas = $('#addIgnoreImage').selectAreas('relativeAreas');
 
-        that.connector.modifyIgnoreAreas(id, $('#addIgnoreImage').selectAreas('relativeAreas'), function (data) {
-            that.$container.hide();
-            that.$container.html('');
-
-            // Call finish function
-            if(that.callback) {
-                that.callback(data.resultImageSet);
-            }
-        });
+		that.callback(selectedAreas);
+		that.$container.hide();
+		that.$container.html('');
     });
 };
 
@@ -93,9 +82,9 @@ AddIgnoreArea.prototype.__createMarkup = function (imagePath, imageSet) {
 /**
  * Configures the jQuery plugin for the select area stuff.
  *
- * @param {ImageSet} imageSet The image which contains the image information.
+ * @param markedAreas ToDo
  * **/
-AddIgnoreArea.prototype.__configureSelectAreaPlugin = function (imageSet) {
+AddIgnoreArea.prototype.__configureSelectAreaPlugin = function (markedAreas) {
     this.$container.find('#addIgnoreImage').selectAreas({
         // editable
         allowEdit: true,
@@ -115,6 +104,6 @@ AddIgnoreArea.prototype.__configureSelectAreaPlugin = function (imageSet) {
         outlineOpacity: 0.5,
         // opacity of the overlay layer over the image
         overlayOpacity: 0.5,
-        areas: imageSet.ignoreAreas
+        areas: markedAreas
     });
 };

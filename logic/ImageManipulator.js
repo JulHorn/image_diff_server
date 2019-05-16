@@ -21,11 +21,14 @@ var ImageManipulator = function () {};
  * @param {String} imageName The name of the images that should be compared. The image must have the same name in the reference and new folder. The diff image will have the name, too.
  * @param {Boolean} autoCrop Determines if the new/reference images should be auto croped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
  * @param {MarkedArea[]} ignoreAreas The areas which will not be part of the comparison.
+ * @param {MarkedArea[]} checkAreas Areas which will be used for checking. Everything not part of such an areay will be ignored (only when there is at least one).
  * @param {Function} callback The callback function which is called, when the method has finished the comparison. The callback has an imageSet as job.
  * **/
-ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, ignoreAreas, callback) {
+ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, ignoreAreas, checkAreas, callback) {
     // Other vars
     var that = this;
+	ignoreAreas = ignoreAreas || [];
+	checkAreas = checkAreas || [];
 
     // Assign default value, if no value was given
     autoCrop = autoCrop || false;
@@ -50,7 +53,7 @@ ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, igno
     // Compute differences
     this.loadImage(referenceImagePath, function (err, referenceImage) {
         that.loadImage(newImagePath, function (err, newImage) {
-            that.__createDiffImage(imageName, newImage, referenceImage, autoCrop, ignoreAreas, callback);
+            that.__createDiffImage(imageName, newImage, referenceImage, autoCrop, ignoreAreas, checkAreas, callback);
         });
     });
 };
@@ -229,56 +232,45 @@ ImageManipulator.prototype.__deleteFile = function (path) {
  * @param {Image} referenceImage The reference image.
  * @param {Image} newImage The new image which will be manipulated.
  * @param {MarkedArea[]} ignoreAreas The areas which should be ignored.
+ * @param {MarkedArea[]} checkAreas Areas which will be used for checking. Everything not part of such an areay will be ignored (only when there is at least one).
  * @throws {String} Thrown, if an ignore area is out of bounds.
  * **/
-ImageManipulator.prototype.__setIgnoreAreas = function (referenceImage, newImage, ignoreAreas) {
-    if(ignoreAreas) {
-        this.__checkIgnoreAreaBoundaries(referenceImage, ignoreAreas, function (err) {
-            // Forward error, if there is one
-            if(err) {
-                throw err;
-            }
+ImageManipulator.prototype.__setMarkedAreas = function (referenceImage, newImage, ignoreAreas, checkAreas) {
+	// ToDo: Probably move this to the autocrop function -> Adapt? Error message/Note
+	var usableImageWidth = newImage.bitmap.width >= referenceImage.bitmap.width ? referenceImage.bitmap.width : newImage.bitmap.width;
+	var usableImageHeight = newImage.bitmap.height >= referenceImage.bitmap.height ? referenceImage.bitmap.height : newImage.bitmap.height;
 
-            // Apply the ignore area stuff
-            ignoreAreas.forEach(function (ignoreArea) {
-                for(var xPosition = ignoreArea.x; xPosition < ignoreArea.x + ignoreArea.width; xPosition++) {
-                    for(var yPosition = ignoreArea.y; yPosition < ignoreArea.y + ignoreArea.height; yPosition++) {
-                        var referencePixelColour = referenceImage.getPixelColor(xPosition, yPosition);
-                        newImage.setPixelColor(referencePixelColour, xPosition, yPosition);
-                    }
-                }
-            });
+	referenceImage.crop(0, 0, usableImageWidth, usableImageHeight);
+	newImage.crop(0, 0, usableImageWidth, usableImageHeight);
+
+	if(ignoreAreas) {
+		// Apply the ignore area stuff
+		ignoreAreas.forEach(function (ignoreArea) {
+			for(var xPosition = ignoreArea.x; xPosition >= ignoreArea.x && xPosition <= ignoreArea.x + ignoreArea.width && xPosition <= usableImageWidth; xPosition++) {
+				for(var yPosition = ignoreArea.y; yPosition >= ignoreArea.y && yPosition <= ignoreArea.y + ignoreArea.height && yPosition <= usableImageHeight; yPosition++) {
+					var referencePixelColour = referenceImage.getPixelColor(xPosition, yPosition);
+					newImage.setPixelColor(referencePixelColour, xPosition, yPosition);
+				}
+			}
         });
     }
+	// ToDo: Color marked regions
+	if (checkAreas) {
+		referenceImage.scan(0, 0, usableImageWidth, usableImageHeight, function(xPosition, yPosition) {
+
+			checkAreas.forEach(function (checkArea) {
+				if (!checkArea.contains(xPosition, yPosition)) {
+					var referencePixelColour = referenceImage.getPixelColor(xPosition, yPosition);
+					newImage.setPixelColor(referencePixelColour, xPosition, yPosition);
+				}
+			});
+		});
+	}
 };
 
-/**
- * Checks whether the ignore areas are not out of bounds of the given image.
- *
- * @param {Image} image The image in which the ignore areas should in their proper bounds.
- * @param {Object[]} ignoreAreas The ignore areas to be checked.
- * @param {Function} callback Called when a problem was found with an error text or called when no error was found without an error parameter.
- * **/
-ImageManipulator.prototype.__checkIgnoreAreaBoundaries = function (image, ignoreAreas, callback) {
-    ignoreAreas.forEach(function (ignoreArea) {
-        if(image.bitmap.width < ignoreArea.x + ignoreArea.width) {
-            callback('An ignore area boundary is outside of the image dimension. Please check the ignore areas.'
-            + '\nImage width: ' + image.bitmap.width
-            + '\nIgnore area x: ' + ignoreArea.x
-            + '\nIgnore area width: ' + ignoreArea.width);
-            return;
-        }
+// Draw bounding box stuff
+ImageManipulator.prototype.__calculateMarkedAreasMinMax = function(markedAreas) {
 
-        if(image.bitmap.height < ignoreArea.y + ignoreArea.height) {
-            callback('An ignore area boundary is outside of the image dimension. Please check the ignore areas.'
-                + '\nImage height: ' + image.bitmap.width
-                + '\nIgnore area y: ' + ignoreArea.x
-                + '\nIgnore area height: ' + ignoreArea.width);
-        }
-    });
-
-    // No problem occurred
-    callback();
 };
 
 /**
@@ -290,9 +282,10 @@ ImageManipulator.prototype.__checkIgnoreAreaBoundaries = function (image, ignore
  * @param {Object} referenceImage The reference image.
  * @param {Boolean} autoCrop Determines if the new/reference images should be auto croped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
  * @param {MarkedArea[]} ignoreAreas The areas which will not be part of the comparison.
+ * @param {MarkedArea[]} checkAreas Areas which will be used for checking. Everything not part of such an areay will be ignored (only when there is at least one).
  * @param {Function} callback The callback function which is called, when the method has finished the comparison. The callback has an imageSet as job.
  */
-ImageManipulator.prototype.__createDiffImage = function(imageName, newImage, referenceImage, autoCrop, ignoreAreas, callback) {
+ImageManipulator.prototype.__createDiffImage = function(imageName, newImage, referenceImage, autoCrop, ignoreAreas, checkAreas, callback) {
 	var errorText = '';
 	var that = this;
 	var diffImagePath = config.getResultImageFolderPath() + path.sep + imageName;
@@ -308,7 +301,7 @@ ImageManipulator.prototype.__createDiffImage = function(imageName, newImage, ref
 
 	try {
 		// Add ignore areas, which should not be part of the comparison
-		this.__setIgnoreAreas(referenceImage, newImage, ignoreAreas);
+		this.__setMarkedAreas(referenceImage, newImage, ignoreAreas, checkAreas);
 	} catch(err) {
 		errorText = err;
 	}
@@ -319,6 +312,7 @@ ImageManipulator.prototype.__createDiffImage = function(imageName, newImage, ref
 	// Create diff, ensure that folder structure exists and write file
 	var diff = jimp.diff(referenceImage, newImage);
 	fs.ensureDirSync(config.getResultImageFolderPath());
+
 	diff.image.write(diffImagePath, function () {
 		// Create data structure for the gathering of imageMetaInformationModel information (distance and difference are between 0 and 0 -> * 100 for percent)
 		callback(that.createCompleteImageSet(imageName, referenceImage, newImage, diff.image, diff.percent * 100, jimp.distance(referenceImage, newImage) * 100, errorText));

@@ -67,6 +67,18 @@ Connector.prototype.modifyIgnoreAreas = function (id, ignoreAreas, callback) {
 };
 
 /**
+ * Modifies the check areas of an image set.
+ *
+ * @param {String} id The id for which the check areas should be modified.
+ * @param {Object[]} checkAreas An array of check areas.
+ * @param {Function} callback Called when the request is done.
+ * **/
+Connector.prototype.modifyCheckAreas = function (id, checkAreas, callback) {
+	console.log('Check areas:', checkAreas);
+	this.sendRequest('/' + id + '/modifyCheckAreas', 'PUT', { checkAreas: checkAreas }, callback);
+};
+
+/**
  * Add/create a project.
  *
  * @param {String} name Name of the new project.

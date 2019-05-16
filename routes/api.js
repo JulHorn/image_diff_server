@@ -48,6 +48,16 @@ router.put('/:id/modifyIgnoreAreas', function(req, res) {
     });
 });
 
+router.put('/:id/modifyCheckAreas', function(req, res) {
+	var setId = req.params.id;
+	var checkAreas = req.body.checkAreas;
+
+	imageManipulatorRepository.modifyCheckAreas(setId, checkAreas, function (imageSet) {
+		res.statusCode = 200;
+		res.json({message: 'OK', data: {resultImageSet: imageSet}});
+	});
+});
+
 /**
  * Compares a new image to a reference image with the same name.
  *

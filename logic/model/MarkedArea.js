@@ -1,14 +1,15 @@
 /**
  * Represents an ignore area.
+ * ToDo: Update
  *
  * @constructor
  * **/
-var MarkedArea = function () {
-    this.x = 0;
-    this.y = 0;
-    this.z = 0;
-    this.height = 0;
-    this.width = 0;
+var MarkedArea = function (x, y, z, height, width) {
+    this.x = x || 0;
+    this.y = y || 0;
+    this.z = z || 0;
+    this.height = height || 0;
+    this.width = width|| 0;
     this.id = -1;
 };
 
@@ -118,6 +119,19 @@ MarkedArea.prototype.setWidth = function (width) {
  * **/
 MarkedArea.prototype.setId = function (id) {
     this.id = id;
+};
+
+/**
+ * Determines whether given coordinates are within the marked area.
+ * @param x The x-coordinate which should be checked.
+ * @param y The y-coordinate which should be checked.
+ * @return {boolean} True if the given coordinates are within the marked area, else false.
+ */
+MarkedArea.prototype.contains = function(x, y) {
+	return x >= this.getX() &&
+		   x <= this.getX() + this.getWidth() &&
+		   y >= this.getY() &&
+		   y <= this.getY() + this.getHeight();
 };
 
 /**

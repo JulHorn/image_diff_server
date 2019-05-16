@@ -102,7 +102,8 @@ CompareImageByNameJob.prototype.__saveAndCompareImage = function (imageName, ima
             var imageSet = that.getImageMetaInformationModel().getImageSetByName(fullImageName, projectId);
             var ignoreAreas = imageSet ? imageSet.getIgnoreAreas() : [];
 
-            that.getImageManipulator().createDiffImage(fullImageName, false, ignoreAreas, function (resultSet) {
+            // ToDo: Add check areas
+            that.getImageManipulator().createDiffImage(fullImageName, false, ignoreAreas, null, function (resultSet) {
                 // Compare
                 that.getImageMetaInformationModel().addImageSet(resultSet, projectId);
                 that.calculateMetaInformation();

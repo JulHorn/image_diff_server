@@ -2,6 +2,7 @@ var CheckAllJobModel = require('./job/CheckAllJob');
 var DeleteJob = require('./job/DeleteJob');
 var MakeToNewReferenceImageJob = require('./job/MakeNewToReferenceImageJob');
 var ModifyIgnoreAreasJob = require('./job/ModifyIgnoreAreasJob');
+var ModifyCheckAreasJob = require('./job/ModifyCheckAreasJob');
 var CompareImageByNameJob = require('./job/CompareImageByNameJob');
 var AddProjectJob = require('./job/AddProjectJob');
 var EditProjectJob = require('./job/EditProjectJob');
@@ -135,6 +136,30 @@ ImageManipulatorRepository.prototype.modifyIgnoreAreas = function (id, ignoreAre
     } catch (exc) {
         logger.error('Error:', exc);
     }
+};
+
+/**
+ * Sets the check areas for an image set.
+ *
+ * @param {String} id The id of the image set for which the ignore areas should be set.
+ * @param {Object} checkAreas The check areas which should be set for the image set.
+ * @param {Function} callback Called when the check areas were set. Has the updated image set as parameter.
+ * **/
+ImageManipulatorRepository.prototype.modifyCheckAreas = function (id, checkAreas, callback) {
+	// Add modify check areas job to the job handler
+	try {
+		jobHandler.addJob(
+				new ModifyCheckAreasJob(id, checkAreas, function (job) {
+											 logger.info("Modified check areas for image set with id: " + id);
+											 if (callback) {
+												 var resultImageSet = jobHandler.getLastActiveJob().getImageMetaInformationModel().getImageSetById(id);
+												 callback(resultImageSet);
+											 }
+										 }
+				));
+	} catch (exc) {
+		logger.error('Error:', exc);
+	}
 };
 
 /**
