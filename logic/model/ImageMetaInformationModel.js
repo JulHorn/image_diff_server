@@ -7,8 +7,8 @@ var config = require('../ConfigurationLoader');
  *
  * @constructor
  * **/
-var ImageMetaInformationModel = function () {
-    this.__init();
+var ImageMetaInformationModel = function() {
+	this.__init();
 };
 
 /* ----- Getter ----- */
@@ -18,8 +18,8 @@ var ImageMetaInformationModel = function () {
  *
  * @return {String} Returns the timestamp.
  * **/
-ImageMetaInformationModel.prototype.getTimeStamp = function () {
-    return this.timeStamp;
+ImageMetaInformationModel.prototype.getTimeStamp = function() {
+	return this.timeStamp;
 };
 
 /**
@@ -27,8 +27,8 @@ ImageMetaInformationModel.prototype.getTimeStamp = function () {
  *
  *  @return {Number} Returns the computed percentual difference between the reference and new image. Does not compute the value itself.
  * **/
-ImageMetaInformationModel.prototype.getBiggestPercentualPixelDifference = function () {
-    return this.biggestPercentualPixelDifference;
+ImageMetaInformationModel.prototype.getBiggestPercentualPixelDifference = function() {
+	return this.biggestPercentualPixelDifference;
 };
 
 /**
@@ -36,8 +36,8 @@ ImageMetaInformationModel.prototype.getBiggestPercentualPixelDifference = functi
  *
  *  @return {Number} Returns the computed hamming distance. Does not compute the value itself.
  * **/
-ImageMetaInformationModel.prototype.getBiggestDistanceDifference = function () {
-    return this.biggestDistanceDifference;
+ImageMetaInformationModel.prototype.getBiggestDistanceDifference = function() {
+	return this.biggestDistanceDifference;
 };
 
 /**
@@ -45,19 +45,19 @@ ImageMetaInformationModel.prototype.getBiggestDistanceDifference = function () {
  *
  * @return {ImageSetModel[]} Returns the image sets.
  * **/
-ImageMetaInformationModel.prototype.getImageSets = function(projectId){
-    var resultImageSets = [];
-    var project = this.getProject(projectId);
+ImageMetaInformationModel.prototype.getImageSets = function(projectId) {
+	var resultImageSets = [];
+	var project = this.getProject(projectId);
 
-    if (project) {
-        resultImageSets = project.getImageSets();
-    } else {
-        this.projects.forEach(function (currentProject) {
-            resultImageSets = resultImageSets.concat(currentProject.getImageSets());
-        });
-    }
+	if(project) {
+		resultImageSets = project.getImageSets();
+	} else {
+		this.projects.forEach(function(currentProject) {
+			resultImageSets = resultImageSets.concat(currentProject.getImageSets());
+		});
+	}
 
-    return resultImageSets;
+	return resultImageSets;
 };
 
 /**
@@ -66,7 +66,7 @@ ImageMetaInformationModel.prototype.getImageSets = function(projectId){
  * @return {Array} The projects.
  */
 ImageMetaInformationModel.prototype.getProjects = function() {
-    return this.projects;
+	return this.projects;
 };
 
 /**
@@ -76,11 +76,13 @@ ImageMetaInformationModel.prototype.getProjects = function() {
  * @return {Project | null} The project by the giben project id. If none was found, null will be returned.
  */
 ImageMetaInformationModel.prototype.getProject = function(projectId) {
-    if (!projectId) { return null; }
+	if(!projectId) {
+		return null;
+	}
 
-    return this.projects.find(function (currentProject) {
-        return currentProject.getProjectId() === projectId;
-    });
+	return this.projects.find(function(currentProject) {
+		return currentProject.getProjectId() === projectId;
+	});
 };
 
 /**
@@ -90,18 +92,18 @@ ImageMetaInformationModel.prototype.getProject = function(projectId) {
  * @param {String} projectId The id of the project to which the imageSet belongs. If no id is given, the set will be searched through all projects.
  * @return {ImageSetModel|null} The found image set or null if none was found with the given id.
  * **/
-ImageMetaInformationModel.prototype.getImageSetById = function(id, projectId){
-    var result = this.getImageSets(projectId).filter(function (imageSet) {
-            return imageSet.getId() === id;
-        });
+ImageMetaInformationModel.prototype.getImageSetById = function(id, projectId) {
+	var result = this.getImageSets(projectId).filter(function(imageSet) {
+		return imageSet.getId() === id;
+	});
 
-    // If the image does not already exist in the imageMetaInformationModel information structure, then return null
-    if(result.length === 0){
-        return null;
-    }
+	// If the image does not already exist in the imageMetaInformationModel information structure, then return null
+	if(result.length === 0) {
+		return null;
+	}
 
-    // Else return the found imageSet
-    return result[0];
+	// Else return the found imageSet
+	return result[0];
 };
 
 /**
@@ -111,26 +113,55 @@ ImageMetaInformationModel.prototype.getImageSetById = function(id, projectId){
  * @param {String} projectId The id of the project to which the imageSet belongs. If no id is given, the set will be searched through all projects.
  * @return {ImageSetModel|null} The found image set or null if none was found with the given id.
  * **/
-ImageMetaInformationModel.prototype.getImageSetByName = function(imageName, projectId){
+ImageMetaInformationModel.prototype.getImageSetByName = function(imageName, projectId) {
 
-    // If no proper name was given, return null
-    if(imageName === ''){
-        return null;
-    }
+	// If no proper name was given, return null
+	if(imageName === '') {
+		return null;
+	}
 
-    // Get the image set with the name
-    var result = this.getImageSets(projectId).filter(function (imageSet) {
-        return imageSet.getReferenceImage().getName() === imageName
-            || imageSet.getNewImage().getName() === imageName;
-    });
+	// Get the image set with the name
+	var result = this.getImageSets(projectId).filter(function(imageSet) {
+		return imageSet.getReferenceImage().getName() === imageName
+			   || imageSet.getNewImage().getName() === imageName;
+	});
 
-    // If the image does not already exist in the imageMetaInformationModel information structure, then return null
-    if(result.length === 0){
-        return null;
-    }
+	// If the image does not already exist in the imageMetaInformationModel information structure, then return null
+	if(result.length === 0) {
+		return null;
+	}
 
-    // Else return the found imageSet
-    return result[0];
+	// Else return the found imageSet
+	return result[0];
+};
+
+/**
+ * Removes all image sets from a certain project which reference image contains the image name.
+ *
+ * @param {String} imageName The image name contained in the reference images' name.
+ * @param {String} projectId The project id from which the image sets should be deleted from.
+ * @return {Number} The number of removes imageSets.
+ */
+ImageMetaInformationModel.prototype.cleanUpProjectByImageName = function(imageName, projectId) {
+	var imageSetsToBeDeletedCount = 0;
+	var projectToBeCleandUp = this.getProject(projectId);
+	var that = this;
+
+	if(projectToBeCleandUp) {
+		var imageSetsToBeDeleted = [];
+
+		imageSetsToBeDeleted = projectToBeCleandUp.getImageSets().filter(function(imageSet) {
+			return imageSet.getReferenceImage().getName().includes(imageName);
+		});
+
+		imageSetsToBeDeletedCount = imageSetsToBeDeleted.length;
+
+		imageSetsToBeDeleted.forEach(function(imageSet) {
+			that.deleteImageSetFromModel(imageSet.getId(), projectId);
+		});
+	}
+
+	return imageSetsToBeDeletedCount;
 };
 
 /* ----- Setter ----- */
@@ -140,8 +171,8 @@ ImageMetaInformationModel.prototype.getImageSetByName = function(imageName, proj
  *
  * @param {String} timeStamp Sets the timeStamp.
  * **/
-ImageMetaInformationModel.prototype.setTimeStamp = function (timeStamp) {
-    this.timeStamp = timeStamp;
+ImageMetaInformationModel.prototype.setTimeStamp = function(timeStamp) {
+	this.timeStamp = timeStamp;
 };
 
 /* ----- Action Methods ----- */
@@ -151,55 +182,55 @@ ImageMetaInformationModel.prototype.setTimeStamp = function (timeStamp) {
  *
  * @param {Object} data The objects containing the data. The objects structure must be identical to this prototype.
  * **/
-ImageMetaInformationModel.prototype.load = function (data) {
-    var that = this;
+ImageMetaInformationModel.prototype.load = function(data) {
+	var that = this;
 
-    this.setTimeStamp(data.timeStamp);
+	this.setTimeStamp(data.timeStamp);
 
-    // Overwrite default project only if no other projects could be loaded
-    if (data.projects && data.projects.length > 0) {
-        data.projects.forEach(function (projectData) {
-            var project = new Project();
-            project.load(projectData);
-            that.projects.push(project);
-        });
-    } else {
-        this.addProject('Default', '0');
-    }
+	// Overwrite default project only if no other projects could be loaded
+	if(data.projects && data.projects.length > 0) {
+		data.projects.forEach(function(projectData) {
+			var project = new Project();
+			project.load(projectData);
+			that.projects.push(project);
+		});
+	} else {
+		this.addProject('Default', '0');
+	}
 
-    // Calculate the biggest image difference of all sets
-    this.calculateBiggestDifferences();
-    this.percentualPixelDifferenceThreshold = data.percentualPixelDifferenceThreshold;
-    this.distanceDifferenceThreshold = data.distanceDifferenceThreshold;
+	// Calculate the biggest image difference of all sets
+	this.calculateBiggestDifferences();
+	this.percentualPixelDifferenceThreshold = data.percentualPixelDifferenceThreshold;
+	this.distanceDifferenceThreshold = data.distanceDifferenceThreshold;
 };
 
 /**
  * Calculates the biggest percentual pixel and distance difference considering all current image sets.
  * **/
-ImageMetaInformationModel.prototype.calculateBiggestDifferences = function () {
-    var that = this;
-    var imageSets = this.getImageSets();
+ImageMetaInformationModel.prototype.calculateBiggestDifferences = function() {
+	var that = this;
+	var imageSets = this.getImageSets();
 
-    // If no image set exists, the difference is always 0
-    if(imageSets.length === 0){
-        that.biggestPercentualPixelDifference = 0;
-        that.biggestDistanceDifference = 0;
-    }
+	// If no image set exists, the difference is always 0
+	if(imageSets.length === 0) {
+		that.biggestPercentualPixelDifference = 0;
+		that.biggestDistanceDifference = 0;
+	}
 
-    // Calculate pixel and distance difference
-    imageSets.forEach(function (set) {
-        if(that.biggestPercentualPixelDifference < set.getDifference()){
-            that.biggestPercentualPixelDifference = set.getDifference();
-        }
+	// Calculate pixel and distance difference
+	imageSets.forEach(function(set) {
+		if(that.biggestPercentualPixelDifference < set.getDifference()) {
+			that.biggestPercentualPixelDifference = set.getDifference();
+		}
 
-        if(that.biggestDistanceDifference < set.getDistance()){
-            that.biggestDistanceDifference = set.getDistance();
-        }
-    });
+		if(that.biggestDistanceDifference < set.getDistance()) {
+			that.biggestDistanceDifference = set.getDistance();
+		}
+	});
 
-    // Set thresholds here to have the current values after each refresh of the calculations
-    this.percentualPixelDifferenceThreshold = config.getMaxPixelDifferenceThreshold();
-    this.distanceDifferenceThreshold = config.getMaxDistanceDifferenceThreshold();
+	// Set thresholds here to have the current values after each refresh of the calculations
+	this.percentualPixelDifferenceThreshold = config.getMaxPixelDifferenceThreshold();
+	this.distanceDifferenceThreshold = config.getMaxDistanceDifferenceThreshold();
 };
 
 /**
@@ -207,11 +238,11 @@ ImageMetaInformationModel.prototype.calculateBiggestDifferences = function () {
  *
  * @return {ImageMetaInformationModel} Returns a new ImageMetaInformationModel object containing the data of this object as a copy.
  * **/
-ImageMetaInformationModel.prototype.getCopy = function () {
-    var copyObject = new ImageMetaInformationModel();
-    copyObject.load(this);
+ImageMetaInformationModel.prototype.getCopy = function() {
+	var copyObject = new ImageMetaInformationModel();
+	copyObject.load(this);
 
-    return copyObject;
+	return copyObject;
 };
 
 
@@ -221,23 +252,23 @@ ImageMetaInformationModel.prototype.getCopy = function () {
  * @param {ImageSetModel} imageSetToBeAdded The image set to add.
  * @param {String} projectId The id of the project to which the imageSet will be added. If none was given or the id was not found, all projects will be searched for an existing image set with the same id and that one will be updated. Else, the image set will be added to the default project.
  * **/
-ImageMetaInformationModel.prototype.addImageSet = function (imageSetToBeAdded, projectId) {
-    var project = this.getProject(projectId);
+ImageMetaInformationModel.prototype.addImageSet = function(imageSetToBeAdded, projectId) {
+	var project = this.getProject(projectId);
 
-    // Try to find project without project id
-    if (!project) {
-        project = this.getProjects().find(function (currentProject) {
-            return currentProject.getImageSets().find(function (currentImageSet) {
-                return imageSetToBeAdded.getId() === currentImageSet.getId();
-            });
-        });
-    }
+	// Try to find project without project id
+	if(!project) {
+		project = this.getProjects().find(function(currentProject) {
+			return currentProject.getImageSets().find(function(currentImageSet) {
+				return imageSetToBeAdded.getId() === currentImageSet.getId();
+			});
+		});
+	}
 
 
-    //  Use given project or undeletable default project
-    project = project ? project : this.getProject('0');
+	//  Use given project or undeletable default project
+	project = project ? project : this.getProject('0');
 
-    project.addImageSet(imageSetToBeAdded);
+	project.addImageSet(imageSetToBeAdded);
 };
 
 /**
@@ -246,29 +277,29 @@ ImageMetaInformationModel.prototype.addImageSet = function (imageSetToBeAdded, p
  * @param {String} id The id of the image set to be deleted.
  * @param {String} projectId The id of the project of which the imageSet will be removed. If none was given or the id was not found, all projects will be searched for an existing image set and that one will be removed.
  * **/
-ImageMetaInformationModel.prototype.deleteImageSetFromModel = function (id, projectId) {
-    var project = this.getProject(projectId);
-    var success = false;
+ImageMetaInformationModel.prototype.deleteImageSetFromModel = function(id, projectId) {
+	var project = this.getProject(projectId);
+	var success = false;
 
-    if (project) {
-        success = project.removeImageSet(id)
-    } else {
-        this.getProjects().forEach(function (project) {
-            if (!success) {
-                success = project.removeImageSet(id);
-            }
-        });
-    }
+	if(project) {
+		success = project.removeImageSet(id)
+	} else {
+		this.getProjects().forEach(function(project) {
+			if(!success) {
+				success = project.removeImageSet(id);
+			}
+		});
+	}
 
-    // Error handling
-    if(!success){
-        var error = 'The image set with the id '
-            + id
-            + ' does not exist and thus can not be deleted.';
+	// Error handling
+	if(!success) {
+		var error = 'The image set with the id '
+					+ id
+					+ ' does not exist and thus can not be deleted.';
 
-        logger.error(error);
-        throw Error(error);
-    }
+		logger.error(error);
+		throw Error(error);
+	}
 };
 
 /**
@@ -279,11 +310,11 @@ ImageMetaInformationModel.prototype.deleteImageSetFromModel = function (id, proj
  * @return {ProjectModel} The newly created project.
  */
 ImageMetaInformationModel.prototype.addProject = function(projectName, projectId) {
-    var project = new Project(projectName, projectId);
+	var project = new Project(projectName, projectId);
 
-    this.projects.push(project);
+	this.projects.push(project);
 
-    return project;
+	return project;
 };
 
 /**
@@ -294,13 +325,15 @@ ImageMetaInformationModel.prototype.addProject = function(projectName, projectId
  * @return {boolean} True if the renaming was successful, else false.
  */
 ImageMetaInformationModel.prototype.renameProject = function(newProjectName, projectId) {
-    var project = this.getProject(projectId);
+	var project = this.getProject(projectId);
 
-    if (!project) { return false; }
+	if(!project) {
+		return false;
+	}
 
-    project.setProjectName(newProjectName);
+	project.setProjectName(newProjectName);
 
-    return true;
+	return true;
 };
 
 /**
@@ -310,16 +343,16 @@ ImageMetaInformationModel.prototype.renameProject = function(newProjectName, pro
  * @return {boolean} True if the deletion was successful, else false.
  */
 ImageMetaInformationModel.prototype.deleteProject = function(projectId) {
-    if (!projectId || projectId === '0') {
-        logger.warn('Tried to delete default project or no project id given. Canceled. Given project id: ' + projectId);
-        return false;
-    }
+	if(!projectId || projectId === '0') {
+		logger.warn('Tried to delete default project or no project id given. Canceled. Given project id: ' + projectId);
+		return false;
+	}
 
-    this.projects = this.projects.filter(function (currentProject) {
-        return currentProject.getProjectId() !== projectId;
-    });
+	this.projects = this.projects.filter(function(currentProject) {
+		return currentProject.getProjectId() !== projectId;
+	});
 
-    return true;
+	return true;
 };
 
 /**
@@ -331,16 +364,16 @@ ImageMetaInformationModel.prototype.deleteProject = function(projectId) {
  * @return {boolean} True if the assignment was a success, else false.
  */
 ImageMetaInformationModel.prototype.assignImageSetToProject = function(imageSetId, projectIdFrom, projectIdTo) {
-    try {
+	try {
 		var imageSetToBeMoved = this.getImageSetById(imageSetId, projectIdFrom);
 		this.addImageSet(imageSetToBeMoved, projectIdTo);
 		this.deleteImageSetFromModel(imageSetId, projectIdFrom);
-    } catch (exc) {
-        logger.error('Failed to assign ImageSet ' + imageSetId + ' to project ' + projectIdTo);
-        return false;
-    }
+	} catch(exc) {
+		logger.error('Failed to assign ImageSet ' + imageSetId + ' to project ' + projectIdTo);
+		return false;
+	}
 
-    return true;
+	return true;
 };
 
 /* ----- Helper Methods ----- */
@@ -352,22 +385,22 @@ ImageMetaInformationModel.prototype.assignImageSetToProject = function(imageSetI
  * @param {Image} image2 The second image.
  * @return {Boolean} True if they are the same, else false.
  * **/
-ImageMetaInformationModel.prototype.__isImageNameTheSame = function (image1, image2) {
-    return image1.getName() === image2.getName()
-        && image1.getName() !== '';
+ImageMetaInformationModel.prototype.__isImageNameTheSame = function(image1, image2) {
+	return image1.getName() === image2.getName()
+		   && image1.getName() !== '';
 };
 
 
 /**
  * Resets the imageMetaInformationModel information model to its initial state.
  * **/
-ImageMetaInformationModel.prototype.__init = function () {
-    this.biggestPercentualPixelDifference = 0;
-    this.biggestDistanceDifference = 0;
-    this.percentualPixelDifferenceThreshold = 0;
-    this.distanceDifferenceThreshold = 0;
-    this.timeStamp = '';
-    this.projects = [];
+ImageMetaInformationModel.prototype.__init = function() {
+	this.biggestPercentualPixelDifference = 0;
+	this.biggestDistanceDifference = 0;
+	this.percentualPixelDifferenceThreshold = 0;
+	this.distanceDifferenceThreshold = 0;
+	this.timeStamp = '';
+	this.projects = [];
 };
 
 module.exports = ImageMetaInformationModel;

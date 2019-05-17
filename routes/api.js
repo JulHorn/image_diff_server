@@ -125,6 +125,16 @@ router.delete('/:id/removeProject', function(req, res) {
     });
 });
 
+router.put('/:id/cleanUpProject', function(req, res) {
+	var projectId = req.params.id;
+	var imageName = req.body.imageName;
+
+	imageManipulatorRepository.cleanUpProject(imageName, projectId, function (job, wasSuccessful) {
+		res.statusCode = 200;
+		res.json({message: 'OK', data: {job: job, wasSuccessful: wasSuccessful}});
+	});
+});
+
 router.put('/:id/assignImageSetToProject', function(req, res) {
     var reqData = req.body;
     var imageSetId = req.params.id;

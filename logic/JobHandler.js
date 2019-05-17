@@ -9,6 +9,7 @@ var CompareImageByNameJob = require('./job/CompareImageByNameJob');
 var AddProjectJob = require('./job/AddProjectJob');
 var EditProjectJob = require('./job/EditProjectJob');
 var RemoveProjectJob = require('./job/RemoveProjectJob');
+var CleanUpProjectJob = require('./job/CleanUpProjectJob');
 var AssignImageSetToProjectJob = require('./job/AssignImageSetToProjectJob');
 var logger = require('winston');
 var config = require('./ConfigurationLoader');
@@ -214,6 +215,9 @@ JobHandler.prototype.__loadJob = function (jobData) {
         case 'RemoveProjectJob':
             job = new RemoveProjectJob();
             break;
+		case 'CleanUpProjectJob':
+			job = new CleanUpProjectJob();
+			break;
         case 'AssignImageSetToProjectJob':
             job = new AssignImageSetToProjectJob();
             break;
