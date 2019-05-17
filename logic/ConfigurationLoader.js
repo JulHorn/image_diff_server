@@ -173,4 +173,13 @@ Configuration.prototype.getAutoCropOption = function () {
     return this.getOptions().get('autoCrop');
 };
 
+/**
+ * Returns if the bounding boxes of marked areas should be displayed in the diff image.
+ *
+ * @return {Boolean} Returns if the bounding boxes of marked areas should be displayed in the diff image.
+ * **/
+Configuration.prototype.getDisplayMarkedAreasOption = function () {
+	return this.getOptions().get('displayMarkedAreas');
+};
+
 module.exports = new Configuration();

@@ -17,6 +17,7 @@
 		"maxImageImageDistanceDifference": 0.15
 	},
 	"options": {
-		"autoCrop":false
+		"autoCrop":true,
+		"displayMarkedAreas": true
 	}
 }

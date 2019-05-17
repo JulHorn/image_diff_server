@@ -101,9 +101,9 @@ CompareImageByNameJob.prototype.__saveAndCompareImage = function (imageName, ima
         if(isReferenceImageExisting) {
             var imageSet = that.getImageMetaInformationModel().getImageSetByName(fullImageName, projectId);
             var ignoreAreas = imageSet ? imageSet.getIgnoreAreas() : [];
+			var checkAreas = imageSet ? imageSet.getCheckAreas() : [];
 
-            // ToDo: Add check areas
-            that.getImageManipulator().createDiffImage(fullImageName, false, ignoreAreas, null, function (resultSet) {
+            that.getImageManipulator().createDiffImage(fullImageName, config.getAutoCropOption(), ignoreAreas, checkAreas, function (resultSet) {
                 // Compare
                 that.getImageMetaInformationModel().addImageSet(resultSet, projectId);
                 that.calculateMetaInformation();

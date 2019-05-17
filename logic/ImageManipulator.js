@@ -17,9 +17,10 @@ var ImageManipulator = function () {};
 /**
  * Creates a diff image of the reference and new image and saves it to the, in the config file configured, folder path.
  * Does not update the imageMetaInformationModel information itself.
+ * ToDo: Low prio: Remove autocrop from here and access the config directly
  *
  * @param {String} imageName The name of the images that should be compared. The image must have the same name in the reference and new folder. The diff image will have the name, too.
- * @param {Boolean} autoCrop Determines if the new/reference images should be auto croped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
+ * @param {Boolean} autoCrop Determines if the new/reference images should be auto cropped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
  * @param {MarkedArea[]} ignoreAreas The areas which will not be part of the comparison.
  * @param {MarkedArea[]} checkAreas Areas which will be used for checking. Everything not part of such an areay will be ignored (only when there is at least one).
  * @param {Function} callback The callback function which is called, when the method has finished the comparison. The callback has an imageSet as job.
@@ -27,11 +28,10 @@ var ImageManipulator = function () {};
 ImageManipulator.prototype.createDiffImage = function (imageName, autoCrop, ignoreAreas, checkAreas, callback) {
     // Other vars
     var that = this;
+	// Assign default values if no value was given
 	ignoreAreas = ignoreAreas || [];
 	checkAreas = checkAreas || [];
-
-    // Assign default value, if no value was given
-    autoCrop = autoCrop || false;
+    autoCrop = autoCrop || true;
 
     // Get images
     var referenceImagePath = config.getReferenceImageFolderPath() + path.sep + imageName;
@@ -195,8 +195,11 @@ ImageManipulator.prototype.createCompleteImageSet = function(imageName, referenc
  * **/
 ImageManipulator.prototype.__autoCrop = function (image1, image2, autoCrop) {
     if(autoCrop){
-        image1.autocrop();
-        image2.autocrop();
+		var usableImageWidth = Math.min(image1.bitmap.width, image2.bitmap.width);
+		var usableImageHeight = Math.min(image1.bitmap.height, image2.bitmap.height);
+
+		image1.crop(0, 0, usableImageWidth, usableImageHeight);
+		image2.crop(0, 0, usableImageWidth, usableImageHeight);
     }
 };
 
@@ -228,7 +231,8 @@ ImageManipulator.prototype.__deleteFile = function (path) {
 /**
  * Sets the ignore areas by setting the ignore areas pixel of the new image to the pixels of the reference image.
  * Because the images are the same in these areas, the resulting diff image will look ok in these areas.
- * ToDo: Update
+ * Will apply the check areas too in a very similar fashion.
+ *
  * @param {Image} referenceImage The reference image.
  * @param {Image} newImage The new image which will be manipulated.
  * @param {MarkedArea[]} ignoreAreas The areas which should be ignored.
@@ -236,22 +240,20 @@ ImageManipulator.prototype.__deleteFile = function (path) {
  * @throws {String} Thrown, if an ignore area is out of bounds.
  * **/
 ImageManipulator.prototype.__applyMarkedAreas = function (referenceImage, newImage, ignoreAreas, checkAreas) {
-	// ToDo: Probably move this to the autocrop function -> Adapt? Error message/Note
-	var usableImageWidth = newImage.bitmap.width >= referenceImage.bitmap.width ? referenceImage.bitmap.width : newImage.bitmap.width;
-	var usableImageHeight = newImage.bitmap.height >= referenceImage.bitmap.height ? referenceImage.bitmap.height : newImage.bitmap.height;
+	var usableImageWidth = Math.min(newImage.bitmap.width, referenceImage.bitmap.width);
+	var usableImageHeight = Math.min(newImage.bitmap.height, referenceImage.bitmap.height);
 	var resultImage = newImage;
 
-	referenceImage.crop(0, 0, usableImageWidth, usableImageHeight);
-	newImage.crop(0, 0, usableImageWidth, usableImageHeight);
-
+	// Apply the ignore area stuff
 	if(ignoreAreas) {
-		// Apply the ignore area stuff
 		this.__iterateThroughMarkedAreas(ignoreAreas, usableImageWidth, usableImageHeight, function(xPosition, yPosition) {
 			var referencePixelColour = referenceImage.getPixelColor(xPosition, yPosition);
 			newImage.setPixelColor(referencePixelColour, xPosition, yPosition);
 		});
     }
-	// ToDo: Color marked regions and add doku
+	// Apply checkAreas
+	// Cloning the reference image and than overwriting the checkArea pixels with the corresponding ones from the new image
+	// should be faster in most cases because not the whole image must be iterated through
 	if (checkAreas) {
 		resultImage = referenceImage.clone();
 
@@ -264,12 +266,13 @@ ImageManipulator.prototype.__applyMarkedAreas = function (referenceImage, newIma
 };
 
 /**
- * ToDo
- * @param image
- * @param markedAreas
- * @param r
- * @param g
- * @param b
+ * Draws bounding boxes for the marked areas.
+ *
+ * @param image The image on which the bounding boxes should be drawn on.
+ * @param markedAreas The marked areas for which the bounding boxes should be drawn.
+ * @param r Red color 0-255.
+ * @param g Green color 0-255.
+ * @param b Blue color 0-255.
  * @private
  */
 ImageManipulator.prototype.__drawMarkedAreaBoxes = function(image, markedAreas, r, g, b) {
@@ -325,15 +328,16 @@ ImageManipulator.prototype.__createDiffImage = function(imageName, newImage, ref
 	}
 
 	// Autocrop if argument is given to normalize images
-	// ToDo: Still necessary?
 	this.__autoCrop(referenceImage, newImage, autoCrop);
 
 	// Create diff, ensure that folder structure exists and write file
 	var diff = jimp.diff(referenceImage, newImageUsedForComparison);
 
-	// Draw marked area boundaries after diff was done to exclude them from te comparison
-	this.__drawMarkedAreaBoxes(diff.image, ignoreAreas, 255, 0, 100);
-	this.__drawMarkedAreaBoxes(diff.image, checkAreas, 0, 255, 100);
+	// Draw marked area boundaries after diff was done to exclude them from the comparison
+	if (config.getDisplayMarkedAreasOption()) {
+		this.__drawMarkedAreaBoxes(diff.image, ignoreAreas, 255, 0, 100);
+		this.__drawMarkedAreaBoxes(diff.image, checkAreas, 0, 255, 100);
+	}
 
 	fs.ensureDirSync(config.getResultImageFolderPath());
 
@@ -346,17 +350,18 @@ ImageManipulator.prototype.__createDiffImage = function(imageName, newImage, ref
 };
 
 /**
- * ToDo
- * @param markedAreas
- * @param usableImageWidth
- * @param usableImageHeight
- * @param callback
+ * Iterated through the given marked areas and calls the callback function for each pixel.
+ *
+ * @param markedAreas The marked areas which should be iterated through.
+ * @param maxImageWidth The max image width. If a marked area lies (partially) outside, the outside parts will be ignored.
+ * @param maxImageHeight The max image height. If a marked area lies (partially) outside, the outside parts will be ignored.
+ * @param callback The callback function called for each pixel. Has the parameter "xPosition" and "yPosition" of the pixel of the marked area.
  * @private
  */
-ImageManipulator.prototype.__iterateThroughMarkedAreas = function(markedAreas, usableImageWidth, usableImageHeight, callback) {
+ImageManipulator.prototype.__iterateThroughMarkedAreas = function(markedAreas, maxImageWidth, maxImageHeight, callback) {
 	markedAreas.forEach(function (markedArea) {
-		for(var xPosition = markedArea.x; xPosition >= markedArea.x && xPosition <= markedArea.x + markedArea.width && xPosition <= usableImageWidth; xPosition++) {
-			for(var yPosition = markedArea.y; yPosition >= markedArea.y && yPosition <= markedArea.y + markedArea.height && yPosition <= usableImageHeight; yPosition++) {
+		for(var xPosition = markedArea.x; xPosition >= markedArea.x && xPosition <= markedArea.x + markedArea.width && xPosition <= maxImageWidth; xPosition++) {
+			for(var yPosition = markedArea.y; yPosition >= markedArea.y && yPosition <= markedArea.y + markedArea.height && yPosition <= maxImageHeight; yPosition++) {
 				if (callback) {
 					callback(xPosition, yPosition);
 				}

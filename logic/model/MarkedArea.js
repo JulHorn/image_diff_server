@@ -1,9 +1,13 @@
 /**
- * Represents an ignore area.
- * ToDo: Update
+ * The constructor.
  *
+ * @param x The start x value. Optional.
+ * @param y The start y value. Optional.
+ * @param z The start z value. Optional.
+ * @param height The height (y axes). Optional.
+ * @param width The width (x axes). Optional.
  * @constructor
- * **/
+ */
 var MarkedArea = function (x, y, z, height, width) {
     this.x = x || 0;
     this.y = y || 0;
