@@ -1,0 +1,31 @@
+.modifyMarkedAreasRegionImageAreaInner {
+	margin: 0 auto;
+}
+
+.modifyMarkedAreasRegion {
+	position: fixed;
+	top: 8vh;
+	left: 15vw;
+	right: 15vw;
+	bottom: 8vh;
+	z-index: 1000;
+	border: solid #1a1a1a thin;
+	background-color: white;
+	padding-top: 50px;
+}
+
+.modifyMarkedAreasRegionImageArea {
+	width: 100%;
+	overflow: auto;
+	height: calc(100% - 50px)
+}
+
+.modifyMarkedAreasRegionImage {
+	margin: auto;
+}
+
+.modifyMarkedAreasRegionButtonBar {
+	text-align: center;
+	line-height: 50px;
+	height: 50px;
+}

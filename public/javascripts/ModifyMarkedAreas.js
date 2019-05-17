@@ -1,10 +1,9 @@
 /**
  * Creates the select area for images prototype.
- * ToDo: Rename stuff
  * @param {Object} $targetDiv The jQuery object under which the ignore area select stuff will be added.
  * @constructor
  * **/
-var AddIgnoreArea = function ($targetDiv) {
+var ModifyMarkedAreas = function ($targetDiv) {
     this.$container = $targetDiv;
     this.callback = null;
     this.__init();
@@ -16,10 +15,10 @@ var AddIgnoreArea = function ($targetDiv) {
  *
  * @param {String} imagePath The image path to the image which should be displayed in the ignore image window.
  * @param {ImageSet} imageSet The image which contains the image information.
- * @param markedAreas ToDO
+ * @param {MarkedArea[]} markedAreas The marked areas which should be displayed in the pane.
  * @param {Function} callback The callback function which will be called when the ignore area window was closed via OK button.
  * **/
-AddIgnoreArea.prototype.show = function (imagePath, imageSet, markedAreas, callback) {
+ModifyMarkedAreas.prototype.show = function (imagePath, imageSet, markedAreas, callback) {
     this.callback = callback;
     this.__createMarkup(imagePath, imageSet);
     this.__configureSelectAreaPlugin(markedAreas);
@@ -28,22 +27,20 @@ AddIgnoreArea.prototype.show = function (imagePath, imageSet, markedAreas, callb
 /**
  * Binds the event handler to the ui elements.
  * **/
-AddIgnoreArea.prototype.bindEvents = function () {
+ModifyMarkedAreas.prototype.bindEvents = function () {
     var that = this;
 
     //  Cancel window
-    this.$container.on('click', 'button[data-action=addIgnoreCancel]', function () {
+    this.$container.on('click', 'button[data-action=modifyMarkedAreasRegionCancel]', function () {
         that.$container.hide();
         that.$container.html('');
     });
 
     // Submit data to server
-    this.$container.on('click', 'button[data-action=addIgnoreOk]', function () {
+    this.$container.on('click', 'button[data-action=modifyMarkedAreasRegionOk]', function () {
         var id = $(this).data('id');
-        console.log('$(\'#addIgnoreImage\')', $('#addIgnoreImage'));
 
-		var selectedAreas = that.$container.find('#addIgnoreImage').selectAreas('relativeAreas');
-		console.log('selectedAreas', selectedAreas);
+		var selectedAreas = that.$container.find('#modifyMarkedAreasRegionImage').selectAreas('relativeAreas');
 
 		if (that.callback) {
 			that.callback(selectedAreas);
@@ -51,7 +48,7 @@ AddIgnoreArea.prototype.bindEvents = function () {
 
 		that.$container.hide();
 		// Off event handler to prevent
-		that.$container.off('click', 'button[data-action=addIgnoreOk]');
+		that.$container.off('click', 'button[data-action=modifyMarkedAreasRegionOk]');
 		that.$container.html('');
     });
 };
@@ -59,7 +56,7 @@ AddIgnoreArea.prototype.bindEvents = function () {
 /**
  * Init stuff.
  * **/
-AddIgnoreArea.prototype.__init = function () {
+ModifyMarkedAreas.prototype.__init = function () {
     this.$container.hide();
 };
 
@@ -69,17 +66,17 @@ AddIgnoreArea.prototype.__init = function () {
  * @param {String} imagePath The image path to the image which should be displayed in the ignore image window.
  * @param {ImageSet} imageSet The image which contains the image information.
  * **/
-AddIgnoreArea.prototype.__createMarkup = function (imagePath, imageSet) {
+ModifyMarkedAreas.prototype.__createMarkup = function (imagePath, imageSet) {
     var content =
-        '<div class="ignoreRegion">'
-        + '<div class="ignoreRegionImageArea">'
-        + '<div class="ignoreRegionImageAreaInner" style="width: ' + imageSet.referenceImage.width + 'px">'
-        + '<img id="addIgnoreImage" src="' + imagePath + '"/>'
+        '<div class="modifyMarkedAreasRegion">'
+        + '<div class="modifyMarkedAreasRegionImageArea">'
+        + '<div class="modifyMarkedAreasRegionImageAreaInner" style="width: ' + imageSet.referenceImage.width + 'px">'
+        + '<img id="modifyMarkedAreasRegionImage" src="' + imagePath + '"/>'
         + '</div>'
         + '</div>'
-        + '<div class="ignoreRegionButtonBar">'
-        + '<button data-action="addIgnoreCancel">Cancel</button>'
-        + '<button data-action="addIgnoreOk" data-id="' + imageSet.id + '">Ok</button>'
+        + '<div class="modifyMarkedAreasRegionButtonBar">'
+        + '<button data-action="modifyMarkedAreasRegionCancel">Cancel</button>'
+        + '<button data-action="modifyMarkedAreasRegionOk" data-id="' + imageSet.id + '">Ok</button>'
         + '</div>'
         + '</div>';
 
@@ -90,10 +87,10 @@ AddIgnoreArea.prototype.__createMarkup = function (imagePath, imageSet) {
 /**
  * Configures the jQuery plugin for the select area stuff.
  *
- * @param markedAreas ToDo
+ * @param {MarkedArea[]} markedAreas The marked areas to be manipulated and displayed.
  * **/
-AddIgnoreArea.prototype.__configureSelectAreaPlugin = function (markedAreas) {
-    this.$container.find('#addIgnoreImage').selectAreas({
+ModifyMarkedAreas.prototype.__configureSelectAreaPlugin = function (markedAreas) {
+    this.$container.find('#modifyMarkedAreasRegionImage').selectAreas({
         // editable
         allowEdit: true,
         // moveable

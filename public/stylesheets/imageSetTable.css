@@ -114,38 +114,6 @@
   display: none;
 }
 
-.ignoreRegionImageAreaInner {
-  margin: 0 auto;
-}
-
-.ignoreRegion {
-  position: fixed;
-  top: 8vh;
-  left: 15vw;
-  right: 15vw;
-  bottom: 8vh;
-  z-index: 1000;
-  border: solid #1a1a1a thin;
-  background-color: white;
-  padding-top: 50px;
-}
-
-.ignoreRegionImageArea {
-  width: 100%;
-  overflow: auto;
-  height: calc(100% - 50px)
-}
-
-.addIgnoreImage {
-  margin: auto;
-}
-
-.ignoreRegionButtonBar {
-  text-align: center;
-  line-height: 50px;
-  height: 50px;
-}
-
 .projectSelectProject {
   background-color: inherit;
   margin: -12px auto 15px auto;

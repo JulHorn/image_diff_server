@@ -103,12 +103,11 @@ CheckAllJob.prototype.createDiffImages = function (autoCrop, pixDiffThreshold, d
 };
 
 /**
- * Goes through the image meta information model and creates a map of ignore areas for better accessibility. Only
+ * Goes through the image meta information model and creates an object containing a map of ignore areas and check areas for better accessibility. Only
  * image sets with a reference image will be included.
- * ToDo: Update Doku
- * ToDo: Mappings noetig?
+ *
  * @param {ImageMetaInformationModel} imageMetaInformationModel The model from which the ignore area set will be created.
- * @return {Object} The map containing the ignore areas. The key is an image name and the value is an ignore area object.
+ * @return {{ignoreAreas: map,checkAreas: map}} An object containing a map of ignore areas and check areas.
  * **/
 CheckAllJob.prototype.__createMarkedAreaMappings = function (imageMetaInformationModel) {
     var resultIgnoreAreaMap = new Map();
@@ -132,7 +131,7 @@ CheckAllJob.prototype.__createMarkedAreaMappings = function (imageMetaInformatio
  *
  * @param {String[]} imageNames Array of image names which should be compared.
  * @param {Boolean} autoCrop Determines if the new/reference images should be autocroped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
- * @param {map} markedAreaMappings The map containing the ignore areas. The key is an image name and the value is an ignore area object. ToDo: Update doku
+ * @param {{ignoreAreas: map, checkAreas: map}} markedAreaMappings An object containing a map of ignore areas and check areas.
  * @param {Number} pixDiffThreshold
  * @param {Number} distThreshold
  * @param {Function} callback Will be called, when the method has finished to compute all images. Has the number of processed images as job.

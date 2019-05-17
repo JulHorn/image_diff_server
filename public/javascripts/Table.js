@@ -40,18 +40,14 @@ Table.prototype.bindEvents = function () {
     // Open ignore region pane
     this.$container.on('click', 'button[data-action=addIgnoreRegions]', function () {
         var $this = $(this);
-        var $ignoreRegion = $('#ignoreRegion');
+        var $ignoreRegion = $('#markedAreasRegion');
         var id = $this.data('id');
         var imgPath = that.__sanitizeImagePaths($this.data('image'));
 
         that.connector.getImageSet(id, function (data) {
-            // ToDo: Rename ignoreRegion
-            new AddIgnoreArea($ignoreRegion).show(imgPath, data.resultImageSet, data.resultImageSet.ignoreAreas, function (markedAreas) {
-                console.log('T0');
+            new ModifyMarkedAreas($ignoreRegion).show(imgPath, data.resultImageSet, data.resultImageSet.ignoreAreas, function (markedAreas) {
 				that.connector.modifyIgnoreAreas(id, markedAreas, function (data) {
-				    console.log('T1');
 					$this.siblings('#ignoreAreaField').text(data.resultImageSet.ignoreAreas.length);
-					console.log('T2');
 				});
             });
         });
@@ -59,16 +55,13 @@ Table.prototype.bindEvents = function () {
 
 	this.$container.on('click', 'button[data-action=addCheckRegions]', function () {
 		var $this = $(this);
-		// ToDo: Rename field
-		var $checkRegion = $('#ignoreRegion');
+		var $checkRegion = $('#markedAreasRegion');
 		var id = $this.data('id');
 		var imgPath = that.__sanitizeImagePaths($this.data('image'));
 
 		that.connector.getImageSet(id, function (data) {
-			new AddIgnoreArea($checkRegion).show(imgPath, data.resultImageSet, data.resultImageSet.checkAreas, function (markedAreas) {
-				console.log('markedAreas', markedAreas);
+			new ModifyMarkedAreas($checkRegion).show(imgPath, data.resultImageSet, data.resultImageSet.checkAreas, function (markedAreas) {
 			    that.connector.modifyCheckAreas(id, markedAreas, function (data) {
-					console.log('data', data);
 					$this.siblings('#checkAreaField').text(data.resultImageSet.checkAreas.length);
 				});
 			});
