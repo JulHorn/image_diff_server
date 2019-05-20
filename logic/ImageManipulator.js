@@ -149,7 +149,7 @@ ImageManipulator.prototype.createCompleteImageSet = function(imageName, referenc
     var referenceImageModel = imageSet.getReferenceImage();
     var newImageModel = imageSet.getNewImage();
     var diffImageModel = imageSet.getDiffImage();
-    var isThresholdBreached = distance > config.getMaxDistanceDifferenceThreshold() || difference > config.getMaxPixelDifferenceThreshold();
+    var isThresholdBreached = difference > config.getMaxPixelDifferenceThreshold();
 
     imageSet.setDifference(difference);
     imageSet.setDistance(distance);
@@ -245,16 +245,17 @@ ImageManipulator.prototype.__applyMarkedAreas = function (referenceImage, newIma
 	var resultImage = newImage;
 
 	// Apply the ignore area stuff
-	if(ignoreAreas) {
+	if(ignoreAreas && ignoreAreas.length > 0) {
 		this.__iterateThroughMarkedAreas(ignoreAreas, usableImageWidth, usableImageHeight, function(xPosition, yPosition) {
 			var referencePixelColour = referenceImage.getPixelColor(xPosition, yPosition);
 			newImage.setPixelColor(referencePixelColour, xPosition, yPosition);
 		});
     }
+
 	// Apply checkAreas
 	// Cloning the reference image and than overwriting the checkArea pixels with the corresponding ones from the new image
 	// should be faster in most cases because not the whole image must be iterated through
-	if (checkAreas) {
+	if (checkAreas && checkAreas.length > 0) {
 		resultImage = referenceImage.clone();
 
 		this.__iterateThroughMarkedAreas(checkAreas, usableImageWidth, usableImageHeight, function(xPosition, yPosition) {
@@ -320,15 +321,15 @@ ImageManipulator.prototype.__createDiffImage = function(imageName, newImage, ref
 		logger.error(errorText);
 	}
 
+	// Autocrop if argument is given to normalize images
+	this.__autoCrop(referenceImage, newImage, autoCrop);
+
 	try {
 		// Add ignore areas, which should not be part of the comparison
 		newImageUsedForComparison = this.__applyMarkedAreas(referenceImage, newImage, ignoreAreas, checkAreas);
 	} catch(err) {
 		errorText = err;
 	}
-
-	// Autocrop if argument is given to normalize images
-	this.__autoCrop(referenceImage, newImage, autoCrop);
 
 	// Create diff, ensure that folder structure exists and write file
 	var diff = jimp.diff(referenceImage, newImageUsedForComparison);
