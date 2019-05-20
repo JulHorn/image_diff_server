@@ -316,7 +316,8 @@ ImageManipulator.prototype.__createDiffImage = function(imageName, newImage, ref
 		|| referenceImage.bitmap.width !== newImage.bitmap.width)){
 		errorText = 'Image dimensions are not equal: '
 					+ '\nreference: ' + referenceImage.bitmap.height + '/' + referenceImage.bitmap.width
-					+ '\nnew: ' + newImage.bitmap.height + '/' + newImage.bitmap.width;
+					+ '\nnew: ' + newImage.bitmap.height + '/' + newImage.bitmap.width
+					+ '\nImages might be cropped to the same size depending of the set auto crop option in the config.';
 		logger.error(errorText);
 	}
 
