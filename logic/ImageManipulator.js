@@ -187,20 +187,59 @@ ImageManipulator.prototype.createCompleteImageSet = function(imageName, referenc
 /* ----- Other helper methods ----- */
 
 /**
- * Autocrops two images.
+ * Autocrops two images. Cuts the bigger image to the dimension of the smaller image.
+ * Cuts the images to match defined checkAreas for the imageSet.
  *
  * @param {Image} image1 The first image to autocrop.
  * @param {Image} image2 The second image to autocrop.
  * @param {bool} autoCrop If true, the images will be autocroped, else not.
+ * @param {MarkedArea} checkAreas ToDo
  * **/
-ImageManipulator.prototype.__autoCrop = function (image1, image2, autoCrop) {
+ImageManipulator.prototype.__autoCrop = function (image1, image2, autoCrop, checkAreas) {
     if(autoCrop){
-		var usableImageWidth = Math.min(image1.bitmap.width, image2.bitmap.width);
-		var usableImageHeight = Math.min(image1.bitmap.height, image2.bitmap.height);
+		var usableDimensions = this.__calculateUsableDimension(image1, image2, checkAreas);
 
-		image1.crop(0, 0, usableImageWidth, usableImageHeight);
-		image2.crop(0, 0, usableImageWidth, usableImageHeight);
+		image1.crop(0, 0, usableDimensions.maxUsableWidth, usableDimensions.maxUsableHeight);
+		image2.crop(0, 0, usableDimensions.maxUsableWidth, usableDimensions.maxUsableHeight);
     }
+};
+
+/**
+ * ToDo
+ * @param image1
+ * @param image2
+ * @param checkAreas
+ * @return {{maxUsableWidth: number, maxUsableHeight: number}}
+ * @private
+ */
+ImageManipulator.prototype.__calculateUsableDimension = function(image1, image2, checkAreas) {
+	var maxUsableWidth = 0;
+	var maxUsableHeight = 0;
+
+	// Get the most right and lowest points of all check areas
+	if (checkAreas && checkAreas.length > 0) {
+		checkAreas.forEach(function(checkArea) {
+			var checkAreaMostRightPoint = checkArea.getX() + checkArea.getWidth();
+			var checkAreaLowestPoint = checkArea.getY() + checkArea.getHeight();
+
+			if (checkAreaMostRightPoint > maxUsableWidth) { maxUsableWidth = checkAreaMostRightPoint; }
+			if (checkAreaLowestPoint > maxUsableHeight) { maxUsableHeight = checkAreaLowestPoint; }
+		});
+	}
+
+	// Add some extra pixels to make the surroundings a bit more visible
+	maxUsableWidth += 10;
+	maxUsableHeight += 10;
+
+	// Get the smallest usable image dimensions
+	var usableImageWidth = Math.min(image1.bitmap.width, image2.bitmap.width);
+	var usableImageHeight = Math.min(image1.bitmap.height, image2.bitmap.height);
+
+	// Get the smallest matching results of checkAreas and image dimensions
+	maxUsableWidth = Math.min(usableImageWidth, maxUsableWidth);
+	maxUsableHeight = Math.min(usableImageHeight, maxUsableHeight);
+
+	return { maxUsableWidth: maxUsableWidth, maxUsableHeight: maxUsableHeight }
 };
 
 /**
@@ -240,13 +279,12 @@ ImageManipulator.prototype.__deleteFile = function (path) {
  * @throws {String} Thrown, if an ignore area is out of bounds.
  * **/
 ImageManipulator.prototype.__applyMarkedAreas = function (referenceImage, newImage, ignoreAreas, checkAreas) {
-	var usableImageWidth = Math.min(newImage.bitmap.width, referenceImage.bitmap.width);
-	var usableImageHeight = Math.min(newImage.bitmap.height, referenceImage.bitmap.height);
+	var usableDimensions = this.__calculateUsableDimension(referenceImage, newImage, checkAreas);
 	var resultImage = newImage;
 
 	// Apply the ignore area stuff
 	if(ignoreAreas && ignoreAreas.length > 0) {
-		this.__iterateThroughMarkedAreas(ignoreAreas, usableImageWidth, usableImageHeight, function(xPosition, yPosition) {
+		this.__iterateThroughMarkedAreas(ignoreAreas, usableDimensions.maxUsableWidth, usableDimensions.maxUsableHeight, function(xPosition, yPosition) {
 			var referencePixelColour = referenceImage.getPixelColor(xPosition, yPosition);
 			newImage.setPixelColor(referencePixelColour, xPosition, yPosition);
 		});
@@ -258,7 +296,7 @@ ImageManipulator.prototype.__applyMarkedAreas = function (referenceImage, newIma
 	if (checkAreas && checkAreas.length > 0) {
 		resultImage = referenceImage.clone();
 
-		this.__iterateThroughMarkedAreas(checkAreas, usableImageWidth, usableImageHeight, function(xPosition, yPosition) {
+		this.__iterateThroughMarkedAreas(checkAreas, usableDimensions.maxUsableWidth, usableDimensions.maxUsableHeight, function(xPosition, yPosition) {
 			var newImageColour = newImage.getPixelColor(xPosition, yPosition);
 			resultImage.setPixelColor(newImageColour, xPosition, yPosition);
 		});
@@ -322,7 +360,7 @@ ImageManipulator.prototype.__createDiffImage = function(imageName, newImage, ref
 	}
 
 	// Autocrop if argument is given to normalize images
-	this.__autoCrop(referenceImage, newImage, autoCrop);
+	this.__autoCrop(referenceImage, newImage, autoCrop, checkAreas);
 
 	try {
 		// Add ignore areas, which should not be part of the comparison
