@@ -60,7 +60,6 @@ Header.prototype.draw = function (data) {
     imageModel.timeStamp ? this.$timeStampField.text(imageModel.timeStamp) : this.$timeStampField.text('Job is currently running');
 
     this.$maxPixelPercentageField.text(imageModel.biggestPercentualPixelDifference + '% of allowed ' + data.imageMetaInformationModel.percentualPixelDifferenceThreshold + '%');
-    this.$maxDistanceField.text(imageModel.biggestDistanceDifference + ' of allowed ' + data.imageMetaInformationModel.distanceDifferenceThreshold);
     this.$progressIndicator.attr('max',data.imagesToBeProcessedCount);
     this.$progressIndicator.val(data.processedImageCount);
     this.$currentJobField.text(data.jobName);
@@ -72,7 +71,6 @@ Header.prototype.draw = function (data) {
 Header.prototype.__initElements = function () {
     this.$timeStampField = this.$container.find('#timeStamp');
     this.$maxPixelPercentageField = this.$container.find('#maxPixelPercentage');
-    this.$maxDistanceField = this.$container.find('#maxDistance');
     this.$progressIndicator = this.$container.find('#progressIndicator');
     this.$currentJobField = this.$container.find('#currentJob');
 };

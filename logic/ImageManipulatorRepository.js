@@ -30,27 +30,22 @@ var ImageManipulatorRepository = function() {
  *
  * @param {Boolean} autoCrop Enables if auto cropping should be used before comparing images.
  * @param {Number} pixDiffThreshold The allowed pixel percentage threshold. Should be between 0 and 1.
- * @param {Number} distThreshold The allowed Hamming distance threshold. Should be between 0 and 1.
  * @param {Function} callback Called when the complete image comparison process is done. Has the updated image imageMetaInformationModel information model object as job.
  * **/
-ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function(autoCrop, pixDiffThreshold, distThreshold, callback) {
+ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function(autoCrop, pixDiffThreshold, callback) {
 	logger.info('---------- Start ----------', new Date().toISOString());
 	var autoCropValue = autoCrop ? autoCrop : config.getAutoCropOption();
 	var pixDiffThresholdValue = pixDiffThreshold ? pixDiffThreshold : config.getMaxPixelDifferenceThreshold();
-	var distThresholdValue = distThreshold ? distThreshold : config.getMaxDistanceDifferenceThreshold();
 
 	logger.info("----- Options Start -----");
 	logger.info("Auto cropping is enabled: ", autoCropValue);
 	logger.info("Threshold for pixel difference:", pixDiffThresholdValue);
-	logger.info("Distance threshold:", distThresholdValue);
 	logger.info("----- Options End -----");
 
 	// Add create diff images job to the job handler
 	jobHandler.addJob(
-			new CheckAllJobModel(autoCropValue, pixDiffThresholdValue, distThresholdValue, function(job) {
+			new CheckAllJobModel(autoCropValue, pixDiffThresholdValue, function(job) {
 				logger.info('---------- End ----------', new Date().toISOString());
-
-				var isBiggestDistanceDiffThresholdBreached = job.getImageMetaInformationModel().getBiggestDistanceDifference() > distThresholdValue;
 				var isBiggestPixelDiffThresholdBreached = job.getImageMetaInformationModel().getBiggestPercentualPixelDifference() > pixDiffThresholdValue;
 
 				logger.info("Percentual pixel difference:"
@@ -58,13 +53,8 @@ ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function
 							+ "\nAllowed threshold: " + pixDiffThresholdValue
 							+ "\nDifference:" + job.getImageMetaInformationModel().getBiggestPercentualPixelDifference());
 
-				logger.info("Distance difference:"
-							+ "\nThreshold breached " + isBiggestDistanceDiffThresholdBreached
-							+ "\nAllowed threshold: " + distThresholdValue
-							+ "\nDifference:" + job.getImageMetaInformationModel().getBiggestDistanceDifference());
-
 				if(callback) {
-					callback(job, isBiggestDistanceDiffThresholdBreached || isBiggestPixelDiffThresholdBreached);
+					callback(job, isBiggestPixelDiffThresholdBreached);
 				}
 			})
 	);

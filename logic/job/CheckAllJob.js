@@ -10,15 +10,13 @@ var fs = require('fs-extra');
  *
  * @param autoCrop Determines if the new/reference images should be autocroped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
  * @param pixDiffThreshold The pixel threshold.
- * @param distThreshold The distance threshold.
  * @param callback The callback method which is called, when diff process has finished. Has the this job as parameter.
  * @constructor
  * **/
-var CheckAllJob = function (autoCrop, pixDiffThreshold, distThreshold, callback) {
+var CheckAllJob = function (autoCrop, pixDiffThreshold, callback) {
     Job.call(this, 'CheckAll', callback);
     this.autoCrop = autoCrop;
     this.pixDiffThreshold = pixDiffThreshold;
-    this.distThreshold = distThreshold;
 };
 
 // Do inheritance
@@ -37,7 +35,7 @@ CheckAllJob.prototype.execute = function (imageMetaInformationModel, callback) {
     this.imageMetaInformationModel = imageMetaInformationModel;
 
     // Compute differences
-    this.createDiffImages(this.autoCrop, this.pixDiffThreshold, this.distThreshold, function () {
+    this.createDiffImages(this.autoCrop, this.pixDiffThreshold, function () {
         var jobCreatorCallback = that.getCallbackFunction();
 
         // Make the reference of the model to a copy to have a snapshot which will not be changed anymore
@@ -59,10 +57,9 @@ CheckAllJob.prototype.execute = function (imageMetaInformationModel, callback) {
  *
  * @param {Boolean} autoCrop Determines if the new/reference images should be autocroped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
  * @param {Number} pixDiffThreshold The pixel threshold.
- * @param {Number} distThreshold The distance threshold.
  * @param {Function} callback The callback method which is called, when diff process as finished. Has the imageMetaInformationModel as job. Optional.
  * **/
-CheckAllJob.prototype.createDiffImages = function (autoCrop, pixDiffThreshold, distThreshold, callback) {
+CheckAllJob.prototype.createDiffImages = function (autoCrop, pixDiffThreshold, callback) {
     var that = this;
 
     // Ensure that the folders which should contain the images exist
@@ -92,7 +89,7 @@ CheckAllJob.prototype.createDiffImages = function (autoCrop, pixDiffThreshold, d
 
     // Create diff images
     this.__createSingleImages(refDiffImageNames, newDiffImageNames, function () {
-        that.__createDiffImages(imageNames, autoCrop, markedAreaMappings, pixDiffThreshold, distThreshold, function () {
+        that.__createDiffImages(imageNames, autoCrop, markedAreaMappings, pixDiffThreshold, function () {
             that.calculateMetaInformation();
 
             if(callback) {
@@ -133,10 +130,9 @@ CheckAllJob.prototype.__createMarkedAreaMappings = function (imageMetaInformatio
  * @param {Boolean} autoCrop Determines if the new/reference images should be autocroped before comparison to yield better results if the sometimes differ in size. Must be a boolean.
  * @param {{ignoreAreas: map, checkAreas: map}} markedAreaMappings An object containing a map of ignore areas and check areas.
  * @param {Number} pixDiffThreshold
- * @param {Number} distThreshold
  * @param {Function} callback Will be called, when the method has finished to compute all images. Has the number of processed images as job.
  * **/
-CheckAllJob.prototype.__createDiffImages = function (imageNames, autoCrop, markedAreaMappings, pixDiffThreshold, distThreshold, callback) {
+CheckAllJob.prototype.__createDiffImages = function (imageNames, autoCrop, markedAreaMappings, pixDiffThreshold, callback) {
 
     logger.info("Number of images left to compare: ", imageNames.length);
     // If no images are left to process, call the callback method and stop
@@ -169,7 +165,7 @@ CheckAllJob.prototype.__createDiffImages = function (imageNames, autoCrop, marke
             // Increase the number of processed images by one
             that.incrementProcessImageCounter();
 
-            that.__createDiffImages(imageNames, autoCrop, markedAreaMappings, pixDiffThreshold, distThreshold, callback);
+            that.__createDiffImages(imageNames, autoCrop, markedAreaMappings, pixDiffThreshold, callback);
         });
     }
 };
@@ -238,15 +234,6 @@ CheckAllJob.prototype.isAutoCropEnabled = function () {
  * **/
 CheckAllJob.prototype.getMaxPixelDifferenceThreshold = function () {
   return this.pixDiffThreshold;
-};
-
-/**
- * Returns the maximum allowed distance threshold. The return value is between 0 and 1.
- *
- * @return {Number} Returns the maximum allowed distance threshold. The return value is between 0 and 1.
- * **/
-CheckAllJob.prototype.getMaxDistanceDifferenceThreshold = function () {
-    return this.distThreshold;
 };
 
 /**

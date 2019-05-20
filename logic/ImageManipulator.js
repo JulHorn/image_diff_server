@@ -289,7 +289,6 @@ ImageManipulator.prototype.__drawMarkedAreaBoxes = function(image, markedAreas, 
 			for (yPosition = markedArea.getY(); yPosition < markedArea.getY() + markedArea.getHeight(); yPosition++) { image.setPixelColor(targetColor, markedArea.getX(), yPosition); }
 			for (yPosition = markedArea.getY(); yPosition < markedArea.getY() + markedArea.getHeight(); yPosition++) { image.setPixelColor(targetColor, markedArea.getX() + markedArea.getWidth(), yPosition); }
 		});
-		console.log('yeah');
 	}
 };
 

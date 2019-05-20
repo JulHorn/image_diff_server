@@ -149,7 +149,7 @@ Configuration.prototype.getMaxPixelDifferenceThreshold = function () {
 /**
  * Returns the maximum allowed hammond distance before the images will be added to the result set.
  *
- * @return {Number} Returns the maximum allowed hammond distance before the images will be added to the result set.
+ * @return {Number} Returns the maximum allowed hamming distance before the images will be added to the result set.
  * **/
 Configuration.prototype.getMaxDistanceDifferenceThreshold = function () {
     return this.getThresholdConf().get('maxImageImageDistanceDifference');

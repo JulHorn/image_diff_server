@@ -11,25 +11,20 @@ block content
                         span(id='currentJob')
                 td
                     div
-                        span Pixel difference:
-                        span(id='maxPixelPercentage')
-            tr
-                td
-                    div
-                        div
-                            span Progress:
-                            progress(id='progressIndicator' value=0 max=10)
-                            button(id='refreshButton' data-action='refresh')
-                                i(class="fas fa-sync-alt")
-                td
-                    div
-                        span Hamming distance:
-                        span(id='maxDistance')
+                        span Progress:
+                        progress(id='progressIndicator' value=0 max=10)
+                        button(id='refreshButton' data-action='refresh')
+                            i(class="fas fa-sync-alt")
             tr
                 td
                     div
                         span Last job finished:
                         span(id='timeStamp')
+                td
+                    div
+                        span Pixel difference:
+                        span(id='maxPixelPercentage')
+
             tr
                 td(colspan = 2)
                     div

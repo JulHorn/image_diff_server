@@ -12,7 +12,6 @@ router.post('/checkAll', function(req, res) {
 
     imageManipulatorRepository.calculateDifferencesForAllImages(reqData.autoCrop
         , reqData.pixDiffThreshold
-        , reqData.distThreshold
         , function (job, isThresholdBreached) {
             res.statusCode = 200;
             res.json({message: 'OK', data: {job: job, isThresholdBreached: isThresholdBreached}});

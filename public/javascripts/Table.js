@@ -301,8 +301,6 @@ Table.prototype.__createDescriptionRow = function (imageSet) {
     desRowContent += '<div>';
     desRowContent += '<span>Pixel difference:</span>';
     desRowContent += '<span role="percPixelDifference">' + imageSet.difference + '%</span><br>';
-    desRowContent += '<span>Hamming distance:</span>';
-    desRowContent += '<span role="distanceDifference">' + imageSet.distance + '</span><br>';
 
     // Display error only if there is really one
     if (imageSet.error) {
@@ -407,7 +405,6 @@ Table.prototype.__updateImageSetMetaInformation = function (resultImageSet, id) 
     diffDesc.find('*[role="width"]').text(resultImageSet.referenceImage.width);
     diffDesc.find('*[role="error"]').text(resultImageSet.error);
     diffDesc.find('*[role="percPixelDifference"]').text(resultImageSet.difference);
-    diffDesc.find('*[role="distanceDifference"]').text(resultImageSet.distance);
 };
 
 /**
