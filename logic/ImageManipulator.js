@@ -213,6 +213,10 @@ ImageManipulator.prototype.__autoCrop = function (image1, image2, autoCrop, chec
  * @private
  */
 ImageManipulator.prototype.__calculateUsableDimension = function(image1, image2, checkAreas) {
+	// Get the smallest usable image dimensions
+	var usableImageWidth = Math.min(image1.bitmap.width, image2.bitmap.width);
+	var usableImageHeight = Math.min(image1.bitmap.height, image2.bitmap.height);
+	// Result usable dimensions
 	var maxUsableWidth = 0;
 	var maxUsableHeight = 0;
 
@@ -225,15 +229,15 @@ ImageManipulator.prototype.__calculateUsableDimension = function(image1, image2,
 			if (checkAreaMostRightPoint > maxUsableWidth) { maxUsableWidth = checkAreaMostRightPoint; }
 			if (checkAreaLowestPoint > maxUsableHeight) { maxUsableHeight = checkAreaLowestPoint; }
 		});
+
+		// Add some extra pixels to make the surroundings a bit more visible
+		maxUsableWidth += 10;
+		maxUsableHeight += 10;
+	} else {
+		// If no checkAreas are defined, use image dimensions in order to prevent 10 px image size for comparison
+		maxUsableWidth = usableImageWidth;
+		maxUsableHeight = usableImageHeight;
 	}
-
-	// Add some extra pixels to make the surroundings a bit more visible
-	maxUsableWidth += 10;
-	maxUsableHeight += 10;
-
-	// Get the smallest usable image dimensions
-	var usableImageWidth = Math.min(image1.bitmap.width, image2.bitmap.width);
-	var usableImageHeight = Math.min(image1.bitmap.height, image2.bitmap.height);
 
 	// Get the smallest matching results of checkAreas and image dimensions
 	maxUsableWidth = Math.min(usableImageWidth, maxUsableWidth);
