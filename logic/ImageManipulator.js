@@ -193,7 +193,8 @@ ImageManipulator.prototype.createCompleteImageSet = function(imageName, referenc
  * @param {Image} image1 The first image to autocrop.
  * @param {Image} image2 The second image to autocrop.
  * @param {bool} autoCrop If true, the images will be autocroped, else not.
- * @param {MarkedArea} checkAreas ToDo
+ * @param {MarkedArea} checkAreas Checked areas which are used to calculate on how much should be cropped.
+ * 	The focus is to remove unneeded stuff and concentrate on the checkAreas.
  * **/
 ImageManipulator.prototype.__autoCrop = function (image1, image2, autoCrop, checkAreas) {
     if(autoCrop){
@@ -205,10 +206,12 @@ ImageManipulator.prototype.__autoCrop = function (image1, image2, autoCrop, chec
 };
 
 /**
- * ToDo
- * @param image1
- * @param image2
- * @param checkAreas
+ * Calculates the usable width and height of the images. The dimensions of the smaller image will be used.
+ * If checkAreas are given, then the calculated dimensions will a bit bigger than the max x and max y value of the checkAreas.
+ *
+ * @param image1 The first image to determine the usable dimensions.
+ * @param image2 The second image to determine the usable dimensions.
+ * @param checkAreas The checkAreas used determine the usable dimensions. Optional.
  * @return {{maxUsableWidth: number, maxUsableHeight: number}}
  * @private
  */

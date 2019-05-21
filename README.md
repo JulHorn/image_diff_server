@@ -25,7 +25,7 @@ It consists of the following:
     1. chose between failed, passed and all images.
     2. manage projects. There will always be a default project which can be renamed but not deleted. The feature makes it possible assign images to different projects for better management. Image names should be unique to avoid collision.
 4. An overview table with these 3 columns: reference, new and diff. All images can be enlarged by clicking on them. It is possible to change the assigned project via the dropdown menu.
-    1. The reference image column displays the reference image and some meta information about it. That is what the new image should look like. If the "Delete" button is clicked, the reference, new and diff images will be deleted. If the "Modify Ignore Areas" button is clicked, it is possible to define areas in which the images will not compared by clicking on the image and keeping the mouse button pressed until you are satisfied with the area.
+    1. The reference image column displays the reference image and some meta information about it. That is what the new image should look like. If the "Delete" button is clicked, the reference, new and diff images will be deleted. If the "Modify Ignore Areas" button is clicked, it is possible to define areas in which the images will not compared by clicking on the image and keeping the mouse button pressed until you are satisfied with the area. Similiar with the "Modify Check Areas" button. Can be used to defined areas for comparison. If at least one is defined everything outside will be ignored.
     2. The new image column displays the new image and some meta information about it. That is what the new image looks like. This image can be made to the new reference image by clicking on the "Add" button.
     3. The diff image column displays the diff image, which visualizes the differences between the reference and the new image and some meta information (percentual pixel difference, ...) about it.
 
@@ -46,9 +46,10 @@ In order to configure this project, rename the file "default-example.json" in th
     4. "jobHistoryFilePath": The path to where the information about the job history will be saved in the JSON format. If the file does not exist, it will be created. It contains all information about the stored jobs, like the number of processed images, their percentual differences etc. Default value is "./data/metaInformation.json".
 3. "thresholds"
     1. "maxPercentualImagePixelDifference": The maximum percentual pixel difference, which is allowed before the image will be stored as "too different" and be accessible via API or UI. The default value is "0.15". It can be between 0 and 100.
-    2. "maxImageImageDistanceDifference": The maximum Hamming distance, which is allowed before the image will be stored as "too different" and be accessible via API or UI. The default value is "0.15". It can be beween 0 and 100.
+    2. "maxImageImageDistanceDifference": The maximum Hamming distance, which is allowed before the image will be stored as "too different" and be accessible via API or UI. The default value is "0.15". It can be beween 0 and 100. Note: Currently not used anymore because of unpredictable results.
 4. "options"
-    1. "autoCrop": The reference and the new images will be cropped to avoid problems with images (e.g. one image which has a little more whitespace on the upper side). The default value is "false". It can be "true" or "false".
+    1. "autoCrop": The reference and the new images will be cropped to avoid problems with different image sizes. Cuts images to the smallest possible size. If checkAreas are defined, the image will be cut further to focus on those areas. The default value is "true". It can be "true" or "false".
+    2. "displayMarkedAreas": Draws rectangles to indicate ignore or check areas. check areas are green and ignore areas are red.
     
 ## API
 
@@ -104,6 +105,18 @@ Every response contains a job object, which contains all information about the c
     3. The request body must be in JSON format with the following properties:
         1. projectIdFrom: The project id to which the image set currently belongs.
         2. projectIdTo: The project to which the image set should be assigned.
+7. Add ignore areas
+	1. Type: PUT
+	2: URL: http://127.0.0.1:xxxx/api/:id/modifyIgnoreAreas
+		1. :id : The id of the image set for which the areas should be set.
+	3. The request body must be in JSON format with the following property:
+		1. ignoreAreas: Example value: [{height: 100, id: -1, width: 100, x: 0, y: 0, z: 100}]
+8. Add check areas
+	1. Type: PUT
+	2: URL: http://127.0.0.1:xxxx/api/:id/modifyCheckAreas
+		1. :id : The id of the image set for which the areas should be set.
+	3. The request body must be in JSON format with the following property:
+		1. checkAreas: Example value: [{height: 100, id: -1, width: 100, x: 0, y: 0, z: 100}]	
 
 ### Example
 
@@ -171,6 +184,8 @@ where the jobs might look like that:
 ]
 
 Note: "imageSets" contains all image sets, even if the job did nothing with them. 
+
+Another small note: The client part has grown really really ugly. Will be refactored sometime in the far away future.
 
 ## Licence information
 1. The ajax loading icon was created via http://loading.io/. 
