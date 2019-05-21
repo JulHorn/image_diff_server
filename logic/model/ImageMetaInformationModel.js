@@ -245,7 +245,6 @@ ImageMetaInformationModel.prototype.getCopy = function() {
 	return copyObject;
 };
 
-
 /**
  * Adds an image set. If an image set with the same (reference/new) image name exists, the existing image set will be updated.
  *
@@ -259,7 +258,11 @@ ImageMetaInformationModel.prototype.addImageSet = function(imageSetToBeAdded, pr
 	if(!project) {
 		project = this.getProjects().find(function(currentProject) {
 			return currentProject.getImageSets().find(function(currentImageSet) {
-				return imageSetToBeAdded.getId() === currentImageSet.getId();
+				if (imageSetToBeAdded.getId() === currentImageSet.getId()
+					|| imageSetToBeAdded.getReferenceImage().getName() === currentImageSet.getReferenceImage().getName()
+					|| imageSetToBeAdded.getNewImage().getName() === currentImageSet.getNewImage().getName()) {
+					return currentProject;
+				}
 			});
 		});
 	}

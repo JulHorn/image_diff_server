@@ -160,7 +160,7 @@ CheckAllJob.prototype.__createDiffImages = function (imageNames, autoCrop, marke
 		}
 
         that.getImageManipulator().createDiffImage(imageToProcess, autoCrop, ignoreAreas, checkAreas, function (resultSet) {
-            that.imageMetaInformationModel.addImageSet(resultSet);
+            that.getImageMetaInformationModel().addImageSet(resultSet);
 
             // Increase the number of processed images by one
             that.incrementProcessImageCounter();
