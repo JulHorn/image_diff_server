@@ -116,11 +116,10 @@ ImageManipulatorRepository.prototype.modifyIgnoreAreas = function(id, ignoreArea
 	// Add modify ignore areas job to the job handler
 	try {
 		jobHandler.addJob(
-				new ModifyIgnoreAreasJob(id, ignoreAreas, function(job) {
+				new ModifyIgnoreAreasJob(id, ignoreAreas, function(job, updatedImageSet) {
 											 logger.info("Modified ignore areas for image set with id: " + id);
 											 if(callback) {
-												 var resultImageSet = jobHandler.getLastActiveJob().getImageMetaInformationModel().getImageSetById(id);
-												 callback(resultImageSet);
+												 callback(job, updatedImageSet);
 											 }
 										 }
 				));
@@ -140,11 +139,10 @@ ImageManipulatorRepository.prototype.modifyCheckAreas = function(id, checkAreas,
 	// Add modify check areas job to the job handler
 	try {
 		jobHandler.addJob(
-				new ModifyCheckAreasJob(id, checkAreas, function(job) {
+				new ModifyCheckAreasJob(id, checkAreas, function(job, updatedImageSet) {
 											logger.info("Modified check areas for image set with id: " + id);
 											if(callback) {
-												var resultImageSet = jobHandler.getLastActiveJob().getImageMetaInformationModel().getImageSetById(id);
-												callback(resultImageSet);
+												callback(job, updatedImageSet);
 											}
 										}
 				));

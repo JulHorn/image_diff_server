@@ -1,5 +1,6 @@
 var Job = require('./Job');
 var MarkedArea = require('../model/MarkedArea');
+var config = require('../ConfigurationLoader');
 
 /**
  * Job to modify the check areas of an image set.
@@ -69,6 +70,7 @@ ModifyCheckAreasJob.prototype.load = function (data) {
  * **/
 ModifyCheckAreasJob.prototype.__modifyCheckAreas = function (id, checkAreas, callback) {
     var imageSet = this.getImageMetaInformationModel().getImageSetById(id);
+    var that = this;
 
     // Transform general marked objects, which are received via API, to proper MarkedArea objects for function support etcö
     var transformedCheckAreas = [];
@@ -79,13 +81,22 @@ ModifyCheckAreasJob.prototype.__modifyCheckAreas = function (id, checkAreas, cal
 		transformedCheckAreas.push(newCheckArea);
     });
 
-
     imageSet.setCheckAreas(transformedCheckAreas);
 
-    // Call callback
-    if(callback){
-        callback();
-    }
+    // Compare again after setting marked areas to get the up to date version
+	that.getImageManipulator().createDiffImage(imageSet.getNewImage().getName(), config.getAutoCropOption(), imageSet.getIgnoreAreas(), imageSet.getCheckAreas(), function (resultSet) {
+		// Keep the id to make the image set behaviour consistent
+		resultSet.setId(imageSet.getId());
+		that.imageMetaInformationModel.addImageSet(resultSet);
+
+		// Save imageMetaInformationModel information
+		that.calculateMetaInformation();
+
+		// Call callback
+		if(callback){
+			callback(that, resultSet);
+		}
+	});
 };
 
 module.exports = ModifyCheckAreasJob;

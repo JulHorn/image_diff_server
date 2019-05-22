@@ -41,9 +41,9 @@ router.put('/:id/modifyIgnoreAreas', function(req, res) {
     var setId = req.params.id;
     var ignoreAreas = req.body.ignoreAreas;
 
-    imageManipulatorRepository.modifyIgnoreAreas(setId, ignoreAreas, function (imageSet) {
+    imageManipulatorRepository.modifyIgnoreAreas(setId, ignoreAreas, function (job, imageSet) {
         res.statusCode = 200;
-        res.json({message: 'OK', data: {resultImageSet: imageSet}});
+        res.json({message: 'OK', data: {job: job, updatedImageSet: imageSet}});
     });
 });
 
@@ -51,9 +51,9 @@ router.put('/:id/modifyCheckAreas', function(req, res) {
 	var setId = req.params.id;
 	var checkAreas = req.body.checkAreas;
 
-	imageManipulatorRepository.modifyCheckAreas(setId, checkAreas, function (imageSet) {
+	imageManipulatorRepository.modifyCheckAreas(setId, checkAreas, function (job, imageSet) {
 		res.statusCode = 200;
-		res.json({message: 'OK', data: {resultImageSet: imageSet}});
+		res.json({message: 'OK', data: {job: job, updatedImageSet: imageSet}});
 	});
 });
 
