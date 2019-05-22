@@ -30,7 +30,7 @@ ModifyCheckAreasJob.prototype.execute = function (imageMetaInformationModel, cal
     // Single option -> Only one image has to be processed
     this.setImagesToBeProcessedCount(1);
 
-    this.__modifyCheckAreas(this.id, this.checkAreas, function () {
+    this.__modifyCheckAreas(this.id, this.checkAreas, function (resultSet) {
         var jobCreatorCallback = that.getCallbackFunction();
         // Update the processed image count
         that.incrementProcessImageCounter();
@@ -40,7 +40,7 @@ ModifyCheckAreasJob.prototype.execute = function (imageMetaInformationModel, cal
 
         /// Call callback of the job creator when stuff is done
         if (jobCreatorCallback) {
-            jobCreatorCallback(that);
+            jobCreatorCallback(that, resultSet);
         }
 
         // Notify the job handler that this job is finished
@@ -70,7 +70,7 @@ ModifyCheckAreasJob.prototype.load = function (data) {
  * **/
 ModifyCheckAreasJob.prototype.__modifyCheckAreas = function (id, checkAreas, callback) {
     var imageSet = this.getImageMetaInformationModel().getImageSetById(id);
-    var that = this;
+	var that = this;
 
     // Transform general marked objects, which are received via API, to proper MarkedArea objects for function support etcö
     var transformedCheckAreas = [];
@@ -94,7 +94,7 @@ ModifyCheckAreasJob.prototype.__modifyCheckAreas = function (id, checkAreas, cal
 
 		// Call callback
 		if(callback){
-			callback(that, resultSet);
+			callback(imageSet);
 		}
 	});
 };

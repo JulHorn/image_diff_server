@@ -44,10 +44,25 @@ Table.prototype.bindEvents = function () {
         var id = $this.data('id');
         var imgPath = that.__sanitizeImagePaths($this.data('image'));
 
+		// Disables the edited row and displays a loading icon
+		that.__enableLoaderForRow(id);
+
         that.connector.getImageSet(id, function (data) {
             new ModifyMarkedAreas($ignoreRegion).show(imgPath, data.resultImageSet, data.resultImageSet.ignoreAreas, function (markedAreas) {
 				that.connector.modifyIgnoreAreas(id, markedAreas, function (data) {
-					$this.siblings('#ignoreAreaField').text(data.resultImageSet.ignoreAreas.length);
+					that.connector.modifyCheckAreas(id, markedAreas, function (data) {
+						$this.siblings('#ignoreAreaField').text(data.updatedImageSet.ignoreAreas.length);
+
+						// Draw all other components but the table because there could be some bad performance with a lot of images
+						that.callback(data, that);
+						// Give data back to have the correct data for the table stored
+						that.callback(data, null, 'redrawNone');
+
+						// Update the row manually for a better performance
+						that.__updateImageSetMetaInformation(data.updatedImageSet, id);
+
+						that.__disableLoaderForRow(id);
+					});
 				});
             });
         });
@@ -59,10 +74,23 @@ Table.prototype.bindEvents = function () {
 		var id = $this.data('id');
 		var imgPath = that.__sanitizeImagePaths($this.data('image'));
 
+		// Disables the edited row and displays a loading icon
+		that.__enableLoaderForRow(id);
+
 		that.connector.getImageSet(id, function (data) {
 			new ModifyMarkedAreas($checkRegion).show(imgPath, data.resultImageSet, data.resultImageSet.checkAreas, function (markedAreas) {
 			    that.connector.modifyCheckAreas(id, markedAreas, function (data) {
-					$this.siblings('#checkAreaField').text(data.resultImageSet.checkAreas.length);
+					$this.siblings('#checkAreaField').text(data.updatedImageSet.checkAreas.length);
+
+					// Draw all other components but the table because there could be some bad performance with a lot of images
+					that.callback(data, that);
+					// Give data back to have the correct data for the table stored
+					that.callback(data, null, 'redrawNone');
+
+					// Update the row manually for a better performance
+					that.__updateImageSetMetaInformation(data.updatedImageSet, id);
+
+					that.__disableLoaderForRow(id);
 				});
 			});
 		});
@@ -74,7 +102,7 @@ Table.prototype.bindEvents = function () {
         var informationLabel = $this.next('label');
         var id = $this.data('id');
 
-        // Disables the edited row and displayes a loading icon
+        // Disables the edited row and displays a loading icon
         that.__enableLoaderForRow(id);
 
         that.connector.makeToNewReferenceImage(id, function (data) {

@@ -30,7 +30,7 @@ ModifyIgnoreAreasJob.prototype.execute = function (imageMetaInformationModel, ca
     // Single option -> Only one image has to be processed
     this.setImagesToBeProcessedCount(1);
 
-    this.__modifyIgnoreAreas(this.id, this.ignoreAreas, function () {
+    this.__modifyIgnoreAreas(this.id, this.ignoreAreas, function (resultSet) {
         var jobCreatorCallback = that.getCallbackFunction();
         // Update the processed image count
         that.incrementProcessImageCounter();
@@ -40,7 +40,7 @@ ModifyIgnoreAreasJob.prototype.execute = function (imageMetaInformationModel, ca
 
         /// Call callback of the job creator when stuff is done
         if (jobCreatorCallback) {
-            jobCreatorCallback(that);
+            jobCreatorCallback(that, resultSet);
         }
 
         // Notify the job handler that this job is finished
@@ -94,7 +94,7 @@ ModifyIgnoreAreasJob.prototype.__modifyIgnoreAreas = function (id, ignoreAreas, 
 
 		// Call callback
 		if(callback){
-			callback(that, resultSet);
+			callback(imageSet);
 		}
 	});
 };
