@@ -44,13 +44,12 @@ Table.prototype.bindEvents = function () {
         var id = $this.data('id');
         var imgPath = that.__sanitizeImagePaths($this.data('image'));
 
-		// Disables the edited row and displays a loading icon
-		that.__enableLoaderForRow(id);
-
         that.connector.getImageSet(id, function (data) {
             new ModifyMarkedAreas($ignoreRegion).show(imgPath, data.resultImageSet, data.resultImageSet.ignoreAreas, function (markedAreas) {
-				that.connector.modifyIgnoreAreas(id, markedAreas, function (data) {
-					that.connector.modifyCheckAreas(id, markedAreas, function (data) {
+				// Disables the edited row and displays a loading icon
+				that.__enableLoaderForRow(id);
+
+            	that.connector.modifyIgnoreAreas(id, markedAreas, function (data) {
 						$this.siblings('#ignoreAreaField').text(data.updatedImageSet.ignoreAreas.length);
 
 						// Draw all other components but the table because there could be some bad performance with a lot of images
@@ -62,7 +61,6 @@ Table.prototype.bindEvents = function () {
 						that.__updateImageSetMetaInformation(data.updatedImageSet, id);
 
 						that.__disableLoaderForRow(id);
-					});
 				});
             });
         });
@@ -74,12 +72,12 @@ Table.prototype.bindEvents = function () {
 		var id = $this.data('id');
 		var imgPath = that.__sanitizeImagePaths($this.data('image'));
 
-		// Disables the edited row and displays a loading icon
-		that.__enableLoaderForRow(id);
-
 		that.connector.getImageSet(id, function (data) {
 			new ModifyMarkedAreas($checkRegion).show(imgPath, data.resultImageSet, data.resultImageSet.checkAreas, function (markedAreas) {
-			    that.connector.modifyCheckAreas(id, markedAreas, function (data) {
+				// Disables the edited row and displays a loading icon
+				that.__enableLoaderForRow(id);
+
+				that.connector.modifyCheckAreas(id, markedAreas, function (data) {
 					$this.siblings('#checkAreaField').text(data.updatedImageSet.checkAreas.length);
 
 					// Draw all other components but the table because there could be some bad performance with a lot of images

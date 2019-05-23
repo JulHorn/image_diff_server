@@ -33,6 +33,8 @@ ModifyMarkedAreas.prototype.bindEvents = function () {
     //  Cancel window
     this.$container.on('click', 'button[data-action=modifyMarkedAreasRegionCancel]', function () {
         that.$container.hide();
+		// Off event handler to prevent
+		that.$container.off('click', 'button[data-action=modifyMarkedAreasRegionOk]');
         that.$container.html('');
     });
 
