@@ -6,6 +6,16 @@ A small NodeJS image comparison program with a straightforward UI and an API. It
 2. The UI enables you to view these images and trigger actions like "Compare all images", "Make image to reference image" or "Delete a result set". The UI will only display those images that have a percentual pixel difference between reference above the configured value.
 3. The API lets you access the image comparison functionality directly, e.g. to connect it with a CI server like Jenkins.
 
+## ToDo for FE Rework:
+
+1. Refactor folder structure
+2. Check tsconfig
+3. Remove old PUG stuff
+4. 
+5. Refactor package.json
+6. Update Favicon
+7. Check fetch dependency in package.json if needed
+
 ## Installation
 
 1. Use the `npm install` command in the project root folder to install all needed dependencies.
