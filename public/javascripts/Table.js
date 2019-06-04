@@ -385,7 +385,7 @@ Table.prototype.__createImageCellContent = function (image) {
     var noImageNoticeTextContainerClass = image.path ? 'hidden' : '';
 
     // Only display image if there is one, else display a notification text
-    cellContent += '<a class="' + imageContainerClass + '" href="' + this.__sanitizeImagePaths(image.path) + imageSuffix + '" role="imageLink">';
+    cellContent += '<a target="_blank" class="' + imageContainerClass + '" href="' + this.__sanitizeImagePaths(image.path) + imageSuffix + '" role="imageLink">';
     cellContent += '<img src="' + this.__sanitizeImagePaths(image.path) + imageSuffix + '" role="image">';
     cellContent += '</a>';
     cellContent += '<div class="noImageAvailableText ' + noImageNoticeTextContainerClass + '">';
