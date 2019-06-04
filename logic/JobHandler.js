@@ -149,7 +149,7 @@ JobHandler.prototype.__loadJobHistory = function () {
         });
 
     } catch (exception) {
-        logger.warn('Failed to load or parse job history file ' + jobFilePath + '. Working from a blank slate.', exception);
+        logger.warn('Failed to load or parse job history file ' + jobFilePath + '. Working from a blank slate.');
         // Add an empty job which can always be returned
         this.jobHistory.push(new Job('EmptyJob', new ImageMetaInformationModel()));
     }

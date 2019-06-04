@@ -1,65 +1,38 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var config = require('./logic/ConfigurationLoader');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const config = require('./logic/ConfigurationLoader');
+const cors = require('cors');
+const guiRoutes = require('./routes/gui');
+const apiRoutes = require('./routes/api');
 
-var guiRoutes = require('./routes/gui');
-var apiRoutes = require('./routes/api');
-var app = express();
-var cors = require('cors');
+const express = require('express');
+const next = require('next');
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
+const port = config.getServerPort();
+const dev = process.env.NODE_ENV !== 'production';
+const app = next({ dev });
+const handle = app.getRequestHandler();
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
-app.use(bodyParser.json({limit: config.getMaxAllowedImageSizeForAPI + 'mb'}));
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-
+app.prepare().then(() => {
+  const server = express();
+  server.use(logger('dev'));
+  server.use(bodyParser.json({limit: config.getMaxAllowedImageSizeForAPI + 'mb'}));
+  server.use(bodyParser.urlencoded({ extended: false }));
+  server.use(cookieParser());
 // Enable cors cross domain requests/responses
-app.use(cors());
+  server.use(cors());
 
-// Set up routes
-app.use('/gui', guiRoutes);
-app.use('/api', apiRoutes);
+  // ToDo: Move stuff to gui routes
+  // server.use('/gui', guiRoutes);
+  server.use('/api', apiRoutes);
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
-
-// error handlers
-
-// development error handler
-// will print stacktrace
-if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
+  server.get('*', (req, res) => {
+    return handle(req, res)
   });
-}
 
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
+  server.listen(port, err => {
+    if (err) { throw err; }
+    console.log(`> Ready on http://localhost:${port}`)
+  })
 });
-
-
-module.exports = app;
