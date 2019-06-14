@@ -1,6 +1,6 @@
 import * as React from "react";
 
-const Footer: React.FunctionComponent<{}>  = ({}): React.ReactElement => {
+const Footer = ({}) => {
 	return (
 		<div>
 			<span> Licence information: </span>

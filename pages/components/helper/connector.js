@@ -4,7 +4,7 @@
  * @return {String} Returns the server endpoint/host to which the requests will be send.
  * **/
 class Connector {
-	getServerEndpoint(): string {
+	getServerEndpoint() {
 			return location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '')
 	}
 }

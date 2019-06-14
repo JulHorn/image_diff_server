@@ -1,15 +1,7 @@
 import * as React from "react";
 import css from "./header.scss";
 
-interface HeaderPropsInterface{
-	jobName: string;
-	progress: number;
-	maxPixDiff: number;
-	lastJobFinished: string;
-	checkAllCallback: any;
-}
-
-const Header: React.FunctionComponent<HeaderPropsInterface>  = ({jobName, progress, maxPixDiff, lastJobFinished, checkAllCallback}): React.ReactElement => {
+const Header = ({jobName, progress, maxPixDiff, lastJobFinished, checkAllCallback}) => {
 	return (
 		<div>
 			<title>ICS</title>
