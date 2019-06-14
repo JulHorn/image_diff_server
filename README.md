@@ -15,6 +15,8 @@ A small NodeJS image comparison program with a straightforward UI and an API. It
 5. Refactor package.json
 6. Update Favicon
 7. Check fetch dependency in package.json if needed
+8. Rename interfaces to IInterfaceName
+9. Use proper typing for callbacks 
 
 ## Installation
 
