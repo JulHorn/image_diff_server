@@ -3,6 +3,7 @@ import Header from "./components/header/header";
 import Footer from "./components/footer/footer";
 import ContentTable from "./components/contentTable/contentTable";
 import connector from "./components/helper/connector"
+import fetch from 'isomorphic-unfetch'
 
 const IndexPage  = ({jobName}) => {
 	return (
@@ -19,7 +20,13 @@ IndexPage.getInitialProps = async ({ } ) => {
 	// var imageManipulatorRepository = require('/logic/ImageManipulatorRepository');
 
 	// console.log(imageManipulatorRepository.getLastActiveJob());
-	// const res2 = await fetch('http://localhost:3001/api/');
+	let res = {};
+	fetch('http://localhost:3001/api/', {method: 'GET', headers: {'Content-Type': 'application/json'}}).then( r => r.json() )
+			.then( data => {
+				console.log(data);
+				res = data;
+			});
+
 	// const json = await res2.json();
 	// console.log(json);
 
