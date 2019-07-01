@@ -11,12 +11,13 @@ A small NodeJS image comparison program with a straightforward UI and an API. It
 1. Refactor folder structure
 2. Check tsconfig
 3. Remove old PUG stuff
-4. 
+4. Check/Adapt routing
 5. Refactor package.json
 6. Update Favicon
 7. Check fetch dependency in package.json if needed
 8. Rename interfaces to IInterfaceName
-9. Use proper typing for callbacks 
+9. Use proper typing for callbacks
+10. Clean up server API 
 
 ## Installation
 
