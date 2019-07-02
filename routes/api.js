@@ -76,14 +76,14 @@ router.put('/compareImageByName', function(req, res) {
 
     imageManipulatorRepository.compareImageByName(imageName, imageType, imageBase64, projectId, function(job, isThresholdBreached) {
         res.statusCode = 200;
-        res.json({ message: 'OK', data: {job: job, isThresholdBreached: isThresholdBreached}});
+        res.json({ job: job, isThresholdBreached: isThresholdBreached});
     });
 });
 
 router.get('/', function (req, res) {
     imageManipulatorRepository.getLastActiveJob(function (job) {
         res.statusCode = 200;
-        res.json({ message: 'OK', data: {job: job} });
+        res.json({ job: job });
     });
 });
 
@@ -92,7 +92,7 @@ router.delete('/:id', function (req, res) {
 
     imageManipulatorRepository.deleteImageSetFromModel(setId, function (job) {
         res.statusCode = 200;
-        res.json({ message: 'OK', data: {job: job}});
+        res.json({ job: job});
     });
 });
 
@@ -101,7 +101,7 @@ router.post('/addProject', function(req, res) {
 
     imageManipulatorRepository.addProject(projectName, function (job, newProject) {
         res.statusCode = 200;
-        res.json({message: 'OK', data: {job: job, project: newProject}});
+        res.json({job: job, project: newProject});
     });
 });
 
@@ -111,7 +111,7 @@ router.put('/:id/editProject', function(req, res) {
 
     imageManipulatorRepository.editProject(projectId, projectName, function (job, wasSuccessful) {
         res.statusCode = 200;
-        res.json({message: 'OK', data: {job: job, wasSuccessful: wasSuccessful}});
+        res.json({job: job, wasSuccessful: wasSuccessful});
     });
 });
 
@@ -120,7 +120,7 @@ router.delete('/:id/removeProject', function(req, res) {
 
     imageManipulatorRepository.removeProject(projectId, function (job, wasSuccessful) {
         res.statusCode = 200;
-        res.json({message: 'OK', data: {job: job, wasSuccessful: wasSuccessful}});
+        res.json({job: job, wasSuccessful: wasSuccessful});
     });
 });
 
@@ -130,7 +130,7 @@ router.put('/:id/cleanUpProject', function(req, res) {
 
 	imageManipulatorRepository.cleanUpProject(imageName, projectId, function (job, wasSuccessful) {
 		res.statusCode = 200;
-		res.json({message: 'OK', data: {job: job, wasSuccessful: wasSuccessful}});
+		res.json({job: job, wasSuccessful: wasSuccessful});
 	});
 });
 
@@ -142,7 +142,7 @@ router.put('/:id/assignImageSetToProject', function(req, res) {
 
     imageManipulatorRepository.assignImageSetToProject(imageSetId, projectIdFrom, projectIdTo, function (job, wasSuccessful) {
         res.statusCode = 200;
-        res.json({message: 'OK', data: {job: job, wasSuccessful: wasSuccessful}});
+        res.json({job: job, wasSuccessful: wasSuccessful});
     });
 });
 

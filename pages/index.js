@@ -1,15 +1,20 @@
 import * as React from 'react'
 import Header from "./components/header/header";
 import Footer from "./components/footer/footer";
-import ContentTable from "./components/contentTable/contentTable";
+import TabManager from "./components/tabManager/tabManager";
 import connector from "./components/helper/connector"
 
-const IndexPage  = ({jobName}) => {
+const IndexPage  = ({jobData}) => {
+	const compData = jobData.imageMetaInformationModel;
+
+	// ToDo: Probably use state thingy here for update fun
+
 	return (
 		<div>
-			<Header jobName="TestJob" lastJobFinished="10.10.10" maxPixDiff={100} progress={100} checkAllCallback={() => {const endpoint = connector.getServerEndpoint();
+			<Header jobName={jobData.jobName} progress={jobData.progress} maxPixDiff={compData.biggestPercentualPixelDifference} lastJobFinished={compData.timestamp} checkAllCallback={() => {
+				const endpoint = connector.getServerEndpoint();
 				console.log(endpoint);}}/>
-			<ContentTable jobName={jobName} progress={1} maxPixDiff={1} lastJobFinished={"11.11.11"}/>
+				<TabManager projects={compData.projects} availableProjects={ "none" } />
 			<Footer />
 		</div>
 	)
@@ -18,7 +23,9 @@ const IndexPage  = ({jobName}) => {
 IndexPage.getInitialProps = async ({ } ) => {
 	const result = await connector.getActiveJob();
 
-	return {jobName: 'json', progress: 0, maxPixDiff: 0, lastJobFinished: ''}
+	return {
+		jobData: result.job
+	}
 };
 
 export default IndexPage

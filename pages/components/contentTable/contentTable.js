@@ -1,9 +1,9 @@
 import * as React from "react";
 
-const ContentTable = ({ jobName }) => {
+const ContentTable = ({ project, availableProjects }) => {
 	return (
 		<div>
-			{ jobName }
+			{ availableProjects }
 		</div>
 	)
 };
