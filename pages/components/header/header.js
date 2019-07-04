@@ -1,7 +1,7 @@
 import * as React from "react";
 import css from "./header.scss";
 
-const Header = ({jobName, progress, maxPixDiff, lastJobFinished, checkAllCallback}) => {
+const Header = ({data, checkAllCallback}) => {
 	return (
 		<div>
 			<title>ICS</title>
@@ -12,12 +12,12 @@ const Header = ({jobName, progress, maxPixDiff, lastJobFinished, checkAllCallbac
 				<table className={css.headerTable}>
 					<tbody>
 						<tr>
-							<td>Job: {jobName}</td>
-							<td>Max Pix. Difference: {maxPixDiff}</td>
+							<td>Job: {data.jobName}</td>
+							<td>Max Pix. Difference: {data.maxActualPixDiff}</td>
 						</tr>
 						<tr>
-							<td>Progress: {progress}</td>
-							<td>Last Job Finished: {lastJobFinished}</td>
+							<td>Progress: {data.processedImageCount}</td>
+							<td>Last Job Finished: {data.jobRunTimestamp}</td>
 						</tr>
 					</tbody>
 				</table>

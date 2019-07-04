@@ -26,7 +26,7 @@ class Connector {
 	/**
 	 * Calculates the diff images for all images. Does not wait until the computation is done.
 	 * **/
-	async refreshAll () {
+	async checkAll () {
 		return this.sendRequest('/checkAll', 'POST', null);
 	};
 
@@ -110,7 +110,7 @@ class Connector {
 	};
 
 	async sendRequest (url, method, data) {
-		return fetch(this.getServerEndpoint(), {method: 'GET', headers: {'Content-Type': 'application/json'}})
+		return fetch(this.getServerEndpoint() + url, {method: method, headers: {'Content-Type': 'application/json', body: data}})
 			.then( resp => resp.json());
 	}
 
