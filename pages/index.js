@@ -17,8 +17,8 @@ const IndexPage  = ({jobData}) => {
 			jobRunTimestamp: compData.timeStamp
 		});
 
-	// ToDo: Probably move the data get stuff into the corresponding file for seperation of concern and think of a good way to states here.
-	const handleClickCheckAll = () => {
+	// Maybe move call logic in corresponding component for more seperation of concern
+	const handleCheckAll = () => {
 		connector.checkAll().then(result => {
 			const compData = result.job.imageMetaInformationModel;
 
@@ -37,7 +37,7 @@ const IndexPage  = ({jobData}) => {
 
 	return (
 		<div>
-			<Header data={metaInformationState} checkAllCallback={(e) => handleClickCheckAll(e)}/>
+			<Header data={metaInformationState} checkAllCallback={(e) => handleCheckAll(e)}/>
 			<TabManager projects={compData.projects} availableProjects={ "none" } />
 			<Footer />
 		</div>

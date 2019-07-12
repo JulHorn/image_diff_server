@@ -11,7 +11,7 @@ const TabManager = ({ projects, availableProjects }) => {
 				{/*<ContentTable />*/}
 			</div>
 			<div>
-				<ContentTable projectToDraw={[]} availableProjects={availableProjects} />
+				<ContentTable projectsToDraw={projects} availableProjects={availableProjects} />
 			</div>
 		</div>
 	)
