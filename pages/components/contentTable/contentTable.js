@@ -1,7 +1,19 @@
 import * as React from "react";
-import contentTableRow from "../contentTableRow/contentTableRow";
+import contentTableHeadlineRow from "../contentTableHeadlineRow/contentTableHeadlineRow";
+import contentTableImageRow from "../contentTableImageRow/contentTableImageRow";
+import contentTableDataRow from "../contentTableDataRow/contentTableDataRow";
 
 const ContentTable = ({ projectsToDraw, availableProjects }) => {
+	const rowsToDraw = [];
+
+	for (const [projectIndex, project] of projectsToDraw) {
+		for (const [imageSetIndex, imageSet] of project.getImageSets()) {
+			rowsToDraw.push(<contentTableHeadlineRow imageSetName={'ImageSetName'} currentProject={'TestProject'} availableProjects={availableProjects} />);
+			rowsToDraw.push(<contentTableImageRow />);
+			rowsToDraw.push(<contentTableDataRow imageSet={} />);
+		}
+	}
+
 	return (
 		<div>
 			<table>
@@ -11,7 +23,7 @@ const ContentTable = ({ projectsToDraw, availableProjects }) => {
 					<th>Diff Image</th>
 				</thead>
 				<tbody>
-
+					{ rowsToDraw }
 				</tbody>
 			</table>
 			{ availableProjects }
