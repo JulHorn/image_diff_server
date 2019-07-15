@@ -10,7 +10,7 @@ const ContentTable = ({ projectsToDraw, availableProjects }) => {
 		for (const [imageSetIndex, imageSet] of project.getImageSets()) {
 			rowsToDraw.push(<contentTableHeadlineRow imageSetName={'ImageSetName'} currentProject={'TestProject'} availableProjects={availableProjects} />);
 			rowsToDraw.push(<contentTableImageRow />);
-			rowsToDraw.push(<contentTableDataRow imageSet={} />);
+			rowsToDraw.push(<contentTableDataRow imageSet={imageSet} />);
 		}
 	}
 
