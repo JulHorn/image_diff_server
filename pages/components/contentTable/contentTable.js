@@ -1,16 +1,16 @@
 import * as React from "react";
-import contentTableHeadlineRow from "../contentTableHeadlineRow/contentTableHeadlineRow";
-import contentTableImageRow from "../contentTableImageRow/contentTableImageRow";
-import contentTableDataRow from "../contentTableDataRow/contentTableDataRow";
+import ContentTableHeadlineRow from "../contentTableHeadlineRow/contentTableHeadlineRow";
+import ContentTableImageRow from "../contentTableImageRow/contentTableImageRow";
+import ContentTableDataRow from "../contentTableDataRow/contentTableDataRow";
 
 const ContentTable = ({ projectsToDraw, availableProjects }) => {
 	const rowsToDraw = [];
 
-	for (const [projectIndex, project] of projectsToDraw) {
-		for (const [imageSetIndex, imageSet] of project.getImageSets()) {
-			rowsToDraw.push(<contentTableHeadlineRow imageSetName={'ImageSetName'} currentProject={'TestProject'} availableProjects={availableProjects} />);
-			rowsToDraw.push(<contentTableImageRow />);
-			rowsToDraw.push(<contentTableDataRow imageSet={imageSet} />);
+	for (const project of projectsToDraw) {
+		for (const imageSet of project.imageSets) {
+			rowsToDraw.push(<ContentTableHeadlineRow imageSetName={'ImageSetName'} currentProject={'TestProject'} availableProjects={availableProjects} />);
+			rowsToDraw.push(<ContentTableImageRow />);
+			rowsToDraw.push(<ContentTableDataRow imageSet={imageSet} />);
 		}
 	}
 
@@ -23,6 +23,7 @@ const ContentTable = ({ projectsToDraw, availableProjects }) => {
 					<th>Diff Image</th>
 				</thead>
 				<tbody>
+					<ContentTableHeadlineRow imageSetName={'ImageSetName'} currentProject={'TestProject'} availableProjects={availableProjects} />
 					{ rowsToDraw }
 				</tbody>
 			</table>

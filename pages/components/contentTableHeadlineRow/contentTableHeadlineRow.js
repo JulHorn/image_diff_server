@@ -4,9 +4,7 @@ import css from "./contentTableHeadlineRow.scss";
 const ContentTableHeadlineRow = ({ availableProjects, currentProject, imageSetName }) => {
     return (
         <tr>
-            <td>currentProject</td>
-            <td>imageSetName</td>
-            <td>imageSetName</td>
+            <td colSpan={3}>{ imageSetName }</td>
         </tr>
 
     )
