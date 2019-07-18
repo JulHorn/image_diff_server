@@ -31,6 +31,8 @@ const IndexPage  = ({jobData}) => {
 				jobRunTimestamp: compData.timeStamp
 			};
 
+			// ToDo: Refresh other states here to display new items etc.
+
 			setMetaInformationState(infoState);
 		});
 	};

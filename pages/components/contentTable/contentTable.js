@@ -4,11 +4,14 @@ import ContentTableImageRow from "../contentTableImageRow/contentTableImageRow";
 import ContentTableDataRow from "../contentTableDataRow/contentTableDataRow";
 
 const ContentTable = ({ projectsToDraw, availableProjects }) => {
+	// ToDo: Make a method out of this
 	const rowsToDraw = [];
 
 	for (const project of projectsToDraw) {
 		for (const imageSet of project.imageSets) {
-			rowsToDraw.push(<ContentTableHeadlineRow imageSetName={'ImageSetName'} currentProject={'TestProject'} availableProjects={availableProjects} />);
+			const imageSetName = imageSet.referenceImage ? imageSet.referenceImage.name : imageSet.newImage.name;
+
+			rowsToDraw.push(<ContentTableHeadlineRow imageSetName={imageSetName} currentProject={'TestProject'} availableProjects={availableProjects} />);
 			rowsToDraw.push(<ContentTableImageRow imageSet={imageSet} />);
 			rowsToDraw.push(<ContentTableDataRow imageSet={imageSet} />);
 		}
@@ -23,7 +26,6 @@ const ContentTable = ({ projectsToDraw, availableProjects }) => {
 					<th>Diff Image</th>
 				</thead>
 				<tbody>
-					<ContentTableHeadlineRow imageSetName={'ImageSetName'} currentProject={'TestProject'} availableProjects={availableProjects} />
 					{ rowsToDraw }
 				</tbody>
 			</table>

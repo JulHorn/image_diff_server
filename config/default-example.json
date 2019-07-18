@@ -7,9 +7,9 @@
 		"maxImageSize": 5
 	},
 	"images":{
-		"referenceImageFolder":"./public/images/reference",
-		"newImageFolder":"./public/images/new",
-		"resultImageFolder":"./public/images/diff",
+		"referenceImageFolder":"./static/images/reference",
+		"newImageFolder":"./static/images/new",
+		"resultImageFolder":"./static/images/diff",
 		"dataFolderPath":"./data"
 	},
 	"thresholds":{
