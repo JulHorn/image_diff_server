@@ -3,6 +3,7 @@ import Header from "./components/header/header";
 import Footer from "./components/footer/footer";
 import TabManager from "./components/tabManager/tabManager";
 import connector from "./components/helper/connector"
+import css from "./index.scss";
 
 const IndexPage  = ({jobData}) => {
 	const compData = jobData.imageMetaInformationModel;
@@ -38,7 +39,7 @@ const IndexPage  = ({jobData}) => {
 	};
 
 	return (
-		<div>
+		<div className={css.indexContent}>
 			<Header data={metaInformationState} checkAllCallback={(e) => handleCheckAll(e)}/>
 			<TabManager projects={compData.projects} availableProjects={ "none" } />
 			<Footer />

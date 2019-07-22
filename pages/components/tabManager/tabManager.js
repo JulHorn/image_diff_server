@@ -4,13 +4,13 @@ import css from "./tabManager.scss";
 
 const TabManager = ({ projects, availableProjects }) => {
 	return (
-		<div>
+		<div className={css.tabManager} >
 			<div className={css.tabManagerHeader}>
 				<div className={css.tabManagerHeaderTabs}> </div>
 				<div className={css.tabManagerHeaderProjectControls}> </div>
 				{/*<ContentTable />*/}
 			</div>
-			<div>
+			<div className={css.tabManagerContent}>
 				<ContentTable projectsToDraw={projects} availableProjects={availableProjects} />
 			</div>
 		</div>

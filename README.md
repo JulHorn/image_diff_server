@@ -18,7 +18,8 @@ A small NodeJS image comparison program with a straightforward UI and an API. It
 8. Rename interfaces to IInterfaceName
 9. Use proper typing for callbacks
 10. Clean up server API
-11. Count the number of times a check failed/ Make an extra kinda tmp list available? 
+11. Count the number of times a check failed/ Make an extra kinda tmp list available?
+12. Evaluate flow type checking 
 
 ## Installation
 
