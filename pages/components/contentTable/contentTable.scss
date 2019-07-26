@@ -1,5 +1,6 @@
 .contentTableContainer {
-	border: #1a1a1a solid 1px;
+	border: black solid 1px;
+	width: 100%;
 }
 
 .contentTable {
@@ -7,11 +8,11 @@
 }
 
 .contentTable:nth-child(even) {
-	background-color: blue;
+	background-color: #ffffff;
 }
 
 .contentTable:nth-child(odd) {
-	background-color: red;
+	background-color: #eeeeee;
 }
 
 .contentTable td {

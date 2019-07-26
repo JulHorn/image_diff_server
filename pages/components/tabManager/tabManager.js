@@ -10,7 +10,6 @@ const TabManager = ({ projects, availableProjects, displayTypeChangeCallback }) 
 				<TabManagerControls displayTypeChangeCallback={displayTypeChangeCallback} availableProjects={availableProjects}/>
 			</div>
 
-			// It might be better to use a padding for the content stuff for left, right and bottom
 			<div className={css.tabManagerContent}>
 				<ContentTable projectsToDraw={projects} availableProjects={availableProjects} />
 			</div>
