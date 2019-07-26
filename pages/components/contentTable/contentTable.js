@@ -12,24 +12,27 @@ const ContentTable = ({ projectsToDraw, availableProjects }) => {
 		for (const imageSet of project.imageSets) {
 			const imageSetName = imageSet.referenceImage ? imageSet.referenceImage.name : imageSet.newImage.name;
 
-			rowsToDraw.push(<ContentTableHeadlineRow imageSetName={imageSetName} currentProject={'TestProject'} availableProjects={availableProjects} />);
-			rowsToDraw.push(<ContentTableImageRow imageSet={imageSet} />);
-			rowsToDraw.push(<ContentTableDataRow imageSet={imageSet} />);
+			rowsToDraw.push(
+			<table className={css.contentTable}>
+				<tbody>
+					<ContentTableHeadlineRow imageSetName={imageSetName} currentProject={'TestProject'} availableProjects={availableProjects} />
+					<ContentTableImageRow imageSet={imageSet} />
+					<ContentTableDataRow imageSet={imageSet} />
+				</tbody>
+			</table>);
 		}
 	}
 
 	return (
-		<div className={css.contentTable}>
-			<table>
+		<div className={css.contentTableContainer}>
+			<table className={css.contentTableHeadline}>
 				<thead>
 					<th>Reference Image</th>
 					<th>New Image</th>
 					<th>Diff Image</th>
 				</thead>
-				<tbody>
-					{ rowsToDraw }
-				</tbody>
 			</table>
+			{ rowsToDraw }
 		</div>
 	)
 };

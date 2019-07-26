@@ -1,5 +1,17 @@
-.contentTable {
+.contentTableContainer {
 	border: #1a1a1a solid 1px;
+}
+
+.contentTable {
+	width: 100%;
+}
+
+.contentTable:nth-child(even) {
+	background-color: blue;
+}
+
+.contentTable:nth-child(odd) {
+	background-color: red;
 }
 
 .contentTable td {
@@ -9,4 +21,12 @@
 .contentTable td img {
 	width: 100%;
 	height: auto;
+}
+
+.contentTableHeadline {
+	width: 100%;
+}
+
+.contentTableHeadline hr {
+	width: 33%;
 }

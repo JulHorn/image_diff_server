@@ -3,12 +3,14 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	border: #1a1a1a solid 1px;
+	border: darkgray solid 1px;
+	background-color: #f1f1f1;
 }
 
 .tabManagerHeader {
 	height: 50px;
-	border-bottom: #1a1a1a solid 1px;
+	width: 100%;
+	margin-bottom: 10px;
 }
 
 .tabManagerHeaderTabs {

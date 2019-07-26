@@ -10,14 +10,12 @@ const TabManagerControls = ({ displayTypeChangeCallback, availableProjects }) =>
 	return (
 		<div className={css.tabManagerControls} >
 			<div className={css.tabManagerControlsSectionTabs}>
-				<fieldset>
-					<input id="tabManagerControlsDisplayTypeFailed" type="radio" name="displayType" onClick={() => displayTypeChangeClick(0, displayTypeChangeCallback)}/>
-					<label htmlFor="tabManagerControlsDisplayTypeFailed">Failed</label>
-					<input id="tabManagerControlsDisplayTypePassed" type="radio" name="displayType" onClick={() => displayTypeChangeClick(1, displayTypeChangeCallback)}/>
-					<label htmlFor="tabManagerControlsDisplayTypePassed">Passed</label>
-					<input id="tabManagerControlsDisplayTypeAll" type="radio" name="displayType" onClick={() => displayTypeChangeClick(2, displayTypeChangeCallback)}/>
-					<label htmlFor="tabManagerControlsDisplayTypeAll">All</label>
-				</fieldset>
+				<input id="tabManagerControlsDisplayTypeFailed" type="radio" name="displayType" onClick={() => displayTypeChangeClick(0, displayTypeChangeCallback)}/>
+				<label htmlFor="tabManagerControlsDisplayTypeFailed">Failed</label>
+				<input id="tabManagerControlsDisplayTypePassed" type="radio" name="displayType" onClick={() => displayTypeChangeClick(1, displayTypeChangeCallback)}/>
+				<label htmlFor="tabManagerControlsDisplayTypePassed">Passed</label>
+				<input id="tabManagerControlsDisplayTypeAll" type="radio" name="displayType" onClick={() => displayTypeChangeClick(2, displayTypeChangeCallback)}/>
+				<label htmlFor="tabManagerControlsDisplayTypeAll">All</label>
 			</div>
 			<div className={css.tabManagerControlsSectionProject}>
 				<select>
