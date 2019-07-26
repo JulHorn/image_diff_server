@@ -3,10 +3,10 @@ import ContentTable from "../contentTable/contentTable";
 import TabManagerControls from "./tabManagerControls/tabManagerControls"
 import css from "./tabManager.scss";
 
-const TabManager = ({ projects, availableProjects }) => {
+const TabManager = ({ projects, availableProjects, displayTypeChangeCallback }) => {
 	return (
 		<div className={css.tabManager} >
-			<TabManagerControls></TabManagerControls>
+			<TabManagerControls displayTypeChangeCallback={displayTypeChangeCallback} availableProjects={availableProjects}/>
 
 			<div className={css.tabManagerContent}>
 				<ContentTable projectsToDraw={projects} availableProjects={availableProjects} />

@@ -1,7 +1,14 @@
 import * as React from "react";
 import css from "./header.scss";
+import connector from "../helper/connector";
 
 const Header = ({data, checkAllCallback}) => {
+	const checkAllClick = (checkAllCallback) => {
+		connector.checkAll().then(result => {
+			checkAllCallback(result);
+		});
+	};
+
 	return (
 		<div>
 			<title>ICS</title>
@@ -21,7 +28,7 @@ const Header = ({data, checkAllCallback}) => {
 						</tr>
 					</tbody>
 				</table>
-				<button className={css.headerButton} onClick={checkAllCallback}>Check all</button>
+				<button className={css.headerButton} onClick={() => checkAllClick(checkAllCallback)}>Check all</button>
 			</div>
 		</div>
 	)

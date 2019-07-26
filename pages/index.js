@@ -18,30 +18,32 @@ const IndexPage  = ({jobData}) => {
 			jobRunTimestamp: compData.timeStamp
 		});
 
-	// Maybe move call logic in corresponding component for more seperation of concern
-	const handleCheckAll = () => {
-		connector.checkAll().then(result => {
-			const compData = result.job.imageMetaInformationModel;
+	const handleCheckAll = (result) => {
+		const compData = result.job.imageMetaInformationModel;
 
-			const infoState = {
-				jobName: result.job.jobName,
-				imagesToBeProcessedCount: result.job.imagesToBeProcessedCount,
-				processedImageCount: result.job.processedImageCount,
-				maxActualPixDiff: compData.biggestPercentualPixelDifference,
-				maxPixDiffThreshold: compData.percentualPixelDifferenceThreshold,
-				jobRunTimestamp: compData.timeStamp
-			};
+		const infoState = {
+			jobName: result.job.jobName,
+			imagesToBeProcessedCount: result.job.imagesToBeProcessedCount,
+			processedImageCount: result.job.processedImageCount,
+			maxActualPixDiff: compData.biggestPercentualPixelDifference,
+			maxPixDiffThreshold: compData.percentualPixelDifferenceThreshold,
+			jobRunTimestamp: compData.timeStamp
+		};
 
-			// ToDo: Refresh other states here to display new items etc.
+		// ToDo: Refresh other states here to display new items etc.
 
-			setMetaInformationState(infoState);
-		});
+		setMetaInformationState(infoState);
+	};
+
+	const handleChangeDisplayType = (displayType) => {
+		// alert("Display type " + displayType);
+		console.log("Display type " + displayType)
 	};
 
 	return (
 		<div className={css.indexContent}>
 			<Header data={metaInformationState} checkAllCallback={(e) => handleCheckAll(e)}/>
-			<TabManager projects={compData.projects} availableProjects={ "none" } />
+			<TabManager projects={compData.projects} availableProjects={ "none" } displayTypeChangeCallback={(dp) => handleChangeDisplayType(dp)} />
 			<Footer />
 		</div>
 	)
