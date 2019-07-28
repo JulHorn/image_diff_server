@@ -35,8 +35,8 @@ class Connector {
 	 *
 	 * @param {String} id The id of the image set for which the new image should be made the reference image.
 	 * **/
-	async makeToNewReferenceImage (id) {
-		return this.sendRequest('/' + id + '/makeToNewReferenceImage', 'PUT', null, successCallback);
+	async setToNewReferenceImage (id) {
+		return this.sendRequest('/' + id + '/makeToNewReferenceImage', 'PUT', null);
 	};
 
 	/**

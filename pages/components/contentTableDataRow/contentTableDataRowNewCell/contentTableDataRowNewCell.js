@@ -1,10 +1,11 @@
 import * as React from "react";
 import css from "./contentTableDataRowNewCell.scss";
 
-const ContentTableDataRowNewCell = ({ newImageData, makeToNewReferenceCallback }) => {
+const ContentTableDataRowNewCell = ({ newImageData, setNewReferenceCallback }) => {
 
-	const makteToNewReferenceClick = () => {
-		makeToNewReferenceCallback();
+	// Can be removed if truly not more logic is needed
+	const makeToNewReferenceClick = (setNewReferenceCallback) => {
+		setNewReferenceCallback();
 	};
 
 	return (
@@ -12,7 +13,7 @@ const ContentTableDataRowNewCell = ({ newImageData, makeToNewReferenceCallback }
 				<div> Height: {newImageData.height}px </div>
 				<div> Width: {newImageData.width}px </div>
 				<div>
-					<button onClick={() => makteToNewReferenceClick()}>New Reference</button>
+					<button onClick={() => makeToNewReferenceClick(setNewReferenceCallback)}>New Reference</button>
 				</div>
 			</td>
 	)

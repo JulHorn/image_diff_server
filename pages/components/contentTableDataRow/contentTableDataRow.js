@@ -3,13 +3,18 @@ import ContentTableDataRowReferenceCell from "./contentTableDataRowReferenceCell
 import ContentTableDataRowNewCell from "./contentTableDataRowNewCell/contentTableDataRowNewCell"
 import ContentTableDataRowDiffCell from "./contentTableDataRowDiffCell/contentTableDataRowDiffCell"
 import css from "./contentTableDataRow.scss";
+import connector from "../helper/connector";
 
-const ContentTableDataRow = ({ imageSet }) => {
+const ContentTableDataRow = ({ imageSet, setNewReferenceImageCallback }) => {
+
+	const setNewReferenceImageRowCallback = (id) => {
+		setNewReferenceImageCallback(connector.setToNewReferenceImage(id))
+	};
 
 	return (
 		<tr>
 			<ContentTableDataRowReferenceCell referenceImageData={imageSet.referenceImage} />
-			<ContentTableDataRowNewCell newImageData={imageSet.newImage} />
+			<ContentTableDataRowNewCell newImageData={imageSet.newImage} setNewReferenceCallback={setNewReferenceImageRowCallback} />
 			<ContentTableDataRowDiffCell diffImageData={imageSet.diffImage} />
 		</tr>
 

@@ -20,6 +20,8 @@ A small NodeJS image comparison program with a straightforward UI and an API. It
 10. Clean up server API
 11. Count the number of times a check failed/ Make an extra kinda tmp list available?
 12. Evaluate flow type checking 
+13. Remove remaining files and npm dependencies of typescript (.babelrc, package.json)
+14. Make event handler to real functions or remove parameter
 
 ## Installation
 
