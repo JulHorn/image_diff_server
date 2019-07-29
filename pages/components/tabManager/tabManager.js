@@ -3,7 +3,7 @@ import ContentTable from "../contentTable/contentTable";
 import TabManagerControls from "./tabManagerControls/tabManagerControls"
 import css from "./tabManager.scss";
 
-const TabManager = ({ projects, availableProjects, displayTypeChangeCallback }) => {
+const TabManager = ({ projects, availableProjects, displayTypeChangeCallback, contentDataModificationCallback }) => {
 	return (
 		<div className={css.tabManager} >
 			<div className={css.tabManagerHeader}>
@@ -11,7 +11,7 @@ const TabManager = ({ projects, availableProjects, displayTypeChangeCallback }) 
 			</div>
 
 			<div className={css.tabManagerContent}>
-				<ContentTable projectsToDraw={projects} availableProjects={availableProjects} />
+				<ContentTable projectsToDraw={projects} availableProjects={availableProjects} dataModificationCallback={(result) => contentDataModificationCallback(result)} />
 			</div>
 		</div>
 	)

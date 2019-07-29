@@ -8,13 +8,15 @@ import connector from "../helper/connector";
 const ContentTableDataRow = ({ imageSet, setNewReferenceImageCallback }) => {
 
 	const setNewReferenceImageRowCallback = (id) => {
-		setNewReferenceImageCallback(connector.setToNewReferenceImage(id))
+		connector.setToNewReferenceImage(id).then((result) => {
+			setNewReferenceImageCallback(result);
+		})
 	};
 
 	return (
 		<tr>
 			<ContentTableDataRowReferenceCell referenceImageData={imageSet.referenceImage} />
-			<ContentTableDataRowNewCell newImageData={imageSet.newImage} setNewReferenceCallback={setNewReferenceImageRowCallback} />
+			<ContentTableDataRowNewCell newImageData={imageSet.newImage} setNewReferenceCallback={() => setNewReferenceImageRowCallback(imageSet.id)} />
 			<ContentTableDataRowDiffCell diffImageData={imageSet.diffImage} />
 		</tr>
 

@@ -2,6 +2,7 @@ var Job = require('./Job');
 var fs = require('fs-extra');
 var config = require('../ConfigurationLoader');
 var path = require('path');
+var logger = require('winston');
 
 /**
  * Job which computes the difference of two images and updates the image meta model accordingly..
@@ -32,22 +33,29 @@ MakeNewToReferenceImageJob.prototype.execute = function (imageMetaInformationMod
     // Single option -> Only one image has to be processed
     this.setImagesToBeProcessedCount(1);
 
-    this.__saveAndCompareImage(this.id, function (updatedImageSet) {
-        var jobCreatorCallback = that.getCallbackFunction();
-        // Update the processed image count
-        that.incrementProcessImageCounter();
+    try {
+        this.__saveAndCompareImage(this.id, function (updatedImageSet) {
+            var jobCreatorCallback = that.getCallbackFunction();
+            // Update the processed image count
+            that.incrementProcessImageCounter();
 
-        // Make the reference of the model to a copy to have a snapshot which will not be changed anymore
-        that.copyImageMetaInformationModel();
+            // Make the reference of the model to a copy to have a snapshot which will not be changed anymore
+            that.copyImageMetaInformationModel();
 
-        /// Call callback of the job creator when stuff is done
-        if (jobCreatorCallback) {
-            jobCreatorCallback(that, updatedImageSet);
-        }
+            /// Call callback of the job creator when stuff is done
+            if (jobCreatorCallback) {
+                jobCreatorCallback(that, updatedImageSet);
+            }
 
+            // Notify the job handler that this job is finished
+            callback();
+        });
+    } catch (err) {
+        // ToDo That would be one of the places where proper error handling and error code in the API would be a good idea
+        logger.error(err);
         // Notify the job handler that this job is finished
         callback();
-    });
+    }
 };
 
 /**
@@ -71,6 +79,10 @@ MakeNewToReferenceImageJob.prototype.load = function (data) {
 MakeNewToReferenceImageJob.prototype.__saveAndCompareImage = function (id, callback) {
     var imageSet = this.getImageMetaInformationModel().getImageSetById(id);
     var that = this;
+
+    if (!imageSet) {
+        throw 'ImageSet with the id "' + id + '" was not found.';
+    }
 
     // Copy new image to reference image
     fs.copy(imageSet.getNewImage().getPath(), config.getReferenceImageFolderPath() + path.sep + imageSet.getNewImage().getName(), function (err) {

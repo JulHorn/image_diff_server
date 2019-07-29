@@ -4,7 +4,7 @@ import ContentTableImageRow from "../contentTableImageRow/contentTableImageRow";
 import ContentTableDataRow from "../contentTableDataRow/contentTableDataRow";
 import css from "./contentTable.scss";
 
-const ContentTable = ({ projectsToDraw, availableProjects }) => {
+const ContentTable = ({ projectsToDraw, availableProjects, dataModificationCallback }) => {
 	// ToDo: Make a method out of this
 	const rowsToDraw = [];
 
@@ -17,7 +17,7 @@ const ContentTable = ({ projectsToDraw, availableProjects }) => {
 				<tbody>
 					<ContentTableHeadlineRow imageSetName={imageSetName} currentProject={'TestProject'} availableProjects={availableProjects} />
 					<ContentTableImageRow imageSet={imageSet} />
-					<ContentTableDataRow imageSet={imageSet} />
+					<ContentTableDataRow setNewReferenceImageCallback={(result) => dataModificationCallback(result)} imageSet={imageSet} />
 				</tbody>
 			</table>);
 		}

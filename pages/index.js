@@ -19,12 +19,21 @@ const IndexPage  = ({jobData}) => {
 		});
 
 	const handleCheckAll = (result) => {
-		const compData = result.job.imageMetaInformationModel;
+		updateHeadline(result.job)
+
+	};
+
+	const handleChangeDisplayType = (displayType) => {
+		console.log("Display type " + displayType)
+	};
+
+	const updateHeadline = (job) => {
+		const compData = job.imageMetaInformationModel;
 
 		const infoState = {
-			jobName: result.job.jobName,
-			imagesToBeProcessedCount: result.job.imagesToBeProcessedCount,
-			processedImageCount: result.job.processedImageCount,
+			jobName: job.jobName,
+			imagesToBeProcessedCount: job.imagesToBeProcessedCount,
+			processedImageCount: job.processedImageCount,
 			maxActualPixDiff: compData.biggestPercentualPixelDifference,
 			maxPixDiffThreshold: compData.percentualPixelDifferenceThreshold,
 			jobRunTimestamp: compData.timeStamp
@@ -35,15 +44,10 @@ const IndexPage  = ({jobData}) => {
 		setMetaInformationState(infoState);
 	};
 
-	const handleChangeDisplayType = (displayType) => {
-		// alert("Display type " + displayType);
-		console.log("Display type " + displayType)
-	};
-
 	return (
 		<div className={css.indexContent}>
 			<Header data={metaInformationState} checkAllCallback={(e) => handleCheckAll(e)}/>
-			<TabManager projects={compData.projects} availableProjects={ "none" } displayTypeChangeCallback={(dp) => handleChangeDisplayType(dp)} />
+			<TabManager projects={compData.projects} availableProjects={ "none" } displayTypeChangeCallback={(dp) => handleChangeDisplayType(dp)} contentDataModificationCallback={(result) => updateHeadline(result.job)} />
 			<Footer />
 		</div>
 	)
