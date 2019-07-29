@@ -13,7 +13,7 @@ const ContentTable = ({ projectsToDraw, availableProjects, dataModificationCallb
 			const imageSetName = imageSet.referenceImage ? imageSet.referenceImage.name : imageSet.newImage.name;
 
 			rowsToDraw.push(
-			<table className={css.contentTable}>
+			<table key={imageSet.id} className={css.contentTable}>
 				<tbody>
 					<ContentTableHeadlineRow imageSetName={imageSetName} currentProject={'TestProject'} availableProjects={availableProjects} />
 					<ContentTableImageRow imageSet={imageSet} />
@@ -27,9 +27,11 @@ const ContentTable = ({ projectsToDraw, availableProjects, dataModificationCallb
 		<div className={css.contentTableContainer}>
 			<table className={css.contentTableHeadline}>
 				<thead>
-					<th>Reference Image</th>
-					<th>New Image</th>
-					<th>Diff Image</th>
+					<tr>
+						<th>Reference Image</th>
+						<th>New Image</th>
+						<th>Diff Image</th>
+					</tr>
 				</thead>
 			</table>
 			{ rowsToDraw }
