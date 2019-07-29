@@ -5,8 +5,9 @@ import ContentTableDataRowDiffCell from "./contentTableDataRowDiffCell/contentTa
 import css from "./contentTableDataRow.scss";
 import connector from "../helper/connector";
 
-const ContentTableDataRow = ({ imageSet, setNewReferenceImageCallback }) => {
+const ContentTableDataRow = ({ imageSet, setNewReferenceImageCallback, deleteImageSetCallback }) => {
 
+	// ToDo Move this a level up because the spinner needs to go over the complete row
 	const setNewReferenceImageRowCallback = (id) => {
 		connector.setToNewReferenceImage(id).then((result) => {
 			setNewReferenceImageCallback(result);
@@ -15,7 +16,7 @@ const ContentTableDataRow = ({ imageSet, setNewReferenceImageCallback }) => {
 
 	return (
 		<tr>
-			<ContentTableDataRowReferenceCell referenceImageData={imageSet.referenceImage} />
+			<ContentTableDataRowReferenceCell deleteImageSetCallback={() => deleteImageSetCallback(imageSet.id)} referenceImageData={imageSet.referenceImage} />
 			<ContentTableDataRowNewCell newImageData={imageSet.newImage} setNewReferenceCallback={() => setNewReferenceImageRowCallback(imageSet.id)} />
 			<ContentTableDataRowDiffCell diffImageData={imageSet.diffImage} />
 		</tr>

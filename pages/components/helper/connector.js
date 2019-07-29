@@ -3,6 +3,7 @@ import fetch from 'isomorphic-unfetch'
 /**
  * Returns the server endpoint/host to which the requests will be send. The value will be retrieved from the local storage.
  *  ToDo: Update documentation with return promise value -> json nad class is probably not needed
+ *  ToDo: Update function names
  * **/
 class Connector {
 
@@ -85,7 +86,7 @@ class Connector {
 	 * @param {String} newName The new name of the project.
 	 * @param {String} id Project which should be modified.
 	 */
-	async editProject (newName, id, callback) {
+	async editProject (newName, id) {
 		return this.sendRequest('/' + id + '/editProject', 'PUT', { name: newName });
 	};
 
