@@ -5,21 +5,22 @@ import TabManager from "./components/tabManager/tabManager";
 import connector from "./components/helper/connector"
 import css from "./index.scss";
 
-const IndexPage  = ({jobData}) => {
-	const compData = jobData.imageMetaInformationModel;
+const IndexPage  = ({initialJobData}) => {
+	const initialCompData = initialJobData.imageMetaInformationModel;
 // ToDo: Probably use state thingy here for update
-	const [metaInformationState, setMetaInformationState] =
+	const [dataState, setMetaInformationState] =
 		useState({
-			jobName: jobData.jobName,
-			imagesToBeProcessedCount: jobData.imagesToBeProcessedCount,
-			processedImageCount: jobData.processedImageCount,
-			maxActualPixDiff: compData.biggestPercentualPixelDifference,
-			maxPixDiffThreshold: compData.percentualPixelDifferenceThreshold,
-			jobRunTimestamp: compData.timeStamp
+			jobName: initialJobData.jobName,
+			imagesToBeProcessedCount: initialJobData.imagesToBeProcessedCount,
+			processedImageCount: initialJobData.processedImageCount,
+		 	projects: initialCompData.projects,
+			maxActualPixDiff: initialCompData.biggestPercentualPixelDifference,
+			maxPixDiffThreshold: initialCompData.percentualPixelDifferenceThreshold,
+			jobRunTimestamp: initialCompData.timeStamp
 		});
 
 	const handleCheckAll = (result) => {
-		updateHeadline(result.job)
+		updateState(result.job)
 
 	};
 
@@ -27,13 +28,15 @@ const IndexPage  = ({jobData}) => {
 		console.log("Display type " + displayType)
 	};
 
-	const updateHeadline = (job) => {
+	// ToDo Might be better to break it down into multiple states
+	const updateState = (job) => {
 		const compData = job.imageMetaInformationModel;
 
 		const infoState = {
 			jobName: job.jobName,
 			imagesToBeProcessedCount: job.imagesToBeProcessedCount,
 			processedImageCount: job.processedImageCount,
+			projects: compData.projects,
 			maxActualPixDiff: compData.biggestPercentualPixelDifference,
 			maxPixDiffThreshold: compData.percentualPixelDifferenceThreshold,
 			jobRunTimestamp: compData.timeStamp
@@ -46,8 +49,8 @@ const IndexPage  = ({jobData}) => {
 
 	return (
 		<div className={css.indexContent}>
-			<Header data={metaInformationState} checkAllCallback={(e) => handleCheckAll(e)}/>
-			<TabManager projects={compData.projects} availableProjects={ "none" } displayTypeChangeCallback={(dp) => handleChangeDisplayType(dp)} contentDataModificationCallback={(result) => updateHeadline(result.job)} />
+			<Header data={dataState} checkAllCallback={(e) => handleCheckAll(e)}/>
+			<TabManager projects={dataState.projects} availableProjects={ "none" } displayTypeChangeCallback={(dp) => handleChangeDisplayType(dp)} contentDataModificationCallback={(result) => updateState(result.job)} />
 			<Footer />
 		</div>
 	)
@@ -57,7 +60,7 @@ IndexPage.getInitialProps = async ({ } ) => {
 	const result = await connector.getActiveJob();
 
 	return {
-		jobData: result.job
+		initialJobData: result.job
 	}
 };
 
