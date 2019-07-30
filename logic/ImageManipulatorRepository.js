@@ -99,10 +99,28 @@ ImageManipulatorRepository.prototype.deleteImageSetFromModel = function(id, call
 /**
  * Returns the currently active job or if no job was active, the last executed job.
  *
+ * @param displayMode ToDo
+ * @param projectId
  * @param {Function} callback The callback which the the currently active job or if no job was active, the last executed job as a parameter.
  * **/
-ImageManipulatorRepository.prototype.getLastActiveJob = function(callback) {
-	callback(jobHandler.getLastActiveJob());
+ImageManipulatorRepository.prototype.getLastActiveJob = function(displayMode, projectId, callback) {
+	var lastJob = jobHandler.getLastActiveJob();
+	var resultJob = this.getCleanedUpJob(displayMode, projectId, lastJob);
+
+	callback(resultJob);
+};
+
+/**
+ * ToDo
+ * @param callback
+ */
+ImageManipulatorRepository.prototype.getCleanedUpJob = function(displayMode, projectId, job) {
+	displayMode = displayMode || 0;
+	projectId = projectId || -1;
+
+	if (!job) { throw 'No job to clean up was given.';}
+
+	return job;
 };
 
 /**

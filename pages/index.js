@@ -4,8 +4,9 @@ import Footer from "./components/footer/footer";
 import TabManager from "./components/tabManager/tabManager";
 import connector from "./components/helper/connector"
 import css from "./index.scss";
+import { withRouter } from 'next/router'
 
-const IndexPage  = ({initialJobData}) => {
+const IndexPage  = ({initialJobData, param, query}) => {
 	const initialCompData = initialJobData.imageMetaInformationModel;
 // ToDo: Probably use state thingy here for update
 	const [dataState, setMetaInformationState] =
