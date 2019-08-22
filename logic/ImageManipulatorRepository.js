@@ -99,13 +99,13 @@ ImageManipulatorRepository.prototype.deleteImageSetFromModel = function(id, call
 /**
  * Returns the currently active job or if no job was active, the last executed job.
  *
- * @param displayMode ToDo
+ * @param imageSetState ToDo
  * @param projectId
  * @param {Function} callback The callback which the the currently active job or if no job was active, the last executed job as a parameter.
  * **/
-ImageManipulatorRepository.prototype.getLastActiveJob = function(displayMode, projectId, callback) {
+ImageManipulatorRepository.prototype.getLastActiveJob = function(imageSetState, projectId, callback) {
 	var lastJob = jobHandler.getLastActiveJob();
-	var resultJob = this.getCleanedUpJob(displayMode, projectId, lastJob);
+	var resultJob = this.getCleanedUpJob(imageSetState, projectId, lastJob);
 
 	callback(resultJob);
 };
@@ -114,13 +114,38 @@ ImageManipulatorRepository.prototype.getLastActiveJob = function(displayMode, pr
  * ToDo
  * @param callback
  */
-ImageManipulatorRepository.prototype.getCleanedUpJob = function(displayMode, projectId, job) {
-	displayMode = displayMode || 0;
+ImageManipulatorRepository.prototype.getCleanedUpJob = function(imageSetState, projectId, job) {
+	imageSetState = imageSetState || 'failed';
 	projectId = projectId || -1;
 
 	if (!job) { throw 'No job to clean up was given.';}
 
-	return job;
+	var clonedJob = job.getCopy();
+	var desiredProjects = clonedJob.imageMetaInformationModel.getProjects();
+
+	if (projectId !== -1) {
+		desiredProjects = desiredProjects.filter(function (project) {
+			return project.getId() === projectId;
+		});
+	}
+
+	if (imageSetState !== 'all') {
+		desiredProjects.forEach(function (project) {
+			var undesiredImageSets = project.getImageSets().filter(function (imageSet) {
+				if (imageSetState === 'failed') {
+					return !imageSet.isThresholdBreached;
+				} else {
+					return imageSet.isThresholdBreached;
+				}
+			});
+
+			undesiredImageSets.forEach(function (imageSetToBeRemoved) {
+				project.removeImageSet(imageSetToBeRemoved.getId());
+			});
+		});
+	}
+
+	return clonedJob;
 };
 
 /**

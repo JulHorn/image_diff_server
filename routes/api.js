@@ -81,10 +81,10 @@ router.put('/compareImageByName', function(req, res) {
 });
 
 router.get('/', function (req, res) {
-    var displayMode = req.query.displayMode;
+    var imageSetState = req.query.imageSetState;
     var projectId = req.query.projectId;
 
-    imageManipulatorRepository.getLastActiveJob(displayMode, projectId, function (job) {
+    imageManipulatorRepository.getLastActiveJob(imageSetState, projectId, function (job) {
         res.statusCode = 200;
         res.json({ job: job });
     });

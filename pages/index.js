@@ -1,12 +1,16 @@
 import React, {useState} from 'react'
+// import {
+// 	BrowserRouter as Router,
+// 	Route
+// } from 'react-router-dom'
+import { useRouter } from 'next/router';
 import Header from "./components/header/header";
 import Footer from "./components/footer/footer";
 import TabManager from "./components/tabManager/tabManager";
 import connector from "./components/helper/connector"
 import css from "./index.scss";
-import { withRouter } from 'next/router'
 
-const IndexPage  = ({initialJobData, param, query}) => {
+const IndexPage  = ({initialJobData, param, query, match}) => {
 	const initialCompData = initialJobData.imageMetaInformationModel;
 // ToDo: Probably use state thingy here for update
 	const [dataState, setMetaInformationState] =
@@ -47,6 +51,8 @@ const IndexPage  = ({initialJobData, param, query}) => {
 
 		setMetaInformationState(infoState);
 	};
+	const router = useRouter();
+	const { slug } = router.query;
 
 	return (
 		<div className={css.indexContent}>
@@ -57,8 +63,9 @@ const IndexPage  = ({initialJobData, param, query}) => {
 	)
 };
 
-IndexPage.getInitialProps = async ({ } ) => {
+IndexPage.getInitialProps = async ({ location } ) => {
 	const result = await connector.getActiveJob();
+	console.log(location);
 
 	return {
 		initialJobData: result.job

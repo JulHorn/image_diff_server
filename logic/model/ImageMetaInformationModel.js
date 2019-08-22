@@ -70,7 +70,7 @@ ImageMetaInformationModel.prototype.getProjects = function() {
 };
 
 /**
- * Returns the project by the giben project id. If none was found, null will be returned.
+ * Returns the project by the given project id. If none was found, null will be returned.
  *
  * @param {String} projectId The project id.
  * @return {Project | null} The project by the giben project id. If none was found, null will be returned.

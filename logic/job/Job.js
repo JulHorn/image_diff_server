@@ -134,4 +134,17 @@ Job.prototype.copyImageMetaInformationModel = function () {
     this.imageMetaInformationModel = this.getImageMetaInformationModel().getCopy();
 };
 
+/**
+ * Clones this job to kill the references.
+ *
+ * @return A clone of this job object.
+ */
+Job.prototype.getCopy = function () {
+    var clonedJob = new Job('', null);
+
+    clonedJob.loadJobData(this);
+
+    return clonedJob;
+};
+
 module.exports = Job;

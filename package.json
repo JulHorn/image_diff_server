@@ -26,7 +26,8 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "uuid": "^3.3.2",
-    "winston": "^2.4.4"
+    "winston": "^2.4.4",
+    "react-router-dom": "^5.0.1"
   },
   "devDependencies": {
     "@zeit/next-typescript": "^1.1.1",
