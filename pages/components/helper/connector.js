@@ -11,8 +11,8 @@ class Connector {
 	 * Gets the currently active job.
 	 *
 	 * **/
-	async getActiveJob () {
-		return this.sendRequest('/', 'GET', null);
+	async getActiveJob (imageSetState, projectId) {
+		return this.sendRequest('/', 'GET', null, {imageSetState: imageSetState, projectId: projectId});
 	};
 
 	/**
@@ -110,8 +110,34 @@ class Connector {
 		return this.sendRequest('/' + imageSetId + '/assignImageSetToProject', 'PUT', { projectIdFrom : projectIdFrom, projectIdTo: projectIdTo });
 	};
 
-	async sendRequest (url, method, data) {
-		return fetch(this.getServerEndpoint() + url, {method: method, headers: {'Content-Type': 'application/json', body: data}})
+	/**
+	 * ToDo: Documentation
+	 *
+	 * @param url
+	 * @param method
+	 * @param bodyData
+	 * @param queryData
+	 * @returns {Promise<Promise<T | never>>}
+	 */
+	async sendRequest (url, method, bodyData, queryData) {
+
+		let query = '';
+
+		for (let objProp in queryData) {
+			const objValue = queryData[objProp];
+
+			if (!objValue || objValue === 'undefined') { continue; }
+
+			if (query.length === 0) {
+				query += '?' + objProp + '=' + objValue;
+			} else {
+				query += '&' + objProp + '=' + objValue;
+			}
+		}
+
+		console.log('query', query);
+
+		return fetch(this.getServerEndpoint() + url + query, {method: method, headers: {'Content-Type': 'application/json', body: bodyData}})
 			.then( resp => resp.json());
 	}
 

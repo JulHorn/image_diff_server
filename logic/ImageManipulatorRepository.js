@@ -123,9 +123,10 @@ ImageManipulatorRepository.prototype.getCleanedUpJob = function(imageSetState, p
 	var clonedJob = job.getCopy();
 	var desiredProjects = clonedJob.imageMetaInformationModel.getProjects();
 
-	if (projectId !== -1) {
+	// ToDo: Use a better comparison here using "" instead of '' only here is not very pretty
+	if (projectId !== "-1") {
 		desiredProjects = desiredProjects.filter(function (project) {
-			return project.getId() === projectId;
+			return project.getProjectId() === projectId;
 		});
 	}
 

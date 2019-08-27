@@ -1,18 +1,14 @@
 import React, {useState} from 'react'
-// import {
-// 	BrowserRouter as Router,
-// 	Route
-// } from 'react-router-dom'
-import { useRouter } from 'next/router';
 import Header from "./components/header/header";
 import Footer from "./components/footer/footer";
 import TabManager from "./components/tabManager/tabManager";
 import connector from "./components/helper/connector"
 import css from "./index.scss";
 
-const IndexPage  = ({initialJobData, param, query, match}) => {
+const IndexPage  = ({initialJobData, param, query, match, req}) => {
 	const initialCompData = initialJobData.imageMetaInformationModel;
-// ToDo: Probably use state thingy here for update
+
+	// ToDo: Probably use state thingy here for update
 	const [dataState, setMetaInformationState] =
 		useState({
 			jobName: initialJobData.jobName,
@@ -27,10 +23,6 @@ const IndexPage  = ({initialJobData, param, query, match}) => {
 	const handleCheckAll = (result) => {
 		updateState(result.job)
 
-	};
-
-	const handleChangeDisplayType = (displayType) => {
-		console.log("Display type " + displayType)
 	};
 
 	// ToDo Might be better to break it down into multiple states
@@ -51,21 +43,18 @@ const IndexPage  = ({initialJobData, param, query, match}) => {
 
 		setMetaInformationState(infoState);
 	};
-	const router = useRouter();
-	const { slug } = router.query;
 
 	return (
 		<div className={css.indexContent}>
 			<Header data={dataState} checkAllCallback={(e) => handleCheckAll(e)}/>
-			<TabManager projects={dataState.projects} availableProjects={ "none" } displayTypeChangeCallback={(dp) => handleChangeDisplayType(dp)} contentDataModificationCallback={(result) => updateState(result.job)} />
+			<TabManager projects={dataState.projects} availableProjects={ "none" } contentDataModificationCallback={(result) => updateState(result.job)} />
 			<Footer />
 		</div>
 	)
 };
 
-IndexPage.getInitialProps = async ({ location } ) => {
-	const result = await connector.getActiveJob();
-	console.log(location);
+IndexPage.getInitialProps = async ({ req } ) => {
+	const result = await connector.getActiveJob(req.query.imageSetState, req.query.projectId);
 
 	return {
 		initialJobData: result.job
