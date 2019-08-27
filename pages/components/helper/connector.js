@@ -12,7 +12,7 @@ class Connector {
 	 *
 	 * **/
 	async getActiveJob (imageSetState, projectId) {
-		return this.sendRequest('/', 'GET', null, {imageSetState: imageSetState, projectId: projectId});
+		return this.sendRequest('', 'GET', null, {imageSetState: imageSetState, projectId: projectId});
 	};
 
 	/**
@@ -129,14 +129,14 @@ class Connector {
 			if (!objValue || objValue === 'undefined') { continue; }
 
 			if (query.length === 0) {
-				query += '?' + objProp + '=' + objValue;
+				query += '/?' + objProp + '=' + objValue;
 			} else {
 				query += '&' + objProp + '=' + objValue;
 			}
 		}
 
 		console.log('query', query);
-
+		console.log('this.getServerEndpoint() + url + query', this.getServerEndpoint() + url + query);
 		return fetch(this.getServerEndpoint() + url + query, {method: method, headers: {'Content-Type': 'application/json', body: bodyData}})
 			.then( resp => resp.json());
 	}
@@ -146,7 +146,7 @@ class Connector {
 	 * @returns {string}
 	 */
 	getServerEndpoint () {
-		return 'http://localhost:3001/api/'
+		return 'http://localhost:3001/api'
 			// return location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '')
 	}
 }

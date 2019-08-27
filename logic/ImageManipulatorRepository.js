@@ -111,7 +111,7 @@ ImageManipulatorRepository.prototype.getLastActiveJob = function(imageSetState, 
 };
 
 /**
- * ToDo
+ * ToDo Documentation
  * @param callback
  */
 ImageManipulatorRepository.prototype.getCleanedUpJob = function(imageSetState, projectId, job) {
@@ -121,7 +121,7 @@ ImageManipulatorRepository.prototype.getCleanedUpJob = function(imageSetState, p
 	if (!job) { throw 'No job to clean up was given.';}
 
 	var clonedJob = job.getCopy();
-	var desiredProjects = clonedJob.imageMetaInformationModel.getProjects();
+	var desiredProjects = clonedJob.getImageMetaInformationModel().getProjects();
 
 	// ToDo: Use a better comparison here using "" instead of '' only here is not very pretty
 	if (projectId !== "-1") {
@@ -146,6 +146,7 @@ ImageManipulatorRepository.prototype.getCleanedUpJob = function(imageSetState, p
 		});
 	}
 
+	clonedJob.getImageMetaInformationModel().calculateBiggestDifferences();
 	return clonedJob;
 };
 

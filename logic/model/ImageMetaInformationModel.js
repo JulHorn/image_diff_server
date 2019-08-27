@@ -211,11 +211,9 @@ ImageMetaInformationModel.prototype.calculateBiggestDifferences = function() {
 	var that = this;
 	var imageSets = this.getImageSets();
 
-	// If no image set exists, the difference is always 0
-	if(imageSets.length === 0) {
-		that.biggestPercentualPixelDifference = 0;
-		that.biggestDistanceDifference = 0;
-	}
+	// Reset values to start calculating from a clean slate
+	that.biggestPercentualPixelDifference = 0;
+	that.biggestDistanceDifference = 0;
 
 	// Calculate pixel and distance difference
 	imageSets.forEach(function(set) {

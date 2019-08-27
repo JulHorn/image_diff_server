@@ -22,11 +22,11 @@ const TabManagerControls = ({ availableProjects }) => {
 		<form action='' id='tabManagerControlsForm' method='get'>
 			<div className={css.tabManagerControls} >
 				<div className={css.tabManagerControlsSectionTabs}>
-					<input id="tabManagerControlsDisplayTypeFailed" value='failed' checked={selectedImageSetState === 'failed'} type="radio" name="imageSetState" onClick={() => displayStateChange()}/>
+					<input id="tabManagerControlsDisplayTypeFailed" value='failed' checked={selectedImageSetState === 'failed'} type="radio" name="imageSetState" onChange={() => displayStateChange()}/>
 					<label htmlFor="tabManagerControlsDisplayTypeFailed">Failed</label>
-					<input id="tabManagerControlsDisplayTypePassed" value='passed' checked={selectedImageSetState === 'passed'} type="radio" name="imageSetState" onClick={() => displayStateChange()}/>
+					<input id="tabManagerControlsDisplayTypePassed" value='passed' checked={selectedImageSetState === 'passed'} type="radio" name="imageSetState" onChange={() => displayStateChange()}/>
 					<label htmlFor="tabManagerControlsDisplayTypePassed">Passed</label>
-					<input id="tabManagerControlsDisplayTypeAll" type="radio" value='all' checked={selectedImageSetState === 'all'} name="imageSetState" onClick={() => displayStateChange()}/>
+					<input id="tabManagerControlsDisplayTypeAll" type="radio" value='all' checked={selectedImageSetState === 'all'} name="imageSetState" onChange={() => displayStateChange()}/>
 					<label htmlFor="tabManagerControlsDisplayTypeAll">All</label>
 				</div>
 				<div className={css.tabManagerControlsSectionProject}>
