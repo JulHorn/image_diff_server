@@ -22,6 +22,7 @@ A small NodeJS image comparison program with a straightforward UI and an API. It
 12. Evaluate flow type checking 
 13. Remove remaining files and npm dependencies of typescript (.babelrc, package.json)
 14. Make event handler to real functions or remove parameter
+15. Use redux to get rid of the callback hell
 
 ## Installation
 

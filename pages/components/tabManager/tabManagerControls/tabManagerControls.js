@@ -26,21 +26,27 @@ const TabManagerControls = ({ availableProjects }) => {
 
 		if (newProjectName) {
 			const result = await connector.addProject(newProjectName);
+			console.log('Project added: ', result);
 		}
+
 	};
 
-	const editProject = (event) => {
-		// var projectSelectOption = that.$container.find('#projectSelect :selected');
-		// var projectToBeRenamedId = projectSelectOption.attr('data-id');
-		// var currentProjectName = projectSelectOption.text();
-		// var newProjectName = prompt('Please enter the new project name for the project "' + currentProjectName + '" (ID:' + projectToBeRenamedId + ' )','');
-		//
-		// if (newProjectName) {
-		// 	that.connector.editProject(newProjectName, projectToBeRenamedId, function (data) {
-		// 		// projectSelectOption.text(newProjectName);
-		// 		that.callback(data, null);
-		// 	});
-		// }
+	const editProject = async (event) => {
+		const projectSelect = document.getElementById('projectSelector');
+		const selectedOptionIndex = projectSelect.selectedIndex;
+		const selectedOption = projectSelect.options[selectedOptionIndex];
+		const selectedProjectName = selectedOption.text;
+		const selectedProjectId = selectedOption.value;
+
+		event.preventDefault();
+		event.stopPropagation();
+
+		var newProjectName = prompt('Please enter the new project name for the project "' + selectedProjectName + '" (ID:' + selectedProjectId + ' )','');
+
+		if (newProjectName) {
+			const result = await connector.editProject(newProjectName, selectedProjectId);
+			console.log('Project renamed: ', result);
+		}
 	};
 
 	const deleteProject = () => {
@@ -87,7 +93,7 @@ const TabManagerControls = ({ availableProjects }) => {
 					<label htmlFor="tabManagerControlsDisplayTypeAll">All</label>
 				</div>
 				<div className={css.tabManagerControlsSectionProject}>
-					<select name='projectId' onChange={() => displayStateChange()}>
+					<select id='projectSelector' name='projectId' onChange={() => displayStateChange()}>
 						<option key={-1} value={-1}>All Projects</option>
 						{ getProjectOptions() }
 					</select>
