@@ -105,6 +105,7 @@ class Connector {
 	 * @param {String} id Id of the project to be deleted.
 	 */
 	async removeProject (id) {
+		console.log('remove project id: ', id);
 		return this.sendRequest('/' + id + '/removeProject', 'DELETE', null);
 	};
 
@@ -148,7 +149,7 @@ class Connector {
 		const reqBody = JSON.stringify(bodyData);
 
 		// Ensure that get and head have no body because the library does not allow it
-		if (method.toLowerCase() === 'head' || method.toLowerCase() === 'get') {
+		if (method.toLowerCase() === 'head' || method.toLowerCase() === 'get' || !bodyData) {
 			return fetch(reqUrl, {method: method, headers: reqHeaders})
 					.then( resp => resp.json());
 		}

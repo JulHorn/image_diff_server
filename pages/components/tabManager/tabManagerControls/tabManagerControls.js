@@ -49,16 +49,20 @@ const TabManagerControls = ({ availableProjects }) => {
 		}
 	};
 
-	const deleteProject = () => {
-		// var projectSelectOption = that.$container.find('#projectSelect :selected');
-		// var projectToBeDeletedId = projectSelectOption.attr('data-id');
-		//
-		// if (confirm("Dou you really want to delete the project? All items of that project will be deleted too.")) {
-		// 	that.connector.removeProject(projectToBeDeletedId, function (data) {
-		// 		console.log(projectToBeDeletedId, 'deletedProjectId');
-		// 		that.callback(data, null);
-		// 	});
-		// }
+	const deleteProject = async (event) => {
+		const projectSelect = document.getElementById('projectSelector');
+		const selectedOptionIndex = projectSelect.selectedIndex;
+		const selectedOption = projectSelect.options[selectedOptionIndex];
+		const selectedProjectName = selectedOption.text;
+		const selectedProjectId = selectedOption.value;
+
+		event.preventDefault();
+		event.stopPropagation();
+
+		if (confirm('Dou you really want to delete the project ' + selectedProjectName + '? All items of that project will be deleted too.')) {
+			const result = await connector.removeProject(selectedProjectId);
+			console.log('Delete project id: ', selectedProjectId);
+		}
 	};
 
 	const getProjectOptions = () => {
