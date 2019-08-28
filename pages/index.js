@@ -5,7 +5,7 @@ import TabManager from "./components/tabManager/tabManager";
 import connector from "./components/helper/connector"
 import css from "./index.scss";
 
-const IndexPage  = ({initialJobData, param, query, match, req}) => {
+const IndexPage  = ({initialJobData, initialAvailableProjectData}) => {
 	const initialCompData = initialJobData.imageMetaInformationModel;
 
 	// ToDo: Probably use state thingy here for update
@@ -19,6 +19,11 @@ const IndexPage  = ({initialJobData, param, query, match, req}) => {
 			maxPixDiffThreshold: initialCompData.percentualPixelDifferenceThreshold,
 			jobRunTimestamp: initialCompData.timeStamp
 		});
+
+	const [availableProjectsState, setAvailableProjectsState] =
+		useState({
+			 availableProjects: initialAvailableProjectData.allProjects
+		 });
 
 	const handleCheckAll = (result) => {
 		updateState(result.job)
@@ -47,17 +52,19 @@ const IndexPage  = ({initialJobData, param, query, match, req}) => {
 	return (
 		<div className={css.indexContent}>
 			<Header data={dataState} checkAllCallback={(e) => handleCheckAll(e)}/>
-			<TabManager projects={dataState.projects} availableProjects={ "none" } contentDataModificationCallback={(result) => updateState(result.job)} />
+			<TabManager projects={dataState.projects} availableProjects={ availableProjectsState.availableProjects } contentDataModificationCallback={(result) => updateState(result.job)} />
 			<Footer />
 		</div>
 	)
 };
 
 IndexPage.getInitialProps = async ({ req } ) => {
-	const result = await connector.getActiveJob(req.query.imageSetState, req.query.projectId);
+	const resultJob = await connector.getActiveJob(req.query.imageSetState, req.query.projectId);
+	const projects = await connector.getProjects();
 
 	return {
-		initialJobData: result.job
+		initialJobData: resultJob.job,
+		initialAvailableProjectData: projects
 	}
 };
 

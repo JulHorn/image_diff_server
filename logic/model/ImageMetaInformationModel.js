@@ -304,6 +304,14 @@ ImageMetaInformationModel.prototype.deleteImageSetFromModel = function(id, proje
 };
 
 /**
+ * ToDo
+ * @param projects
+ */
+ImageMetaInformationModel.prototype.setProjects = function(projects) {
+	this.projects = projects;
+};
+
+/**
  * Adds a new project to the ImageMetaInformationModel.
  *
  * @param {String} projectName The name of the new project.

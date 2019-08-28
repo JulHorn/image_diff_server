@@ -81,6 +81,15 @@ class Connector {
 	};
 
 	/**
+	 * Get all projects.
+	 *
+	 * @return {[Object]} A list of objects representing the projects. The objects contain the property "name" and "id".
+	 */
+	async getProjects () {
+		return this.sendRequest('/getProjects', 'GET');
+	};
+
+	/**
 	 * Edit an existing project.
 	 *
 	 * @param {String} newName The new name of the project.
@@ -120,7 +129,6 @@ class Connector {
 	 * @returns {Promise<Promise<T | never>>}
 	 */
 	async sendRequest (url, method, bodyData, queryData) {
-
 		let query = '';
 
 		for (let objProp in queryData) {
@@ -135,10 +143,18 @@ class Connector {
 			}
 		}
 
-		console.log('query', query);
-		console.log('this.getServerEndpoint() + url + query', this.getServerEndpoint() + url + query);
-		return fetch(this.getServerEndpoint() + url + query, {method: method, headers: {'Content-Type': 'application/json', body: bodyData}})
-			.then( resp => resp.json());
+		const reqUrl = this.getServerEndpoint() + url + query;
+		const reqHeaders = {'Content-Type': 'application/json; charset=utf-8'};
+		const reqBody = JSON.stringify(bodyData);
+
+		// Ensure that get and head have no body because the library does not allow it
+		if (method.toLowerCase() === 'head' || method.toLowerCase() === 'get') {
+			return fetch(reqUrl, {method: method, headers: reqHeaders})
+					.then( resp => resp.json());
+		}
+
+		return fetch(reqUrl, {method: method, headers: reqHeaders, body: reqBody})
+				.then( resp => resp.json());
 	}
 
 	/**

@@ -103,8 +103,17 @@ router.post('/addProject', function(req, res) {
     var projectName = req.body.name;
 
     imageManipulatorRepository.addProject(projectName, function (job, newProject) {
+        imageManipulatorRepository.getProjects(function(allProjects) {
+            res.statusCode = 200;
+            res.json({job: job, project: newProject, allProjects: allProjects});
+        });
+    });
+});
+
+router.get('/getProjects', function(req, res) {
+    imageManipulatorRepository.getProjects(function(allProjects) {
         res.statusCode = 200;
-        res.json({job: job, project: newProject});
+        res.json({allProjects: allProjects});
     });
 });
 

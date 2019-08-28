@@ -116,7 +116,7 @@ ImageManipulatorRepository.prototype.getLastActiveJob = function(imageSetState, 
  */
 ImageManipulatorRepository.prototype.getCleanedUpJob = function(imageSetState, projectId, job) {
 	imageSetState = imageSetState || 'failed';
-	projectId = projectId || -1;
+	projectId = projectId || '-1';
 
 	if (!job) { throw 'No job to clean up was given.';}
 
@@ -146,6 +146,7 @@ ImageManipulatorRepository.prototype.getCleanedUpJob = function(imageSetState, p
 		});
 	}
 
+	clonedJob.getImageMetaInformationModel().setProjects(desiredProjects);
 	clonedJob.getImageMetaInformationModel().calculateBiggestDifferences();
 	return clonedJob;
 };
@@ -161,13 +162,14 @@ ImageManipulatorRepository.prototype.modifyIgnoreAreas = function(id, ignoreArea
 	// Add modify ignore areas job to the job handler
 	try {
 		jobHandler.addJob(
-				new ModifyIgnoreAreasJob(id, ignoreAreas, function(job, updatedImageSet) {
-											 logger.info("Modified ignore areas for image set with id: " + id);
-											 if(callback) {
-												 callback(job, updatedImageSet);
-											 }
-										 }
-				));
+			new ModifyIgnoreAreasJob(id, ignoreAreas, function(job, updatedImageSet) {
+				 logger.info("Modified ignore areas for image set with id: " + id);
+
+				 if(callback) {
+					 callback(job, updatedImageSet);
+				 }
+			 }
+		));
 	} catch(exc) {
 		logger.error('Error:', exc);
 	}
@@ -184,13 +186,14 @@ ImageManipulatorRepository.prototype.modifyCheckAreas = function(id, checkAreas,
 	// Add modify check areas job to the job handler
 	try {
 		jobHandler.addJob(
-				new ModifyCheckAreasJob(id, checkAreas, function(job, updatedImageSet) {
-											logger.info("Modified check areas for image set with id: " + id);
-											if(callback) {
-												callback(job, updatedImageSet);
-											}
-										}
-				));
+			new ModifyCheckAreasJob(id, checkAreas, function(job, updatedImageSet) {
+				logger.info("Modified check areas for image set with id: " + id);
+
+				if(callback) {
+					callback(job, updatedImageSet);
+				}
+			}
+		));
 	} catch(exc) {
 		logger.error('Error:', exc);
 	}
@@ -216,15 +219,32 @@ ImageManipulatorRepository.prototype.getImageSet = function(id, callback) {
  */
 ImageManipulatorRepository.prototype.addProject = function(projectName, callback) {
 	jobHandler.addJob(
-			new AddProjectJob(projectName, function(job, newProject) {
+		new AddProjectJob(projectName, function(job, newProject) {
+		  logger.info("Added project " + projectName);
 
-								  logger.info("Added project " + projectName);
+		  if(callback) {
+			  callback(job, {name: newProject.getProjectName(), id: newProject.getProjectId()});
+		  }
+		}
+	));
+};
 
-								  if(callback) {
-									  callback(job, newProject);
-								  }
-							  }
-			));
+/**
+ * ToDo
+ * @param callback
+ */
+ImageManipulatorRepository.prototype.getProjects = function(callback) {
+
+	var projects = jobHandler.getLastActiveJob().getImageMetaInformationModel().getProjects();
+	var cleanedUpProjects = [];
+
+	projects.forEach(function(project) {
+		cleanedUpProjects.push({name: project.getProjectName(), id: project.getProjectId()});
+	});
+
+	if(callback) {
+		callback(cleanedUpProjects);
+	}
 };
 
 /**
@@ -236,15 +256,14 @@ ImageManipulatorRepository.prototype.addProject = function(projectName, callback
  */
 ImageManipulatorRepository.prototype.editProject = function(projectId, projectName, callback) {
 	jobHandler.addJob(
-			new EditProjectJob(projectId, projectName, function(job, wasSuccessful) {
+		new EditProjectJob(projectId, projectName, function(job, wasSuccessful) {
+		   logger.info("Edited project " + projectId);
 
-								   logger.info("Edited project " + projectId);
-
-								   if(callback) {
-									   callback(job, wasSuccessful);
-								   }
-							   }
-			));
+		   if(callback) {
+			   callback(job, wasSuccessful);
+		   }
+		}
+	));
 };
 
 /**
@@ -255,15 +274,14 @@ ImageManipulatorRepository.prototype.editProject = function(projectId, projectNa
  */
 ImageManipulatorRepository.prototype.removeProject = function(projectId, callback) {
 	jobHandler.addJob(
-			new RemoveProjectJob(projectId, function(job, wasSuccessful) {
+		new RemoveProjectJob(projectId, function(job, wasSuccessful) {
+			 logger.info("Removed project " + projectId);
 
-									 logger.info("Removed project " + projectId);
-
-									 if(callback) {
-										 callback(job, wasSuccessful);
-									 }
-								 }
-			));
+			 if(callback) {
+				 callback(job, wasSuccessful);
+			 }
+		 }
+	));
 };
 
 /**
@@ -276,15 +294,14 @@ ImageManipulatorRepository.prototype.removeProject = function(projectId, callbac
  */
 ImageManipulatorRepository.prototype.assignImageSetToProject = function(imageSetId, projectIdFrom, projectIdTo, callback) {
 	jobHandler.addJob(
-			new AssignImageSetToProjectJob(imageSetId, projectIdFrom, projectIdTo, function(job, wasSuccessful) {
+		new AssignImageSetToProjectJob(imageSetId, projectIdFrom, projectIdTo, function(job, wasSuccessful) {
+		   logger.info("Moved imageSet " + imageSetId + " from project " + projectIdFrom + " to project " + projectIdTo);
 
-											   logger.info("Moved imageSet " + imageSetId + " from project " + projectIdFrom + " to project " + projectIdTo);
-
-											   if(callback) {
-												   callback(job, wasSuccessful);
-											   }
-										   }
-			));
+		   if(callback) {
+			   callback(job, wasSuccessful);
+		   }
+	   }
+	));
 };
 
 /**
@@ -298,13 +315,14 @@ ImageManipulatorRepository.prototype.assignImageSetToProject = function(imageSet
 ImageManipulatorRepository.prototype.cleanUpProject = function(imageName, projectId, callback) {
 	// Add cleanUp job to the job handler
 	jobHandler.addJob(
-			new CleanUpProjectJob(imageName, projectId, function(job) {
-									  logger.info("Removes all imageSets containing the name: " + imageName + "from the project " + projectId + " without deleting the images itself.");
-									  if(callback) {
-										  callback(job, true);
-									  }
-								  }
-			));
+		new CleanUpProjectJob(imageName, projectId, function(job) {
+			  logger.info("Removes all imageSets containing the name: " + imageName + "from the project " + projectId + " without deleting the images itself.");
+
+			  if(callback) {
+				  callback(job, true);
+			  }
+		  }
+	));
 };
 
 /**
@@ -320,15 +338,14 @@ ImageManipulatorRepository.prototype.cleanUpProject = function(imageName, projec
 ImageManipulatorRepository.prototype.compareImageByName = function(imageName, imageType, imageBase64, projectId, callback) {
 
 	jobHandler.addJob(
-			new CompareImageByNameJob(imageName, imageType, imageBase64, projectId, function(job, resultImageSet) {
+		new CompareImageByNameJob(imageName, imageType, imageBase64, projectId, function(job, resultImageSet) {
+		  logger.info("Compared image " + imageName + "." + imageType + " with the threshold breached result: " + resultImageSet.isThresholdBreached);
 
-										  logger.info("Compared image " + imageName + "." + imageType + " with the threshold breached result: " + resultImageSet.isThresholdBreached);
-
-										  if(callback) {
-											  callback(job, resultImageSet.isThresholdBreached);
-										  }
-									  }
-			));
+			if(callback) {
+				callback(job, resultImageSet.isThresholdBreached);
+			}
+		}
+	));
 };
 
 module.exports = new ImageManipulatorRepository();
