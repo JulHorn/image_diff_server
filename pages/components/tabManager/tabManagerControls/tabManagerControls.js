@@ -90,11 +90,11 @@ const TabManagerControls = ({ availableProjects }) => {
 			<div className={css.tabManagerControls} >
 				<div className={css.tabManagerControlsSectionTabs}>
 					<input id="tabManagerControlsDisplayTypeFailed" value='failed' checked={selectedImageSetState === 'failed'} type="radio" name="imageSetState" onChange={() => displayStateChange()}/>
-					<label htmlFor="tabManagerControlsDisplayTypeFailed">Failed</label>
+					<label className={selectedImageSetState === 'failed' ? css.tabManagerControlsSectionTabsTabActive : false} htmlFor="tabManagerControlsDisplayTypeFailed">Failed</label>
 					<input id="tabManagerControlsDisplayTypePassed" value='passed' checked={selectedImageSetState === 'passed'} type="radio" name="imageSetState" onChange={() => displayStateChange()}/>
-					<label htmlFor="tabManagerControlsDisplayTypePassed">Passed</label>
+					<label className={selectedImageSetState === 'passed' ? css.tabManagerControlsSectionTabsTabActive : false} htmlFor="tabManagerControlsDisplayTypePassed">Passed</label>
 					<input id="tabManagerControlsDisplayTypeAll" type="radio" value='all' checked={selectedImageSetState === 'all'} name="imageSetState" onChange={() => displayStateChange()}/>
-					<label htmlFor="tabManagerControlsDisplayTypeAll">All</label>
+					<label className={selectedImageSetState === 'all' ? css.tabManagerControlsSectionTabsTabActive : false} htmlFor="tabManagerControlsDisplayTypeAll">All</label>
 				</div>
 				<div className={css.tabManagerControlsSectionProject}>
 					<select id='projectSelector' name='projectId' onChange={() => displayStateChange()}>

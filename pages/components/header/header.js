@@ -16,18 +16,13 @@ const Header = ({data, checkAllCallback}) => {
 			<div className={css.header}>
 				<h1 className={css.headerHeadline}>Image Comparison Server</h1>
 
-				<table className={css.headerTable}>
-					<tbody>
-						<tr>
-							<td>Job: {data.jobName}</td>
-							<td>Max Pix. Difference: {data.maxActualPixDiff}</td>
-						</tr>
-						<tr>
-							<td>Progress: {data.processedImageCount}</td>
-							<td>Last Job Finished: {data.jobRunTimestamp}</td>
-						</tr>
-					</tbody>
-				</table>
+				<div>{data.jobName}</div>
+				<progress value={data.processedImageCount} max={10} className={css.headerHeadlineProgressBar} />
+				<div className={css.headerSecondaryInformation}>
+					<div>Max Pix. Difference: {data.maxActualPixDiff}</div>
+					<div>Last Job Finished: {data.jobRunTimestamp}</div>
+				</div>
+
 				<button className={css.headerButton} onClick={() => checkAllClick(checkAllCallback)}>Check all</button>
 			</div>
 		</div>

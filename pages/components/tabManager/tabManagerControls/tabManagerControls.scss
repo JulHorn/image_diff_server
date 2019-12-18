@@ -7,7 +7,6 @@
 .tabManagerControlsSectionTabs {
 	width: 50%;
 	height: 100%;
-	background-color: red;
 }
 
 .tabManagerControlsSectionTabs input[type="radio"] {
@@ -25,9 +24,16 @@
 	height: auto;
 }
 
+.tabManagerControlsSectionTabs label:hover {
+	background-color:#ddd;
+}
+
+.tabManagerControlsSectionTabsTabActive {
+	background-color:#ccc;
+}
+
 .tabManagerControlsSectionProject {
 	width: 50%;
-	background-color: blue;
 	display: flex;
 	flex-wrap: nowrap;
 	justify-content: flex-end;

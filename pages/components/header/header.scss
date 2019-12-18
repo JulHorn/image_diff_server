@@ -3,12 +3,24 @@
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	margin-bottom: 20px;
 }
 
-.headerHeadline {
+.header > div, progress {
+	margin-bottom: 5px;
 }
 
-.headerTable {
+.headerHeadlineProgressBar {
+	width: 50%;
+}
+
+.headerSecondaryInformation {
+	display: flex;
+}
+
+.headerSecondaryInformation div {
+	margin-right: 5px;
+	margin-left: 5px;
 }
 
 .headerButton {
