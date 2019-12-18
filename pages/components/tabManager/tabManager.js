@@ -3,7 +3,7 @@ import ContentTable from "../contentTable/contentTable";
 import TabManagerControls from "./tabManagerControls/tabManagerControls"
 import css from "./tabManager.scss";
 
-const TabManager = ({ projects, availableProjects, displayTypeChangeCallback, contentDataModificationCallback }) => {
+const TabManager = ({ projects, availableProjects, displayTypeChangeCallback, contentDataModificationCallback, addImageCheckRegionsCallback, addImageIgnoreRegionsCallback }) => {
 	return (
 		<div className={css.tabManager} >
 			<div className={css.tabManagerHeader}>
@@ -11,7 +11,7 @@ const TabManager = ({ projects, availableProjects, displayTypeChangeCallback, co
 			</div>
 
 			<div className={css.tabManagerContent}>
-				<ContentTable projectsToDraw={projects} availableProjects={availableProjects} dataModificationCallback={(result) => contentDataModificationCallback(result)} />
+				<ContentTable projectsToDraw={projects} availableProjects={availableProjects} dataModificationCallback={(result) => contentDataModificationCallback(result)} addImageCheckRegionsCallback={ (imageSetRowData) => addImageCheckRegionsCallback(imageSetRowData) } addImageIgnoreRegionsCallback={ (imageSetRowData) => addImageIgnoreRegionsCallback(imageSetRowData) }/>
 			</div>
 		</div>
 	)

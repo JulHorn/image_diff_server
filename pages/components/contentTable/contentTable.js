@@ -5,7 +5,7 @@ import ContentTableDataRow from "../contentTableDataRow/contentTableDataRow";
 import css from "./contentTable.scss";
 import connector from "../helper/connector";
 
-const ContentTable = ({ projectsToDraw, availableProjects, dataModificationCallback }) => {
+const ContentTable = ({ projectsToDraw, availableProjects, dataModificationCallback, addImageCheckRegionsCallback, addImageIgnoreRegionsCallback }) => {
 	const deleteImageSet = (id) => {
 		connector.delete(id).then((result) => {
 			dataModificationCallback(result);
@@ -24,7 +24,7 @@ const ContentTable = ({ projectsToDraw, availableProjects, dataModificationCallb
 				<tbody>
 					<ContentTableHeadlineRow imageSetName={imageSetName} currentProject={'TestProject'} availableProjects={availableProjects} />
 					<ContentTableImageRow imageSet={imageSet} />
-					<ContentTableDataRow deleteImageSetCallback={(id) => deleteImageSet(id) } setNewReferenceImageCallback={(result) => dataModificationCallback(result)} imageSet={imageSet} />
+					<ContentTableDataRow deleteImageSetCallback={(id) => deleteImageSet(id) } setNewReferenceImageCallback={(result) => dataModificationCallback(result)} imageSet={imageSet} addImageIgnoreRegionsCallback={ (imageSetRowData) => addImageIgnoreRegionsCallback(imageSetRowData) } addImageCheckRegionsCallback={ (imageSetRowData) => addImageCheckRegionsCallback(imageSetRowData) } />
 				</tbody>
 			</table>);
 		}

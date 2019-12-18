@@ -1,7 +1,7 @@
 import * as React from "react";
 import css from "./contentTableDataRowReferenceCell.scss";
 
-const ContentTableDataRowReferenceCell = ({ referenceImageData, deleteImageSetCallback }) => {
+const ContentTableDataRowReferenceCell = ({ referenceImageData, deleteImageSetCallback, addImageIgnoreRegionsCallback, addImageCheckRegionsCallback }) => {
 
 	return (
 			<td>
@@ -11,8 +11,8 @@ const ContentTableDataRowReferenceCell = ({ referenceImageData, deleteImageSetCa
 				<div> Check Areas: {referenceImageData.checkAreas} </div>
 				<div>
 					<button onClick={ () => deleteImageSetCallback() }>Delete Set</button>
-					<button>Add Ignore Area</button>
-					<button>Add Check Area</button>
+					<button onClick={ () => addImageIgnoreRegionsCallback() }>Add Ignore Area</button>
+					<button onClick={ () => addImageCheckRegionsCallback () }>Add Check Area</button>
 				</div>
 			</td>
 	)

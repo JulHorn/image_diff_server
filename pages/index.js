@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import Header from "./components/header/header";
 import Footer from "./components/footer/footer";
 import TabManager from "./components/tabManager/tabManager";
+import ImageAreaSelector from "./components/imageAreaSelector/imageAreaSelector"
 import connector from "./components/helper/connector"
 import css from "./index.scss";
 
@@ -24,6 +25,41 @@ const IndexPage  = ({initialJobData, initialAvailableProjectData}) => {
 		useState({
 			 availableProjects: initialAvailableProjectData.allProjects
 		 });
+
+	const [imageAreaSelectionState, setImageAreaSelectionState] =
+		useState({
+			visible: false,
+		 	applyClickCallback: false,
+			imagePath: false
+		 });
+
+	const addImageIgnoreAreas = (imageSet) => {
+		setImageAreaSelectionState({
+		   visible: true,
+		   applyClickCallback: imageModificationCallback,
+		   cancelClickCallback: imageModificationCallback,
+		   imagePath: imageSet.referenceImage.path
+	   });
+	};
+
+	const addImageCheckAreas = (imageSet) => {
+		setImageAreaSelectionState({
+			visible: true,
+			applyClickCallback: imageModificationCallback,
+			cancelClickCallback: imageModificationCallback,
+			imagePath: imageSet.referenceImage.path
+		})
+	};
+
+	const imageModificationCallback = (modifiedAreas) => {
+		if (modifiedAreas) {
+			console.log('Modified')
+		}
+
+		setImageAreaSelectionState({
+		   visible: false
+		})
+	};
 
 	const handleCheckAll = (result) => {
 		updateState(result.job)
@@ -51,8 +87,9 @@ const IndexPage  = ({initialJobData, initialAvailableProjectData}) => {
 
 	return (
 		<div className={css.indexContent}>
+			<ImageAreaSelector state={ imageAreaSelectionState } />
 			<Header data={dataState} checkAllCallback={(e) => handleCheckAll(e)}/>
-			<TabManager projects={dataState.projects} availableProjects={ availableProjectsState.availableProjects } contentDataModificationCallback={(result) => updateState(result.job)} />
+			<TabManager projects={dataState.projects} availableProjects={ availableProjectsState.availableProjects } contentDataModificationCallback={(result) => updateState(result.job)} addImageIgnoreRegionsCallback={ (imageSet) => addImageIgnoreAreas(imageSet) } addImageCheckRegionsCallback={ (imageSet) => addImageCheckAreas(imageSet) } />
 			<Footer />
 		</div>
 	)

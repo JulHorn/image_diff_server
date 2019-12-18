@@ -1,27 +1,27 @@
 import React, {useState} from 'react'
 import css from "./imageAreaSelector.scss";
 
-const ImageAreaSelector = ({ image, applyCallback, showCallback }) => {
-	console.log( image, ' image');
+const ImageAreaSelector = ({ state }) => {
+	const render = () => {
+		let content = null;
 
-	const [internalState, setInternalState] =
-		useState({
-			display: false
-		});
+		if (state.visible) {
+			content = <div className={ css.imageAreaSelector }>
+				<div className={css.imageAreaSelectorImageArea}>
+					<img src={state.imagePath} alt='' />
+				</div>
+				<div className={css.imageAreaSelectorActionArea}>
+					<button onClick={ () => state.applyClickCallback({}) }> Apply </button>
+					<button onClick={ () => state.cancelClickCallback() }> Cancel </button>
+				</div>
+			</div>
+		}
 
-	// Use internal state to decide if it should be displayed or not
+		return content
+	};
 
 	return (
-		<div className={ internalState.display ? css.imageAreaSelectorShow : css.imageAreaSelector }>
-			<div className={css.imageAreaSelectorImageArea}>
-				<img src={image.path} alt='' />
-			</div>
-			<div className={css.imageAreaSelectorActionArea}>
-				<button onClick={ () => applyCallback('Whoop') }> Apply </button>
-				<button> Cancel </button>
-			</div>
-
-		</div>
+		render()
 	)
 };
 
