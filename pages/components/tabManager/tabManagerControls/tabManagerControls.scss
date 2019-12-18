@@ -1,3 +1,5 @@
+$hoverBackGroundColor: #ddd;
+
 .tabManagerControls {
 	width: 100%;
 	height: auto;
@@ -24,10 +26,6 @@
 	height: auto;
 }
 
-.tabManagerControlsSectionTabs label:hover {
-	background-color:#ddd;
-}
-
 .tabManagerControlsSectionTabsTabActive {
 	background-color:#ccc;
 }
@@ -38,4 +36,26 @@
 	flex-wrap: nowrap;
 	justify-content: flex-end;
 	height: auto;
+}
+
+.tabManagerControlsSectionProject select, button {
+	background-color: inherit;
+	border: black;
+	outline: none;
+	cursor: pointer;
+	transition: 0.3s;
+	font-size: 14px;
+	color: black;
+}
+
+.tabManagerControlsSectionProject select {
+	margin: 14px 8px;
+}
+
+.tabManagerControlsSectionProject button {
+	padding: 14px 8px;
+}
+
+.tabManagerControlsSectionProject button:hover, label:hover {
+	background-color: $hoverBackGroundColor;
 }

@@ -1,6 +1,10 @@
 import * as React from "react";
 import css from "./tabManagerControls.scss";
 import {useRouter} from 'next/router';
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import connector from "../../helper/connector"
 
 const TabManagerControls = ({ availableProjects }) => {
@@ -101,9 +105,9 @@ const TabManagerControls = ({ availableProjects }) => {
 						<option key={-1} value={-1}>All Projects</option>
 						{ getProjectOptions() }
 					</select>
-					<button onClick={ (event) => createProject(event) }>Create</button>
-					<button onClick={ (event) => editProject(event) }>Edit</button>
-					<button onClick={ (event) => deleteProject(event) }>Delete</button>
+					<button onClick={ (event) => createProject(event) }><FontAwesomeIcon icon={faPlus} /></button>
+					<button onClick={ (event) => editProject(event) }><FontAwesomeIcon icon={faEdit} /></button>
+					<button onClick={ (event) => deleteProject(event) }><FontAwesomeIcon icon={faTrash} /></button>
 				</div>
 			</div>
 		</form>
