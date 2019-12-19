@@ -4,7 +4,7 @@ import css from "./contentTableDataRowDiffCell.scss";
 const ContentTableDataRowDiffCell = ({ diffImageData }) => {
 
 	return (
-			<td>
+			<td className={css.contentTableDataRowDiffCell}>
 				<div> Height: {diffImageData.height}px </div>
 				<div> Width: {diffImageData.width}px </div>
 			</td>

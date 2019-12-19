@@ -4,7 +4,7 @@ import css from "./contentTableDataRowReferenceCell.scss";
 const ContentTableDataRowReferenceCell = ({ referenceImageData, deleteImageSetCallback, addImageIgnoreRegionsCallback, addImageCheckRegionsCallback }) => {
 
 	return (
-			<td>
+			<td className={css.contentTableDataRowReferenceCell}>
 				<div> Height: {referenceImageData.height}px </div>
 				<div> Width: {referenceImageData.width}px </div>
 				<div> Ignore Areas: {referenceImageData.ignoreAreas} </div>

@@ -4,7 +4,7 @@ import css from "./contentTableDataRowNewCell.scss";
 const ContentTableDataRowNewCell = ({ newImageData, setNewReferenceCallback }) => {
 
 	return (
-			<td>
+			<td className={css.contentTableDataRowNewCell}>
 				<div> Height: {newImageData.height}px </div>
 				<div> Width: {newImageData.width}px </div>
 				<div>

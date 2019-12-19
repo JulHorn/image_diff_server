@@ -9,9 +9,9 @@ const ContentTableImageRow = ({ imageSet }) => {
 
 	return (
 		<tr>
-			<td> <img src={uncachedImagePath(imageSet.referenceImage.path)} /> </td>
-			<td> <img src={uncachedImagePath(imageSet.newImage.path)} /> </td>
-			<td> <img src={uncachedImagePath(imageSet.diffImage.path)} /> </td>
+			<td> <a href={uncachedImagePath(imageSet.referenceImage.path)} target={'_blank'}> <img src={uncachedImagePath(imageSet.referenceImage.path)}  alt={''}/> </a> </td>
+			<td> <a href={uncachedImagePath(imageSet.newImage.path)} target={'_blank'}> <img src={uncachedImagePath(imageSet.newImage.path)} alt={''} /> </a> </td>
+			<td> <a href={uncachedImagePath(imageSet.diffImage.path)} target={'_blank'}> <img src={uncachedImagePath(imageSet.diffImage.path)} alt={''} />  </a> </td>
 		</tr>
 
 	)

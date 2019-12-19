@@ -1,15 +1,23 @@
 .contentTableContainer {
-	border: black solid 1px;
 	width: 100%;
 }
 
 .contentTable {
 	width: 100%;
+	border-width: 1px 1px 0;
+	border-style: solid;
+	border-color: #888888;
+	border-collapse: collapse;
+}
+
+.contentTable:last-child {
+	border-width: 1px 1px 1px;
 }
 
 .contentTable:nth-child(even) {
 	background-color: #ffffff;
 }
+
 
 .contentTable:nth-child(odd) {
 	background-color: #eeeeee;
