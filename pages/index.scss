@@ -1,7 +1,10 @@
 .indexContent {
+	font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+	padding: 30px 20px;
+}
+
+.indexCenteredContent {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-	margin-top: 30px;
 }

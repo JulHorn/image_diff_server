@@ -87,9 +87,11 @@ const IndexPage  = ({initialJobData, initialAvailableProjectData}) => {
 
 	return (
 		<div className={css.indexContent}>
-			<ImageAreaSelector state={ imageAreaSelectionState } />
-			<Header data={dataState} checkAllCallback={(e) => handleCheckAll(e)}/>
-			<TabManager projects={dataState.projects} availableProjects={ availableProjectsState.availableProjects } contentDataModificationCallback={(result) => updateState(result.job)} addImageIgnoreRegionsCallback={ (imageSet) => addImageIgnoreAreas(imageSet) } addImageCheckRegionsCallback={ (imageSet) => addImageCheckAreas(imageSet) } />
+			<div className={css.indexCenteredContent}>
+				<ImageAreaSelector state={ imageAreaSelectionState } />
+				<Header data={dataState} checkAllCallback={(e) => handleCheckAll(e)}/>
+				<TabManager projects={dataState.projects} availableProjects={ availableProjectsState.availableProjects } contentDataModificationCallback={(result) => updateState(result.job)} addImageIgnoreRegionsCallback={ (imageSet) => addImageIgnoreAreas(imageSet) } addImageCheckRegionsCallback={ (imageSet) => addImageCheckAreas(imageSet) } />
+			</div>
 			<Footer />
 		</div>
 	)
