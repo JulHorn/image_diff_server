@@ -28,9 +28,13 @@ const ContentTableDataRowReferenceCell = ({ referenceImageData, deleteImageSetCa
 
 	return (
 			<td className={css.contentTableDataRowReferenceCell}>
-				<div> Height: {referenceImageData.height}px </div>
-				<div> Width: {referenceImageData.width}px </div>
-				{ renderRegionSelectInfo() }
+				<div className={css.contentTableDataRowReferenceCellInformationContainer}>
+					<div className={css.contentTableDataRowReferenceCellInformationContainerFirstBlock}>
+						<div> Height: {referenceImageData.height}px </div>
+						<div> Width: {referenceImageData.width}px </div>
+					</div>
+					{ renderRegionSelectInfo() }
+				</div>
 
 				<div>
 					<button onClick={ () => deleteImageSetCallback() }>Delete Set</button>
