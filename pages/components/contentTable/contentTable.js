@@ -20,13 +20,14 @@ const ContentTable = ({ projectsToDraw, availableProjects, dataModificationCallb
 			const imageSetName = imageSet.referenceImage ? imageSet.referenceImage.name : imageSet.newImage.name;
 
 			rowsToDraw.push(
-			<table key={imageSet.id} className={css.contentTable}>
-				<tbody>
-					<ContentTableHeadlineRow imageSetName={imageSetName} currentProject={'TestProject'} availableProjects={availableProjects} />
-					<ContentTableImageRow imageSet={imageSet} />
-					<ContentTableDataRow deleteImageSetCallback={(id) => deleteImageSet(id) } setNewReferenceImageCallback={(result) => dataModificationCallback(result)} imageSet={imageSet} addImageIgnoreRegionsCallback={ (imageSetRowData) => addImageIgnoreRegionsCallback(imageSetRowData) } addImageCheckRegionsCallback={ (imageSetRowData) => addImageCheckRegionsCallback(imageSetRowData) } />
-				</tbody>
-			</table>);
+				<table key={imageSet.id} className={css.contentTable}>
+					<tbody>
+						<ContentTableHeadlineRow imageSetName={imageSetName} currentProject={'TestProject'} availableProjects={availableProjects} />
+						<ContentTableImageRow imageSet={imageSet} />
+						<ContentTableDataRow deleteImageSetCallback={(id) => deleteImageSet(id) } setNewReferenceImageCallback={(result) => dataModificationCallback(result)} imageSet={imageSet} addImageIgnoreRegionsCallback={ (imageSetRowData) => addImageIgnoreRegionsCallback(imageSetRowData) } addImageCheckRegionsCallback={ (imageSetRowData) => addImageCheckRegionsCallback(imageSetRowData) } />
+					</tbody>
+				</table>
+			);
 		}
 	}
 

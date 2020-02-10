@@ -1,10 +1,16 @@
 import React, {useState} from 'react'
 import css from "./imageAreaSelector.scss";
+import ImageAreaSelectedArea from "./imageAreaSelectedArea/imageAreaSelectedArea";
 
 const ImageAreaSelector = ({ state }) => {
 	let mouseStartPointX;
 	let mouseStartPointY;
-	let selectedAreas = [];
+
+	const [areasState, setAreasState] =
+		useState({
+			selectedAreas: []
+		});
+
 
 	const mouseDownEvent = (event) => {
 		console.log('Down');
@@ -23,8 +29,9 @@ const ImageAreaSelector = ({ state }) => {
 				height: Math.abs(mouseStartPointY - event.clientY)
 			};
 
-			selectedAreas.push(selectedArea);
-			console.log('Mouse Up selected area', selectedArea);
+			const selectedAreasTmp = areasState.selectedAreas;
+			selectedAreasTmp.push(selectedArea);
+			setAreasState({ selectedAreas: selectedAreasTmp});
 		}
 
 		console.log('Mouse up');
@@ -37,6 +44,17 @@ const ImageAreaSelector = ({ state }) => {
 		mouseStartPointY = null;
 	};
 
+	const renderAreas = () => {
+		const areasToRender = [];
+
+		for (const areaState of areasState.selectedAreas) {
+			areasToRender.push(<ImageAreaSelectedArea height={ areaState.height } width={ areaState.width } x={ areaState.x } y={ areaState.y } />);
+			console.log('Area', areaState);
+		}
+
+		return areasToRender;
+	};
+
 	const render = () => {
 		let content = null;
 
@@ -44,11 +62,12 @@ const ImageAreaSelector = ({ state }) => {
 			content = <div className={ css.imageAreaSelector }>
 				<div className={css.imageAreaSelectorImageArea}>
 					<div onMouseDown={(event) => mouseDownEvent(event)} onMouseUp={(event) => mouseUpEvent(event)} className={css.imageAreaSelectorSelectLayer}> </div>
+					{ renderAreas() }
 					<img src={state.imagePath} alt='' />
 				</div>
 				<div className={css.imageAreaSelectorActionArea}>
-					<button onClick={ () => state.applyClickCallback({}) }> Apply </button>
-					<button onClick={ () => state.cancelClickCallback() }> Cancel </button>
+					<button onClick={ () => state.applyClickCallback({}) }>Apply</button>
+					<button onClick={ () => state.cancelClickCallback() }>Cancel</button>
 				</div>
 			</div>
 		}
