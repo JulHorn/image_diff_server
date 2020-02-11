@@ -36,11 +36,12 @@ const IndexPage  = ({initialJobData, initialAvailableProjectData}) => {
 
 	const addImageIgnoreAreas = (imageSet) => {
 		setImageAreaSelectionState({
-		   visible: true,
-		   applyClickCallback: imageModificationIgnoreAreaCallback,
-		   cancelClickCallback: imageModificationCancelCallback,
-		   imagePath: imageSet.referenceImage.path,
-			imageSetId: imageSet.id
+			visible: true,
+			applyClickCallback: imageModificationIgnoreAreaCallback,
+			cancelClickCallback: imageModificationCancelCallback,
+			imagePath: imageSet.referenceImage.path,
+			imageSetId: imageSet.id,
+			imageSetMarkedAreas: imageSet.ignoreAreas
 	   });
 	};
 
@@ -50,7 +51,8 @@ const IndexPage  = ({initialJobData, initialAvailableProjectData}) => {
 			applyClickCallback: imageModificationCheckAreaCallback,
 			cancelClickCallback: imageModificationCancelCallback,
 			imagePath: imageSet.referenceImage.path,
-			imageSetId: imageSet.id
+			imageSetId: imageSet.id,
+			imageSetMarkedAreas: imageSet.checkAreas
 		})
 	};
 
