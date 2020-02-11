@@ -30,34 +30,58 @@ const IndexPage  = ({initialJobData, initialAvailableProjectData}) => {
 		useState({
 			visible: false,
 		 	applyClickCallback: false,
+			cancelClickCallback: false,
 			imagePath: false
 		 });
 
 	const addImageIgnoreAreas = (imageSet) => {
 		setImageAreaSelectionState({
 		   visible: true,
-		   applyClickCallback: imageModificationCallback,
-		   cancelClickCallback: imageModificationCallback,
-		   imagePath: imageSet.referenceImage.path
+		   applyClickCallback: imageModificationIgnoreAreaCallback,
+		   cancelClickCallback: imageModificationCancelCallback,
+		   imagePath: imageSet.referenceImage.path,
+			imageSetId: imageSet.id
 	   });
 	};
 
 	const addImageCheckAreas = (imageSet) => {
 		setImageAreaSelectionState({
 			visible: true,
-			applyClickCallback: imageModificationCallback,
-			cancelClickCallback: imageModificationCallback,
-			imagePath: imageSet.referenceImage.path
+			applyClickCallback: imageModificationCheckAreaCallback,
+			cancelClickCallback: imageModificationCancelCallback,
+			imagePath: imageSet.referenceImage.path,
+			imageSetId: imageSet.id
 		})
 	};
 
-	const imageModificationCallback = (modifiedAreas) => {
-		if (modifiedAreas) {
-			console.log('Modified')
+	// ToDo: Rename
+	const imageModificationIgnoreAreaCallback = (id, ignoredAreas) => {
+		if (id && ignoredAreas) {
+			connector.modifyIgnoreAreas(id, ignoredAreas)
+				.then(
+					setImageAreaSelectionState({
+						visible: false
+					})
+				)
 		}
+	};
 
+	// ToDo: Rename
+	const imageModificationCheckAreaCallback = (id, modifiedAreas) => {
+		if (id && modifiedAreas) {
+			connector.modifyCheckAreas(id, modifiedAreas)
+				.then(
+					setImageAreaSelectionState({
+						visible: false
+					})
+				)
+		}
+	};
+
+	// ToDo: Rename
+	const imageModificationCancelCallback = () => {
 		setImageAreaSelectionState({
-		   visible: false
+			visible: false
 		})
 	};
 

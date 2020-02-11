@@ -154,6 +154,7 @@ class Connector {
 					.then( resp => resp.json());
 		}
 
+		// ToDo: Think about catch for error cases
 		return fetch(reqUrl, {method: method, headers: reqHeaders, body: reqBody})
 				.then( resp => resp.json());
 	}

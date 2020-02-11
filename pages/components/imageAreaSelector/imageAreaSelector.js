@@ -66,7 +66,7 @@ const ImageAreaSelector = ({ state }) => {
 					<img src={state.imagePath} alt='' />
 				</div>
 				<div className={css.imageAreaSelectorActionArea}>
-					<button onClick={ () => state.applyClickCallback({}) }>Apply</button>
+					<button onClick={ () => state.applyClickCallback( state.imageSetId, areasState.selectedAreas ) }>Apply</button>
 					<button onClick={ () => state.cancelClickCallback() }>Cancel</button>
 				</div>
 			</div>
