@@ -8,7 +8,7 @@ const ContentTableDataRowNewCell = ({ newImageData, setNewReferenceCallback }) =
 				<div> Height: {newImageData.height}px </div>
 				<div> Width: {newImageData.width}px </div>
 				<div>
-					<button onClick={() => setNewReferenceCallback()}>New Reference</button>
+					<button disabled={newImageData.height === 0 || newImageData.width === 0} onClick={() => setNewReferenceCallback()}>New Reference</button>
 				</div>
 			</td>
 	)

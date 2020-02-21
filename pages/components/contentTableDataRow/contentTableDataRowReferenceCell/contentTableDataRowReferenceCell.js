@@ -16,14 +16,12 @@ const ContentTableDataRowReferenceCell = ({ referenceImageData, deleteImageSetCa
 	};
 
 	const renderRegionSelectButtons = () => {
-		if (referenceImageData.height && referenceImageData.height !== 0) {
-			return 	<span>
-						<button onClick={ () => addImageIgnoreRegionsCallback() }>Add Ignore Area</button>
-						<button onClick={ () => addImageCheckRegionsCallback () }>Add Check Area</button>
-					</span>
-		}
+		const disableButtons = referenceImageData.height || referenceImageData.width === 0;
 
-		return null
+		return 	<span>
+					<button disabled={ disableButtons } onClick={ () => addImageIgnoreRegionsCallback() }>Add Ignore Area</button>
+					<button disabled={ disableButtons } onClick={ () => addImageCheckRegionsCallback () }>Add Check Area</button>
+				</span>
 	};
 
 	return (
