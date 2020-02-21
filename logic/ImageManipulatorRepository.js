@@ -28,14 +28,17 @@ var ImageManipulatorRepository = function() {
 /**
  * Creates diff images for all images with the same name in the reference/new folders.
  *
+ * @param imageSetState ToDo
+ * @param projectId
  * @param {Boolean} autoCrop Enables if auto cropping should be used before comparing images.
  * @param {Number} pixDiffThreshold The allowed pixel percentage threshold. Should be between 0 and 1.
  * @param {Function} callback Called when the complete image comparison process is done. Has the updated image imageMetaInformationModel information model object as job.
  * **/
-ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function(autoCrop, pixDiffThreshold, callback) {
+ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function(projectId, imageSetState, autoCrop, pixDiffThreshold, callback) {
 	logger.info('---------- Start ----------', new Date().toISOString());
 	var autoCropValue = autoCrop ? autoCrop : config.getAutoCropOption();
 	var pixDiffThresholdValue = pixDiffThreshold ? pixDiffThreshold : config.getMaxPixelDifferenceThreshold();
+	var that = this;
 
 	logger.info("----- Options Start -----");
 	logger.info("Auto cropping is enabled: ", autoCropValue);
@@ -54,7 +57,8 @@ ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function
 							+ "\nDifference:" + job.getImageMetaInformationModel().getBiggestPercentualPixelDifference());
 
 				if(callback) {
-					callback(job, isBiggestPixelDiffThresholdBreached);
+					var resultJob = that.getCleanedUpJob(imageSetState, projectId, job);
+					callback(resultJob, isBiggestPixelDiffThresholdBreached);
 				}
 			})
 	);

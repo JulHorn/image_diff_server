@@ -6,7 +6,7 @@ import ImageAreaSelector from "./components/imageAreaSelector/imageAreaSelector"
 import connector from "./components/helper/connector"
 import css from "./index.scss";
 
-const IndexPage  = ({initialJobData, initialAvailableProjectData}) => {
+const IndexPage  = ({initialJobData, initialAvailableProjectData, initialProjectId, initialImageSetState}) => {
 	const initialCompData = initialJobData.imageMetaInformationModel;
 
 	// ToDo: Probably use state thingy here for update
@@ -89,7 +89,6 @@ const IndexPage  = ({initialJobData, initialAvailableProjectData}) => {
 
 	const handleCheckAll = (result) => {
 		updateState(result.job)
-
 	};
 
 	// ToDo Might be better to break it down into multiple states
@@ -115,7 +114,7 @@ const IndexPage  = ({initialJobData, initialAvailableProjectData}) => {
 		<div className={css.indexContent}>
 			<div className={css.indexCenteredContent}>
 				<ImageAreaSelector state={ imageAreaSelectionState } />
-				<Header data={dataState} checkAllCallback={(e) => handleCheckAll(e)}/>
+				<Header data={dataState} projectId={initialProjectId} imageSetState={initialImageSetState} checkAllCallback={(e) => handleCheckAll(e)}/>
 				<TabManager projects={dataState.projects} availableProjects={ availableProjectsState.availableProjects } contentDataModificationCallback={(result) => updateState(result.job)} addImageIgnoreRegionsCallback={ (imageSet) => addImageIgnoreAreas(imageSet) } addImageCheckRegionsCallback={ (imageSet) => addImageCheckAreas(imageSet) } />
 			</div>
 			<Footer />
@@ -129,7 +128,9 @@ IndexPage.getInitialProps = async ({ req } ) => {
 
 	return {
 		initialJobData: resultJob.job,
-		initialAvailableProjectData: projects
+		initialAvailableProjectData: projects,
+		initialImageSetState: req.query.imageSetState,
+		initialProjectId: req.query.projectId
 	}
 };
 

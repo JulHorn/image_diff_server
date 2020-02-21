@@ -10,7 +10,7 @@ router.post('/checkAll', function(req, res) {
     res.setTimeout(config.getRequestTimeout());
     var reqData = req.body;
 
-    imageManipulatorRepository.calculateDifferencesForAllImages(reqData.autoCrop
+    imageManipulatorRepository.calculateDifferencesForAllImages(reqData.projectId, reqData.imageSetState, reqData.autoCrop
         , reqData.pixDiffThreshold
         , function (job, isThresholdBreached) {
             res.statusCode = 200;

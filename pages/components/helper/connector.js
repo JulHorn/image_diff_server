@@ -26,9 +26,11 @@ class Connector {
 
 	/**
 	 * Calculates the diff images for all images. Does not wait until the computation is done.
+	 *
+	 * ToDo params
 	 * **/
-	async checkAll () {
-		return this.sendRequest('/checkAll', 'POST', null);
+	async checkAll (projectId, imageSetState) {
+		return this.sendRequest('/checkAll', 'POST', {imageSetState: imageSetState, projectId: projectId});
 	};
 
 	/**

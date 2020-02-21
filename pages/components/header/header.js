@@ -2,9 +2,9 @@ import * as React from "react";
 import css from "./header.scss";
 import connector from "../helper/connector";
 
-const Header = ({data, checkAllCallback}) => {
+const Header = ({data, projectId, imageSetState, checkAllCallback}) => {
 	const checkAllClick = (checkAllCallback) => {
-		connector.checkAll().then(result => {
+		connector.checkAll(projectId, imageSetState).then(result => {
 			checkAllCallback(result);
 		});
 	};

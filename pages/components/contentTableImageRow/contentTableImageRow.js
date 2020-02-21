@@ -2,7 +2,6 @@ import * as React from "react";
 import css from "./contentTableImageRow.scss";
 
 const ContentTableImageRow = ({ imageSet }) => {
-
 	const uncachedImagePath = (imagePath) => {
 		return  imagePath + '?timestamp=' + new Date().getTime();
 	};
