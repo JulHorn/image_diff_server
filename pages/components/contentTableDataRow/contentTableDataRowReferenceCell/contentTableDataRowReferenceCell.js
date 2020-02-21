@@ -12,7 +12,7 @@ const ContentTableDataRowReferenceCell = ({ referenceImageData, deleteImageSetCa
 	};
 
 	const renderRegionSelectButtons = () => {
-		const disableButtons = referenceImageData.referenceImage.height || referenceImageData.referenceImage.width === 0;
+		const disableButtons = referenceImageData.referenceImage.height === 0 || referenceImageData.referenceImage.width === 0;
 
 		return 	<span>
 					<button disabled={ disableButtons } onClick={ () => addImageIgnoreRegionsCallback() }>Add Ignore Area</button>
