@@ -76,7 +76,6 @@ const TabManagerControls = ({ availableProjects }) => {
 		console.log('availableProjects', availableProjects);
 
 		for (const availableProject of availableProjects) {
-
 			projectOptions.push(
 				<option key={ availableProject.id } selected={ evaluateQueryParameter('projectId') === availableProject.id } value={ availableProject.id }> { availableProject.name } </option>
 			);

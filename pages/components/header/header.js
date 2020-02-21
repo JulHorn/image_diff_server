@@ -17,7 +17,8 @@ const Header = ({data, checkAllCallback}) => {
 				<h1 className={css.headerHeadline}>Image Comparison Server</h1>
 
 				<div>{data.jobName}</div>
-				<progress value={data.processedImageCount} max={10} className={css.headerHeadlineProgressBar} />
+
+				<progress value={data.processedImageCount} max={data.imagesToBeProcessedCount} className={css.headerHeadlineProgressBar} />
 				<div className={css.headerSecondaryInformation}>
 					<div>Max Pix. Difference: {data.maxActualPixDiff}</div>
 					<div>Last Job Finished: {data.jobRunTimestamp}</div>

@@ -16,7 +16,7 @@ const ContentTableDataRow = ({ imageSet, setNewReferenceImageCallback, deleteIma
 
 	return (
 		<tr>
-			<ContentTableDataRowReferenceCell deleteImageSetCallback={() => deleteImageSetCallback(imageSet.id)} referenceImageData={imageSet.referenceImage} addImageIgnoreRegionsCallback={ () => addImageIgnoreRegionsCallback(imageSet) } addImageCheckRegionsCallback={ () => addImageCheckRegionsCallback(imageSet) } />
+			<ContentTableDataRowReferenceCell deleteImageSetCallback={() => deleteImageSetCallback(imageSet.id)} referenceImageData={imageSet} addImageIgnoreRegionsCallback={ () => addImageIgnoreRegionsCallback(imageSet) } addImageCheckRegionsCallback={ () => addImageCheckRegionsCallback(imageSet) } />
 			<ContentTableDataRowNewCell newImageData={imageSet.newImage} setNewReferenceCallback={() => setNewReferenceImageRowCallback(imageSet.id)} />
 			<ContentTableDataRowDiffCell diffImageData={imageSet.diffImage} />
 		</tr>

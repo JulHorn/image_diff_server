@@ -17,7 +17,7 @@ const ContentTable = ({ projectsToDraw, availableProjects, dataModificationCallb
 
 	for (const project of projectsToDraw) {
 		for (const imageSet of project.imageSets) {
-			const imageSetName = imageSet.referenceImage ? imageSet.referenceImage.name : imageSet.newImage.name;
+			const imageSetName = imageSet.referenceImage && imageSet.referenceImage.name ? imageSet.referenceImage.name : imageSet.newImage.name;
 
 			rowsToDraw.push(
 				<table key={imageSet.id} className={css.contentTable}>
