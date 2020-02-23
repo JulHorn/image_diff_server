@@ -68,17 +68,20 @@ ImageManipulatorRepository.prototype.calculateDifferencesForAllImages = function
  * Makes a new image to a reference image. Updates and save the imageMetaInformationModel information model.
  *
  * @param {String} id Id of the image set for which the new image should be made a reference image.
+ * @param projectId ToDo
+ * @param imageSetState
  * @param {Function} callback Called when the complete process is done. Has the job and updated image set as parameter.
  * **/
-ImageManipulatorRepository.prototype.makeToNewReferenceImage = function(id, callback) {
+ImageManipulatorRepository.prototype.makeToNewReferenceImage = function(id, projectId, imageSetState, callback) {
 	// Add create diff images job to the job handler
 	jobHandler.addJob(
-			new MakeToNewReferenceImageJob(id, function(job, updatedImageSet) {
-											   if(callback) {
-												   callback(job, updatedImageSet);
-											   }
-										   }
-			));
+		new MakeToNewReferenceImageJob(id, function(job, updatedImageSet) {
+			   if(callback) {
+				   var resultJob = that.getCleanedUpJob(imageSetState, projectId, job);
+				   callback(resultJob, updatedImageSet);
+			   }
+		   }
+		));
 };
 
 /**
@@ -86,15 +89,18 @@ ImageManipulatorRepository.prototype.makeToNewReferenceImage = function(id, call
  * and the images will be deleted.
  *
  * @param id The id of the image set.
+ * @param projectId ToDo
+ * @param imageSetState
  * @param callback Called when the complete deletion process is done. Has the updated image imageMetaInformationModel information model object as job.
  * **/
-ImageManipulatorRepository.prototype.deleteImageSetFromModel = function(id, callback) {
+ImageManipulatorRepository.prototype.deleteImageSetFromModel = function(id, projectId, imageSetState, callback) {
 	// Add delete job to the job handler
 	jobHandler.addJob(
 			new DeleteJob(id, function(job) {
 							  logger.info("Deleted image set with id: ", id);
 							  if(callback) {
-								  callback(job);
+								  var resultJob = that.getCleanedUpJob(imageSetState, projectId, job);
+								  callback(resultJob);
 							  }
 						  }
 			));
@@ -159,10 +165,12 @@ ImageManipulatorRepository.prototype.getCleanedUpJob = function(imageSetState, p
  * Sets the ignore areas for an image set.
  *
  * @param {String} id The id of the image set for which the ignore areas should be set.
+ * @param projectId
+ * @param imageSetState ToDo
  * @param {Object} ignoreAreas The ignore areas which should be set for the image set.
  * @param {Function} callback Called when the ignore areas were set. Has the updated image set as parameter.
  * **/
-ImageManipulatorRepository.prototype.modifyIgnoreAreas = function(id, ignoreAreas, callback) {
+ImageManipulatorRepository.prototype.modifyIgnoreAreas = function(id, projectId, imageSetState, ignoreAreas, callback) {
 	// Add modify ignore areas job to the job handler
 	try {
 		jobHandler.addJob(
@@ -170,7 +178,8 @@ ImageManipulatorRepository.prototype.modifyIgnoreAreas = function(id, ignoreArea
 				 logger.info("Modified ignore areas for image set with id: " + id);
 
 				 if(callback) {
-					 callback(job, updatedImageSet);
+					 var resultJob = that.getCleanedUpJob(imageSetState, projectId, job);
+					 callback(resultJob, updatedImageSet);
 				 }
 			 }
 		));
@@ -183,18 +192,21 @@ ImageManipulatorRepository.prototype.modifyIgnoreAreas = function(id, ignoreArea
  * Sets the check areas for an image set.
  *
  * @param {String} id The id of the image set for which the ignore areas should be set.
+ * @param projectId
+ * @param imageSetState
  * @param {Object} checkAreas The check areas which should be set for the image set.
  * @param {Function} callback Called when the check areas were set. Has the updated image set as parameter.
  * **/
-ImageManipulatorRepository.prototype.modifyCheckAreas = function(id, checkAreas, callback) {
+ImageManipulatorRepository.prototype.modifyCheckAreas = function(id, projectId, imageSetState, checkAreas, callback) {
 	// Add modify check areas job to the job handler
 	try {
 		jobHandler.addJob(
-			new ModifyCheckAreasJob(id, checkAreas, function(job, updatedImageSet) {
+			new ModifyCheckAreasJob(id, checkAreas, function(job,  updatedImageSet) {
 				logger.info("Modified check areas for image set with id: " + id);
 
 				if(callback) {
-					callback(job, updatedImageSet);
+					var resultJob = that.getCleanedUpJob(imageSetState, projectId, job);
+					callback(resultJob, updatedImageSet);
 				}
 			}
 		));
@@ -219,15 +231,18 @@ ImageManipulatorRepository.prototype.getImageSet = function(id, callback) {
  * Add a new project to the image meta model.
  *
  * @param {String} projectName The name of the project to be added.
+ * @param projectId
+ * @param imageSetState
  * @param {Function} callback Called when finished. Has the job and the newly created project object as parameter.
  */
-ImageManipulatorRepository.prototype.addProject = function(projectName, callback) {
+ImageManipulatorRepository.prototype.addProject = function(projectName, projectId, imageSetState, callback) {
 	jobHandler.addJob(
 		new AddProjectJob(projectName, function(job, newProject) {
 		  logger.info("Added project " + projectName);
 
 		  if(callback) {
-			  callback(job, {name: newProject.getProjectName(), id: newProject.getProjectId()});
+			  var resultJob = that.getCleanedUpJob(imageSetState, projectId, job);
+			  callback(resultJob, {name: newProject.getProjectName(), id: newProject.getProjectId()});
 		  }
 		}
 	));
@@ -258,13 +273,14 @@ ImageManipulatorRepository.prototype.getProjects = function(callback) {
  * @param {String} projectName New name of the project.
  * @param {Function} callback Called when finished. Has the job and a boolean (renaming was successful?) as parameter.
  */
-ImageManipulatorRepository.prototype.editProject = function(projectId, projectName, callback) {
+ImageManipulatorRepository.prototype.editProject = function(projectId, projectName, imageSetState, callback) {
 	jobHandler.addJob(
 		new EditProjectJob(projectId, projectName, function(job, wasSuccessful) {
 		   logger.info("Edited project " + projectId);
 
 		   if(callback) {
-			   callback(job, wasSuccessful);
+			   var resultJob = that.getCleanedUpJob(imageSetState, projectId, job);
+			   callback(resultJob, wasSuccessful);
 		   }
 		}
 	));
@@ -274,15 +290,17 @@ ImageManipulatorRepository.prototype.editProject = function(projectId, projectNa
  * Removes a project from the image manipulation repository.
  *
  * @param {String} projectId The project to be removed.
+ * @param imageSetState
  * @param {Function} callback Called when finished. Has the job and a boolean (removing was successful?) as parameter.
  */
-ImageManipulatorRepository.prototype.removeProject = function(projectId, callback) {
+ImageManipulatorRepository.prototype.removeProject = function(projectId, imageSetState, callback) {
 	jobHandler.addJob(
 		new RemoveProjectJob(projectId, function(job, wasSuccessful) {
 			 logger.info("Removed project " + projectId);
 
 			 if(callback) {
-				 callback(job, wasSuccessful);
+				 var resultJob = that.getCleanedUpJob(imageSetState, projectId, job);
+				 callback(resultJob, wasSuccessful);
 			 }
 		 }
 	));
@@ -294,15 +312,18 @@ ImageManipulatorRepository.prototype.removeProject = function(projectId, callbac
  * @param {String} imageSetId The image set that should be re-assigned.
  * @param {String} projectIdFrom The project to which the image set currently belongs.
  * @param {String} projectIdTo Project to which the image set should be moved to.
+ * @param projectId
+ * @param imageSetState
  * @param {Function} callback Called when finished. Has the job and a boolean (removing was successful?) as parameter.
  */
-ImageManipulatorRepository.prototype.assignImageSetToProject = function(imageSetId, projectIdFrom, projectIdTo, callback) {
+ImageManipulatorRepository.prototype.assignImageSetToProject = function(imageSetId, projectIdFrom, projectIdTo, projectId, imageSetState, callback) {
 	jobHandler.addJob(
 		new AssignImageSetToProjectJob(imageSetId, projectIdFrom, projectIdTo, function(job, wasSuccessful) {
 		   logger.info("Moved imageSet " + imageSetId + " from project " + projectIdFrom + " to project " + projectIdTo);
 
 		   if(callback) {
-			   callback(job, wasSuccessful);
+			   var resultJob = that.getCleanedUpJob(imageSetState, projectId, job);
+			   callback(resultJob, wasSuccessful);
 		   }
 	   }
 	));
@@ -337,16 +358,18 @@ ImageManipulatorRepository.prototype.cleanUpProject = function(imageName, projec
  * @param {String} imageType The type of the image (png, ...)
  * @param {String} imageBase64 The base 64 encoded image.
  * @param {String} projectId Project to be compared.
+ * @param imageSetState
  * @param {Function} callback Called when the complete image comparison process is done. Has the updated image imageMetaInformationModel information model object as job.
  */
-ImageManipulatorRepository.prototype.compareImageByName = function(imageName, imageType, imageBase64, projectId, callback) {
+ImageManipulatorRepository.prototype.compareImageByName = function(imageName, imageType, imageBase64, projectId, imageSetState, callback) {
 
 	jobHandler.addJob(
 		new CompareImageByNameJob(imageName, imageType, imageBase64, projectId, function(job, resultImageSet) {
 		  logger.info("Compared image " + imageName + "." + imageType + " with the threshold breached result: " + resultImageSet.isThresholdBreached);
 
 			if(callback) {
-				callback(job, resultImageSet.isThresholdBreached);
+				var resultJob = that.getCleanedUpJob(imageSetState, projectId, job);
+				callback(resultJob, resultImageSet.isThresholdBreached);
 			}
 		}
 	));

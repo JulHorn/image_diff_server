@@ -20,9 +20,10 @@ router.post('/checkAll', function(req, res) {
 
 router.put('/:id/makeToNewReferenceImage', function(req, res) {
     var setId = req.params.id;
+    var projectId = req.body.projectId;
+    var imageSetState = req.body.imageSetState;
 
-
-    imageManipulatorRepository.makeToNewReferenceImage(setId, function (job, updatedImageSet) {
+    imageManipulatorRepository.makeToNewReferenceImage(setId, projectId, imageSetState, function (job, updatedImageSet) {
         res.statusCode = 200;
         res.json({job: job, updatedImageSet: updatedImageSet});
     });
